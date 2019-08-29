@@ -27,7 +27,7 @@ jobs:
         with:
           github-token: ${{github.token}}
           script: |
-            await github.issues.createComment({...context.issue, body: '👋 Thanks for reporting!'})
+            github.issues.createComment({...context.issue, body: '👋 Thanks for reporting!'})
 ```
 
 ### Apply a label to an issue
@@ -44,7 +44,7 @@ jobs:
         with:
           github-token: ${{github.token}}
           script: |
-            await github.issues.addLabels({...context.issue, labels: ['Triage']})
+            github.issues.addLabels({...context.issue, labels: ['Triage']})
 ```
 
 ### Welcome a first-time contributor
