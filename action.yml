@@ -1,5 +1,8 @@
 name: Script
 description: An action for running simple scripts with a GitHub client
+branding:
+  color: blue
+  icon: pen-tool
 inputs:
   script:
     description: The script to run
