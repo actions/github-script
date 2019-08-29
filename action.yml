@@ -1,0 +1,15 @@
+name: Script
+description: An action for running simple scripts with a GitHub client
+inputs:
+  script:
+    description: The script to run
+    required: true
+  github-token:
+    description: The GitHub token used to create an authenticated client
+    required: true
+outputs:
+  result:
+    description: The return value of the script, stringified with `JSON.stringify`
+runs:
+  using: node12
+  main: main.js
