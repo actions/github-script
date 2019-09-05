@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@actions/core@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@actions/core/-/core-1.0.0.tgz#4a090a2e958cc300b9ea802331034d5faf42d239"
-  integrity sha512-aMIlkx96XH4E/2YZtEOeyrYQfhlas9jIRkfGPqMwXD095Rdkzo4lB6ZmbxPQSzD+e1M+Xsm98ZhuSMYGv/AlqA==
+"@actions/core@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@actions/core/-/core-1.1.0.tgz#25c3aff43a20f9c5a04e2a3439898a49ba8d3625"
+  integrity sha512-KKpo3xzo0Zsikni9tbOsEQkxZBGDsYSJZNkTvmo0gPSXrc98TBOcdTvKwwjitjkjHkreTggWdB1ACiAFVgsuzA==
 
-"@actions/github@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@actions/github/-/github-1.0.0.tgz#5154cadd93c4b17217f56304ee27056730b8ae88"
-  integrity sha512-PPbWZ5wFAD/Vr+RCECfR3KNHjTwYln4liJBihs9tQUL0/PCFqB2lSkIh9V94AcZFHxgKk8snImjuLaBE8bKR7A==
+"@actions/github@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@actions/github/-/github-1.1.0.tgz#06f34e6b0cf07eb2b3641de3e680dbfae6bcd400"
+  integrity sha512-cHf6PyoNMdei13jEdGPhKprIMFmjVVW/dnM5/9QmQDJ1ZTaGVyezUSCUIC/ySNLRvDUpeFwPYMdThSEJldSbUw==
   dependencies:
     "@octokit/graphql" "^2.0.1"
     "@octokit/rest" "^16.15.0"
