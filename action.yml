@@ -10,6 +10,14 @@ inputs:
   github-token:
     description: The GitHub token used to create an authenticated client
     required: true
+  debug:
+    description: Whether to tell the GitHub client to log details of its requests
+    default: false
+  user-agent:
+    description: An optional user-agent string
+    default: actions/github-script
+  previews:
+    description: A comma-separated list of API previews to accept
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
