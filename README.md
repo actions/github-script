@@ -33,7 +33,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.1.0
+      - uses: actions/github-script@0.2.0
         with:
           github-token: ${{github.token}}
           script: |
@@ -50,7 +50,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.1.0
+      - uses: actions/github-script@0.2.0
         with:
           github-token: ${{github.token}}
           script: |
@@ -66,7 +66,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.1.0
+      - uses: actions/github-script@0.2.0
         with:
           github-token: ${{github.token}}
           script: |
