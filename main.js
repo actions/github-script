@@ -11,9 +11,9 @@ async function main() {
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
   const opts = {}
-  if (debug) opts.log = console
-  if (userAgent) opts.userAgent = userAgent
-  if (previews) opts.previews = previews
+  if (debug === 'true') opts.log = console
+  if (userAgent != null) opts.userAgent = userAgent
+  if (previews != null) opts.previews = previews.split(',')
   const client = new GitHub(token, opts)
   const script = core.getInput('script', {required: true})
   const fn = new AsyncFunction('github', 'context', script)

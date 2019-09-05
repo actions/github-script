@@ -17,7 +17,7 @@ inputs:
     description: An optional user-agent string
     default: actions/github-script
   previews:
-    description: A list of API previews to accept
+    description: A comma-separated list of API previews to accept
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
