@@ -1,15 +1,25 @@
-# script
+# github-script
 
-This action makes it easy to quickly write a script in your workflow that uses the GitHub API and the workflow run context.
+This action makes it easy to quickly write a script in your workflow that
+uses the GitHub API and the workflow run context.
 
-In order to use this action, a `script` input is provided. The value of that input should be the body of an asynchronous function call. Two arguments will be provided:
+In order to use this action, a `script` input is provided. The value of that
+input should be the body of an asynchronous function call. Two arguments will
+be provided:
 
-- `github` A pre-authenticated [octokit/rest.js](https://github.com/octokit/rest.js) client
-- `context` An object containing the [context of the workflow run](https://github.com/actions/toolkit/tree/master/packages/github)
+- `github` A pre-authenticated
+  [octokit/rest.js](https://github.com/octokit/rest.js) client
+- `context` An object containing the [context of the workflow
+  run](https://github.com/actions/toolkit/tree/master/packages/github)
 
-Since the `script` is just a function body, these values will already be defined, so you don't have to (see examples below).
+Since the `script` is just a function body, these values will already be
+defined, so you don't have to (see examples below).
 
-See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client documentation.
+See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
+documentation.
+
+**Note** This action is still a bit of an experiment—the API may change in
+*future versions. 🙂
 
 ## Examples
 
@@ -23,7 +33,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/script@1.0.0
+      - uses: actions/github-script@0.1.0
         with:
           github-token: ${{github.token}}
           script: |
@@ -40,7 +50,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/script@1.0.0
+      - uses: actions/github-script@0.1.0
         with:
           github-token: ${{github.token}}
           script: |
@@ -56,7 +66,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/script@1.0.0
+      - uses: actions/github-script@0.1.0
         with:
           github-token: ${{github.token}}
           script: |

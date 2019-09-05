@@ -1,4 +1,4 @@
-name: Script
+name: GitHub Script
 description: An action for running simple scripts with a GitHub client
 branding:
   color: blue
