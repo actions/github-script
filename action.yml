@@ -18,7 +18,6 @@ inputs:
     default: actions/github-script
   previews:
     description: A list of API previews to accept
-    default: []
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
