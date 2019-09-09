@@ -19,7 +19,7 @@ See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
 
 **Note** This action is still a bit of an experiment—the API may change in
-*future versions. 🙂
+\*future versions. 🙂
 
 ## Examples
 
@@ -27,7 +27,8 @@ documentation.
 
 ```yaml
 on:
-  issue: {type: opened}
+  issues:
+    types: [opened]
 
 jobs:
   comment:
@@ -44,7 +45,8 @@ jobs:
 
 ```yaml
 on:
-  issue: {type: opened}
+  issues:
+    types: [opened]
 
 jobs:
   apply-label:
