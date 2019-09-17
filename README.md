@@ -93,7 +93,7 @@ jobs:
             await github.issues.createComment({...context.issue, body: 'Welcome, new contributor!'})
 ```
 
-### Download data from an URL
+### Download data from a URL
 
 You can use the `github` object to access the octokit API. For
 instance, `github.request`
