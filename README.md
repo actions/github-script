@@ -95,7 +95,7 @@ jobs:
 
 ### Download data from a URL
 
-You can use the `github` object to access the octokit API. For
+You can use the `github` object to access the Octokit API. For
 instance, `github.request`
 
 ```
