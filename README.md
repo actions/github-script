@@ -27,7 +27,7 @@ documentation.
 
 ```yaml
 on:
-  issue: {type: opened}
+  issues: {types: opened}
 
 jobs:
   comment:
@@ -44,7 +44,7 @@ jobs:
 
 ```yaml
 on:
-  issue: {type: opened}
+  issues: {types: opened}
 
 jobs:
   apply-label:
