@@ -16,8 +16,8 @@ async function main() {
   if (previews != null) opts.previews = previews.split(',')
   const client = new GitHub(token, opts)
   const script = core.getInput('script', {required: true})
-  const fn = new AsyncFunction('github', 'context', script)
-  const result = await fn(client, context)
+  const fn = new AsyncFunction('github', 'context', 'core', script)
+  const result = await fn(client, context, core)
   core.setOutput('result', JSON.stringify(result))
 }
 

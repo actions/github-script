@@ -11,6 +11,7 @@ be provided:
   [octokit/rest.js](https://github.com/octokit/rest.js) client
 - `context` An object containing the [context of the workflow
   run](https://github.com/actions/toolkit/tree/master/packages/github)
+- `core` Functions for inputs, outputs, results, logging, secrets and variables from [@actions/core](https://github.com/actions/toolkit/blob/master/packages/core)
 
 Since the `script` is just a function body, these values will already be
 defined, so you don't have to (see examples below).
