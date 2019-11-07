@@ -92,3 +92,29 @@ jobs:
 
             await github.issues.createComment({...context.issue, body: 'Welcome, new contributor!'})
 ```
+
+### Download data from a URL
+
+You can use the `github` object to access the Octokit API. For
+instance, `github.request`
+
+```
+on:
+  pull_request
+
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{github.token}}
+          script: |
+            const diff_url = context.payload.pull_request.diff_url
+            const result = await github.request( diff_url )
+            console.log( result )
+
+```
+
+This will print the full diff object in the screen; `result.data` will
+contain the actual diff text.
