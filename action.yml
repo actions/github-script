@@ -1,5 +1,5 @@
 name: GitHub Script
-description: An action for running simple scripts with a GitHub client
+description: Run simple scripts using the GitHub client
 branding:
   color: blue
   icon: code
