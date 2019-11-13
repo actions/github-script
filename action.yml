@@ -1,4 +1,5 @@
 name: GitHub Script
+author: GitHub
 description: Run simple scripts using the GitHub client
 branding:
   color: blue
