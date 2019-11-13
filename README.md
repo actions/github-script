@@ -33,7 +33,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.2.0
+      - uses: actions/github-script@0.3.0
         with:
           github-token: ${{github.token}}
           script: |
@@ -98,7 +98,7 @@ jobs:
 You can use the `github` object to access the Octokit API. For
 instance, `github.request`
 
-```
+```yaml
 on:
   pull_request
 
@@ -111,9 +111,8 @@ jobs:
           github-token: ${{github.token}}
           script: |
             const diff_url = context.payload.pull_request.diff_url
-            const result = await github.request( diff_url )
-            console.log( result )
-
+            const result = await github.request(diff_url)
+            console.log(result)
 ```
 
 This will print the full diff object in the screen; `result.data` will
