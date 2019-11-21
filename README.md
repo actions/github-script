@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/github-script@0.3.0
         with:
-          github-token: ${{github.token}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.createComment({...context.issue, body: '👋 Thanks for reporting!'})
 ```
@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/github-script@0.2.0
         with:
-          github-token: ${{github.token}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.addLabels({...context.issue, labels: ['Triage']})
 ```
@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/github-script@0.2.0
         with:
-          github-token: ${{github.token}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             // Get a list of all issues created by the PR opener
             // See: https://octokit.github.io/rest.js/#pagination
@@ -108,7 +108,7 @@ jobs:
     steps:
       - uses: actions/github-script@0.2.0
         with:
-          github-token: ${{github.token}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const diff_url = context.payload.pull_request.diff_url
             const result = await github.request(diff_url)
