@@ -1,10 +1,14 @@
 {
+  "name": "github-script",
+  "version": "0.3.0",
   "private": true,
-  "license": "MIT",
+  "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/main.js",
     "precommit": "npm run build && git add dist/"
   },
+  "author": "GitHub",
+  "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.1.0",
     "@actions/github": "^1.1.0"
