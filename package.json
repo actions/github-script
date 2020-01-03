@@ -1,8 +1,15 @@
 {
   "private": true,
   "license": "MIT",
+  "scripts": {
+    "build": "ncc build src/main.js",
+    "precommit": "npm run build && git add dist/"
+  },
   "dependencies": {
     "@actions/core": "^1.1.0",
     "@actions/github": "^1.1.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.20.5"
   }
 }
