@@ -37,7 +37,12 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            github.issues.createComment({...context.issue, body: '👋 Thanks for reporting!'})
+            github.issues.createComment({
+              issue_number: context.issue,
+              owner: context.owner,
+              repo: context.repo,
+              body: '👋 Thanks for reporting!'
+            })
 ```
 
 ### Apply a label to an issue
@@ -54,7 +59,12 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            github.issues.addLabels({...context.issue, labels: ['Triage']})
+            github.issues.addLabels({
+              issue_number: context.issue,
+              owner: context.owner,
+              repo: context.repo,
+              labels: ['Triage']
+            })
 ```
 
 ### Welcome a first-time contributor
@@ -90,7 +100,12 @@ jobs:
               }
             }
 
-            await github.issues.createComment({...context.issue, body: 'Welcome, new contributor!'})
+            await github.issues.createComment({
+              issue_number: context.issue,
+              owner: context.owner,
+              repo: context.repo,
+              body: 'Welcome, new contributor!'
+            })
 ```
 
 ### Download data from a URL
