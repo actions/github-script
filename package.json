@@ -4,7 +4,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/main.js"
+    "build": "ncc build src/main.ts"
   },
   "author": "GitHub",
   "license": "MIT",

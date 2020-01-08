@@ -1,5 +1,5 @@
-const core = require('@actions/core')
-const {GitHub, context} = require('@actions/github')
+import * as core from '@actions/core'
+import {context, GitHub} from '@actions/github'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
@@ -10,7 +10,7 @@ async function main() {
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
-  const opts = {}
+  const opts: {[key: string]: any} = {}
   if (debug === 'true') opts.log = console
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
@@ -38,7 +38,12 @@ async function main() {
   core.setOutput('result', output)
 }
 
-function handleError(err) {
+function handleError(err: any) {
   console.error(err)
-  core.setFailed(err.message)
+
+  if (err && err.message) {
+    core.setFailed(err.message)
+  } else {
+    core.setFailed(`Unhandled error: ${err}`)
+  }
 }
