@@ -132,3 +132,19 @@ jobs:
 
 This will print the full diff object in the screen; `result.data` will
 contain the actual diff text.
+
+### Result encoding
+
+By default, the JSON-encoded return value of the function is set as the "result" in the
+output of a github-script step. For some workflows, string encoding is preferred. This option can be set using the
+`result-encoding` input:
+
+
+```yaml
+- uses: actions/github-script@0.3.0
+  with:
+    github-token: ${{secrets.GITHUB_TOKEN}}
+    result-encoding: string
+    script: |
+      return "I will be string (not JSON) encoded!"
+```
