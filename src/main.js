@@ -19,8 +19,8 @@ async function main() {
   const fn = new AsyncFunction('require', 'github', 'context', script)
   const result = await fn(require, client, context)
 
-  let encoding = core.getInput('result-enoding')
-  encoding = encoding != null ? encoding : 'json'
+  let encoding = core.getInput('result-encoding')
+  encoding = encoding ? encoding : 'json'
 
   let output
 
