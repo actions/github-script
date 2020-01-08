@@ -4,8 +4,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/main.ts",
-    "precommit": "npm run build && git add dist/"
+    "build": "ncc build src/main.ts"
   },
   "author": "GitHub",
   "license": "MIT",
@@ -14,6 +13,12 @@
     "@actions/github": "^1.1.0"
   },
   "devDependencies": {
-    "@zeit/ncc": "^0.20.5"
+    "@zeit/ncc": "^0.20.5",
+    "husky": "^4.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build && git add dist/"
+    }
   }
 }
