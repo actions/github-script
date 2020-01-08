@@ -26,16 +26,16 @@ async function main() {
 
   switch (encoding) {
     case 'json':
-      result = JSON.stringify(result)
+      output = JSON.stringify(result)
       break
     case 'string':
-      result = String(result)
+      output = String(result)
       break
     default:
       throw new Error('"result-encoding" must be either "string" or "json"')
   }
 
-  core.setOutput('result', result)
+  core.setOutput('result', output)
 }
 
 function handleError(err) {
