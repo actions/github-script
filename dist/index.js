@@ -34,8 +34,10 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(31);
+/******/ 		return __webpack_require__(131);
 /******/ 	};
+/******/ 	// initialize runtime
+/******/ 	runtime(__webpack_require__);
 /******/
 /******/ 	// run startup
 /******/ 	return startup();
@@ -388,57 +390,6 @@ module.exports.sync = spawnSync;
 
 module.exports._parse = parse;
 module.exports._enoent = enoent;
-
-
-/***/ }),
-
-/***/ 31:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-const core = __webpack_require__(470)
-const {GitHub, context} = __webpack_require__(469)
-
-process.on('unhandledRejection', handleError)
-main().catch(handleError)
-
-async function main() {
-  const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
-  const token = core.getInput('github-token', {required: true})
-  const debug = core.getInput('debug')
-  const userAgent = core.getInput('user-agent')
-  const previews = core.getInput('previews')
-  const opts = {}
-  if (debug === 'true') opts.log = console
-  if (userAgent != null) opts.userAgent = userAgent
-  if (previews != null) opts.previews = previews.split(',')
-  const client = new GitHub(token, opts)
-  const script = core.getInput('script', {required: true})
-  const fn = new AsyncFunction('require', 'github', 'context', script)
-  const result = await fn(require, client, context)
-
-  let encoding = core.getInput('result-encoding')
-  encoding = encoding ? encoding : 'json'
-
-  let output
-
-  switch (encoding) {
-    case 'json':
-      output = JSON.stringify(result)
-      break
-    case 'string':
-      output = String(result)
-      break
-    default:
-      throw new Error('"result-encoding" must be either "string" or "json"')
-  }
-
-  core.setOutput('result', output)
-}
-
-function handleError(err) {
-  console.error(err)
-  core.setFailed(err.message)
-}
 
 
 /***/ }),
@@ -1516,6 +1467,74 @@ module.exports = uniq;
 /***/ (function(module) {
 
 module.exports = require("child_process");
+
+/***/ }),
+
+/***/ 131:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(470);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(469);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+process.on('unhandledRejection', handleError);
+main().catch(handleError);
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const AsyncFunction = Object.getPrototypeOf(() => __awaiter(this, void 0, void 0, function* () { })).constructor;
+        const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('github-token', { required: true });
+        const debug = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('debug');
+        const userAgent = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('user-agent');
+        const previews = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('previews');
+        const opts = {};
+        if (debug === 'true')
+            opts.log = console;
+        if (userAgent != null)
+            opts.userAgent = userAgent;
+        if (previews != null)
+            opts.previews = previews.split(',');
+        const client = new _actions_github__WEBPACK_IMPORTED_MODULE_1__.GitHub(token, opts);
+        const script = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('script', { required: true });
+        const fn = new AsyncFunction('require', 'github', 'context', script);
+        const result = yield fn(__webpack_require__(875), client, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context);
+        let encoding = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('result-encoding');
+        encoding = encoding ? encoding : 'json';
+        let output;
+        switch (encoding) {
+            case 'json':
+                output = JSON.stringify(result);
+                break;
+            case 'string':
+                output = String(result);
+                break;
+            default:
+                throw new Error('"result-encoding" must be either "string" or "json"');
+        }
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('result', output);
+    });
+}
+function handleError(err) {
+    console.error(err);
+    if (err && err.message) {
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(err.message);
+    }
+    else {
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`Unhandled error: ${err}`);
+    }
+}
+
 
 /***/ }),
 
@@ -9526,6 +9545,25 @@ module.exports = function (str) {
 
 /***/ }),
 
+/***/ 875:
+/***/ (function(module) {
+
+function webpackEmptyContext(req) {
+	if (typeof req === 'number' && __webpack_require__.m[req])
+  return __webpack_require__(req);
+try { return require(req) }
+catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e }
+var e = new Error("Cannot find module '" + req + "'");
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = 875;
+
+/***/ }),
+
 /***/ 881:
 /***/ (function(module) {
 
@@ -11235,4 +11273,43 @@ function onceStrict (fn) {
 
 /***/ })
 
-/******/ });
+/******/ },
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ 	"use strict";
+/******/ 
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function getDefault() { return module['default']; } :
+/******/ 				function getModuleExports() { return module; };
+/******/ 			__webpack_require__.d(getter, 'a', getter);
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getter */
+/******/ 	!function() {
+/******/ 		// define getter function for harmony exports
+/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
+/******/ 		__webpack_require__.d = function(exports, name, getter) {
+/******/ 			if(!hasOwnProperty.call(exports, name)) {
+/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ }
+);
