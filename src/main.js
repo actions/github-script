@@ -18,7 +18,24 @@ async function main() {
   const script = core.getInput('script', {required: true})
   const fn = new AsyncFunction('require', 'github', 'context', script)
   const result = await fn(require, client, context)
-  core.setOutput('result', JSON.stringify(result))
+
+  let encoding = core.getInput('result-enoding')
+  encoding = encoding != null ? encoding : 'json'
+
+  let output
+
+  switch (encoding) {
+    case 'json':
+      result = JSON.stringify(result)
+      break
+    case 'string':
+      result = String(result)
+      break
+    default:
+      throw new Error('"result-encoding" must be either "string" or "json"')
+  }
+
+  core.setOutput('result', result)
 }
 
 function handleError(err) {
