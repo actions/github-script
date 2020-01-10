@@ -1479,6 +1479,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(469);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(184);
+/* harmony import */ var vm__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vm__WEBPACK_IMPORTED_MODULE_2__);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -1489,11 +1491,11 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 
 
+
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const AsyncFunction = Object.getPrototypeOf(() => __awaiter(this, void 0, void 0, function* () { })).constructor;
         const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('github-token', { required: true });
         const debug = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('debug');
         const userAgent = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('user-agent');
@@ -1505,10 +1507,18 @@ function main() {
             opts.userAgent = userAgent;
         if (previews != null)
             opts.previews = previews.split(',');
-        const client = new _actions_github__WEBPACK_IMPORTED_MODULE_1__.GitHub(token, opts);
+        const github = new _actions_github__WEBPACK_IMPORTED_MODULE_1__.GitHub(token, opts);
         const script = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('script', { required: true });
-        const fn = new AsyncFunction('require', 'github', 'context', script);
-        const result = yield fn(__webpack_require__(875), client, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context);
+        const fn = wrapFunction(script);
+        const result = yield vm__WEBPACK_IMPORTED_MODULE_2__.runInNewContext(fn, {
+            github,
+            console,
+            context: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context,
+            actions: { core: _actions_core__WEBPACK_IMPORTED_MODULE_0__ },
+            require: __webpack_require__(875) // Otherwise, the build step will compile this incorrectly.
+        }, {
+            lineOffset: -1
+        });
         let encoding = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('result-encoding');
         encoding = encoding ? encoding : 'json';
         let output;
@@ -1524,6 +1534,11 @@ function main() {
         }
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('result', output);
     });
+}
+function wrapFunction(fn) {
+    return `(async function() {
+${fn}
+  })()`;
 }
 function handleError(err) {
     console.error(err);
@@ -1688,6 +1703,13 @@ module.exports = opts => {
 	return result;
 };
 
+
+/***/ }),
+
+/***/ 184:
+/***/ (function(module) {
+
+module.exports = require("vm");
 
 /***/ }),
 

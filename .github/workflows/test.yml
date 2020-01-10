@@ -1,0 +1,49 @@
+on:
+  pull_request: {branches: master}
+  push: {branches: master}
+  repository_dispatch:
+
+name: Test
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: run-script
+        uses: ./
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          result-encoding: string
+          script: |
+            const crypto = require('crypto')
+            const {promisify} = require('util')
+            const randomBytes = promisify(crypto.randomBytes)
+
+            const repo = await github.repos.get({
+              owner: 'actions',
+              repo: 'github-script'
+            })
+
+            console.log('repo.url', repo.url)
+            console.log('context.eventName', context.eventName)
+            console.log('input.result-encoding', actions.core.getInput('result-encoding'))
+
+            const bytes = await randomBytes(16)
+            return bytes.toString('hex')
+      - uses: ./
+        name: Invalid token
+        continue-on-error: true
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            #
+      - uses: ./
+        name: Throw error
+        continue-on-error: true
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            throw new Error('Whoops!')
+      - run: |
+          echo OUTPUT: ${{steps.run-script.outputs.result}}

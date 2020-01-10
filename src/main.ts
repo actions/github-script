@@ -1,11 +1,11 @@
 import * as core from '@actions/core'
 import {context, GitHub} from '@actions/github'
+import * as vm from 'vm'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
 
 async function main() {
-  const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
   const token = core.getInput('github-token', {required: true})
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
@@ -14,10 +14,23 @@ async function main() {
   if (debug === 'true') opts.log = console
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
-  const client = new GitHub(token, opts)
+  const github = new GitHub(token, opts)
   const script = core.getInput('script', {required: true})
-  const fn = new AsyncFunction('require', 'github', 'context', script)
-  const result = await fn(require, client, context)
+  const fn = wrapFunction(script)
+
+  const result = await vm.runInNewContext(
+    fn,
+    {
+      github,
+      console,
+      context,
+      actions: {core},
+      require: require // Otherwise, the build step will compile this incorrectly.
+    },
+    {
+      lineOffset: -1
+    }
+  )
 
   let encoding = core.getInput('result-encoding')
   encoding = encoding ? encoding : 'json'
@@ -36,6 +49,12 @@ async function main() {
   }
 
   core.setOutput('result', output)
+}
+
+function wrapFunction(fn: string) {
+  return `(async function() {
+${fn}
+  })()`
 }
 
 function handleError(err: any) {
