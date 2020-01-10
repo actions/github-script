@@ -25,6 +25,8 @@ jobs:
               repo: 'github-script'
             })
 
+            setTimeout(() => console.log("HI"), 0)
+
             console.log('repo.url', repo.url)
             console.log('context.eventName', context.eventName)
             console.log('input.result-encoding', actions.core.getInput('result-encoding'))
