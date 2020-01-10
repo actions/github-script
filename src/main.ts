@@ -21,6 +21,7 @@ async function main() {
   const result = await vm.runInNewContext(
     fn,
     {
+      ...global,
       github,
       console,
       context,

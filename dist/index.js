@@ -1510,13 +1510,10 @@ function main() {
         const github = new _actions_github__WEBPACK_IMPORTED_MODULE_1__.GitHub(token, opts);
         const script = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('script', { required: true });
         const fn = wrapFunction(script);
-        const result = yield vm__WEBPACK_IMPORTED_MODULE_2__.runInNewContext(fn, {
-            github,
+        const result = yield vm__WEBPACK_IMPORTED_MODULE_2__.runInNewContext(fn, Object.assign({}, global, { github,
             console,
-            context: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context,
-            actions: { core: _actions_core__WEBPACK_IMPORTED_MODULE_0__ },
-            require: __webpack_require__(875) // Otherwise, the build step will compile this incorrectly.
-        }, {
+            context: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context, actions: { core: _actions_core__WEBPACK_IMPORTED_MODULE_0__ }, require: __webpack_require__(875) // Otherwise, the build step will compile this incorrectly.
+         }), {
             lineOffset: -1
         });
         let encoding = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('result-encoding');
