@@ -38,9 +38,9 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.createComment({
-              issue_number: context.payload.issue.number,
-              owner: context.payload.repository.owner.login,
-              repo: context.payload.repository.name,
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               body: '👋 Thanks for reporting!'
             })
 ```
