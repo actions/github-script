@@ -38,9 +38,9 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.createComment({
-              issue_number: context.issue,
-              owner: context.owner,
-              repo: context.repo,
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               body: '👋 Thanks for reporting!'
             })
 ```
@@ -60,9 +60,9 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.addLabels({
-              issue_number: context.issue,
-              owner: context.owner,
-              repo: context.repo,
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               labels: ['Triage']
             })
 ```
@@ -101,9 +101,9 @@ jobs:
             }
 
             await github.issues.createComment({
-              issue_number: context.issue,
-              owner: context.owner,
-              repo: context.repo,
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               body: 'Welcome, new contributor!'
             })
 ```
