@@ -10,7 +10,8 @@ inputs:
     required: true
   github-token:
     description: The GitHub token used to create an authenticated client
-    required: true
+    default: ${{ github.token }}
+    required: false
   debug:
     description: Whether to tell the GitHub client to log details of its requests
     default: false
