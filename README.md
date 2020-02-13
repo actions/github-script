@@ -21,6 +21,10 @@ documentation.
 **Note** This action is still a bit of an experiment—the API may change in
 *future versions. 🙂
 
+## Development
+
+See [development.md](/docs/development.md).
+
 ## Examples
 
 Note that `github-token` is optional in this action, and the input is there
