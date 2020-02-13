@@ -42,7 +42,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.4.0
+      - uses: actions/github-script@0.5.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -64,7 +64,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.4.0
+      - uses: actions/github-script@0.5.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -85,7 +85,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.4.0
+      - uses: actions/github-script@0.5.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -130,7 +130,7 @@ jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.4.0
+      - uses: actions/github-script@0.5.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -150,7 +150,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 
 
 ```yaml
-- uses: actions/github-script@0.4.0
+- uses: actions/github-script@0.5.0
   with:
     github-token: ${{secrets.GITHUB_TOKEN}}
     result-encoding: string
