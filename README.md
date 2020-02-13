@@ -23,6 +23,11 @@ documentation.
 
 ## Examples
 
+Note that `github-token` is optional in this action, and the input is there
+in case you need to use a non-default token.
+
+By default, github-script will use the token provided to your workflow.
+
 ### Comment on an issue
 
 ```yaml
