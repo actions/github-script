@@ -1479,51 +1479,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(469);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 
 
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const AsyncFunction = Object.getPrototypeOf(() => __awaiter(this, void 0, void 0, function* () { })).constructor;
-        const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('github-token', { required: true });
-        const debug = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('debug');
-        const userAgent = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('user-agent');
-        const previews = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('previews');
-        const opts = {};
-        if (debug === 'true')
-            opts.log = console;
-        if (userAgent != null)
-            opts.userAgent = userAgent;
-        if (previews != null)
-            opts.previews = previews.split(',');
-        const client = new _actions_github__WEBPACK_IMPORTED_MODULE_1__.GitHub(token, opts);
-        const script = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('script', { required: true });
-        const fn = new AsyncFunction('require', 'github', 'context', script);
-        const result = yield fn(__webpack_require__(875), client, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context);
-        let encoding = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('result-encoding');
-        encoding = encoding ? encoding : 'json';
-        let output;
-        switch (encoding) {
-            case 'json':
-                output = JSON.stringify(result);
-                break;
-            case 'string':
-                output = String(result);
-                break;
-            default:
-                throw new Error('"result-encoding" must be either "string" or "json"');
-        }
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('result', output);
-    });
+async function main() {
+    const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor;
+    const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('github-token', { required: true });
+    const debug = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('debug');
+    const userAgent = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('user-agent');
+    const previews = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('previews');
+    const opts = {};
+    if (debug === 'true')
+        opts.log = console;
+    if (userAgent != null)
+        opts.userAgent = userAgent;
+    if (previews != null)
+        opts.previews = previews.split(',');
+    const client = new _actions_github__WEBPACK_IMPORTED_MODULE_1__.GitHub(token, opts);
+    const script = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('script', { required: true });
+    const fn = new AsyncFunction('require', 'github', 'context', script);
+    const result = await fn(__webpack_require__(875), client, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context);
+    let encoding = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('result-encoding');
+    encoding = encoding ? encoding : 'json';
+    let output;
+    switch (encoding) {
+        case 'json':
+            output = JSON.stringify(result);
+            break;
+        case 'string':
+            output = String(result);
+            break;
+        default:
+            throw new Error('"result-encoding" must be either "string" or "json"');
+    }
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('result', output);
 }
 function handleError(err) {
     console.error(err);
