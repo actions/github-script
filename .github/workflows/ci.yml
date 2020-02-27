@@ -1,0 +1,32 @@
+on:
+  push: {branches: master}
+  pull_request: {branches: master}
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: output-set
+        uses: actions/github-script@master
+        with:
+          script: |
+            const core = require('@actions/core')
+            core.setOutput('result', 'test')
+      - run: |
+          if [[ "${{steps.output-set.outputs.result}}" != "test" ]]; then
+            exit 1
+          fi
+
+  jest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with: {node-version: 13.x}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
+          restore-keys: ${{runner.os}}-npm-
+      - run: npm ci
+      - run: npm test
