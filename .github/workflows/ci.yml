@@ -10,7 +10,6 @@ jobs:
         uses: actions/github-script@master
         with:
           script: |
-            const core = require('@actions/core')
             core.setOutput('result', 'test')
       - run: |
           if [[ "${{steps.output-set.outputs.result}}" != "test" ]]; then
