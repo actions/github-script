@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2018",  
+    "target": "es2018",
     "moduleResolution": "node",
-    "strict": true,            
+    "strict": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["__test__"]
 }

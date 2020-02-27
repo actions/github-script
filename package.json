@@ -1,24 +1,43 @@
 {
   "name": "github-script",
+  "description": "A GitHub action for executing a simple script",
   "version": "0.6.0",
-  "private": true,
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "ncc build src/main.ts"
-  },
   "author": "GitHub",
-  "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.2",
     "@actions/github": "^2.1.1"
   },
   "devDependencies": {
-    "@zeit/ncc": "^0.20.5",
-    "husky": "^4.0.1"
+    "@types/jest": "^25.1.3",
+    "@zeit/ncc": "^0.21.1",
+    "husky": "^4.2.3",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.2"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run build && git add dist/"
     }
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "globals": {
+      "ts-jest": {
+        "diagnostics": {
+          "ignoreCodes": [
+            "151001"
+          ]
+        }
+      }
+    }
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "build": "ncc build src/main.ts",
+    "test": "jest"
   }
 }

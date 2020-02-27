@@ -1,11 +1,11 @@
 import * as core from '@actions/core'
 import {context, GitHub} from '@actions/github'
+import {callAsyncFunction} from './async-function'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
 
 async function main() {
-  const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
   const token = core.getInput('github-token', {required: true})
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
@@ -14,10 +14,14 @@ async function main() {
   if (debug === 'true') opts.log = console
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
-  const client = new GitHub(token, opts)
+  const github = new GitHub(token, opts)
   const script = core.getInput('script', {required: true})
-  const fn = new AsyncFunction('require', 'github', 'context', script)
-  const result = await fn(require, client, context)
+
+  // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
+  const result = callAsyncFunction(
+    {require: require, github: github, context: context},
+    script
+  )
 
   let encoding = core.getInput('result-encoding')
   encoding = encoding ? encoding : 'json'
