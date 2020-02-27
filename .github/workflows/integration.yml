@@ -1,0 +1,16 @@
+on:
+  push: {branches: integration-workflow}
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - id: output-set
+        uses: actions/github-script@integration-workflow
+        with:
+          script: return 'test'
+          result-encoding: string
+      - run: |
+          if [[ "${{steps.output-set.outputs.result}}" != "test" ]]; then
+            exit 1
+          fi

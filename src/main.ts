@@ -18,7 +18,7 @@ async function main() {
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
-  const result = callAsyncFunction(
+  const result = await callAsyncFunction(
     {require: require, github: github, context: context, core: core},
     script
   )
