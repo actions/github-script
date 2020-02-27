@@ -1,12 +1,12 @@
 on:
-  push: {branches: integration-workflow}
+  push: {branches: master}
 
 jobs:
   integration:
     runs-on: ubuntu-latest
     steps:
       - id: output-set
-        uses: actions/github-script@integration-workflow
+        uses: actions/github-script@master
         with:
           script: return 'test'
           result-encoding: string
