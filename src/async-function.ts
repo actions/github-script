@@ -2,7 +2,7 @@ const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
 
 type AsyncFunctionArguments = {[key: string]: any}
 
-export async function callAsyncFunction(
+export function callAsyncFunction(
   args: AsyncFunctionArguments,
   source: string
 ): Promise<any> {
