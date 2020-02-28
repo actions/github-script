@@ -19,7 +19,7 @@ See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
 
 **Note** This action is still a bit of an experiment—the API may change in
-*future versions. 🙂
+future versions. 🙂
 
 ## Development
 
@@ -42,7 +42,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.6.0
+      - uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -64,7 +64,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.6.0
+      - uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -85,7 +85,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.6.0
+      - uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -123,14 +123,13 @@ You can use the `github` object to access the Octokit API. For
 instance, `github.request`
 
 ```yaml
-on:
-  pull_request
+on: pull_request
 
 jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.6.0
+      - uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -148,9 +147,8 @@ By default, the JSON-encoded return value of the function is set as the "result"
 output of a github-script step. For some workflows, string encoding is preferred. This option can be set using the
 `result-encoding` input:
 
-
 ```yaml
-- uses: actions/github-script@0.6.0
+- uses: actions/github-script@0.8.0
   with:
     github-token: ${{secrets.GITHUB_TOKEN}}
     result-encoding: string
