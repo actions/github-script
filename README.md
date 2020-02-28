@@ -1,4 +1,4 @@
-# github-script
+# github-script ![.github/workflows/integration.yml](https://github.com/actions/github-script/workflows/.github/workflows/integration.yml/badge.svg?event=push) ![.github/workflows/ci.yml](https://github.com/actions/github-script/workflows/.github/workflows/ci.yml/badge.svg?event=push)
 
 This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
