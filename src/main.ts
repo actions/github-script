@@ -22,6 +22,7 @@ async function main() {
     {require: require, github, context},
     script
   )
+  console.log('test result', result)
 
   let encoding = core.getInput('result-encoding')
   encoding = encoding ? encoding : 'json'
