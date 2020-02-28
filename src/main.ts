@@ -39,7 +39,7 @@ async function main() {
       throw new Error('"result-encoding" must be either "string" or "json"')
   }
 
-  core.setOutput('result', output)
+  // core.setOutput('result', output)
 }
 
 function handleError(err: any) {
