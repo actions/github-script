@@ -39,8 +39,6 @@ async function main() {
       throw new Error('"result-encoding" must be either "string" or "json"')
   }
 
-  console.log('setting output', output)
-
   core.setOutput('result', output)
 }
 

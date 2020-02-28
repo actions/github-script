@@ -9192,7 +9192,6 @@ async function main() {
         default:
             throw new Error('"result-encoding" must be either "string" or "json"');
     }
-    console.log('setting output', output);
     Object(core.setOutput)('result', output);
 }
 function handleError(err) {
