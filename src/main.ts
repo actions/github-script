@@ -23,6 +23,8 @@ async function main() {
     script
   )
 
+  console.log('test result', result)
+
   let encoding = core.getInput('result-encoding')
   encoding = encoding ? encoding : 'json'
 
