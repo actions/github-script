@@ -9178,7 +9178,7 @@ async function main() {
     const github = new lib_github.GitHub(token, opts);
     const script = Object(core.getInput)('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
-    const result = await callAsyncFunction({ require: __webpack_require__(875), github: github, context: lib_github.context, core: core }, script);
+    const result = await callAsyncFunction({ require: __webpack_require__(875), github, context: lib_github.context }, script);
     let encoding = Object(core.getInput)('result-encoding');
     encoding = encoding ? encoding : 'json';
     let output;
