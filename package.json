@@ -1,7 +1,7 @@
 {
   "name": "github-script",
   "description": "A GitHub action for executing a simple script",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "author": "GitHub",
   "dependencies": {
     "@actions/core": "^1.2.3",
