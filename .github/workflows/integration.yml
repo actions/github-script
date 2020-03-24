@@ -8,9 +8,10 @@ jobs:
       - id: output-set
         uses: actions/github-script@master
         with:
-          script: return 'test'
+          script: return core.getInput('input-value')
           result-encoding: string
+          input-value: output
       - run: |
-          if [[ "${{steps.output-set.outputs.result}}" != "test" ]]; then
+          if [[ "${{steps.output-set.outputs.result}}" != "output" ]]; then
             exit 1
           fi
