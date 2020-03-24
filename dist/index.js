@@ -298,9 +298,9 @@ module.exports = require("tls");
 /***/ }),
 
 /***/ 18:
-/***/ (function() {
+/***/ (function(module) {
 
-eval("require")("encoding");
+module.exports = eval("require")("encoding");
 
 
 /***/ }),
@@ -7139,6 +7139,13 @@ exports.setFailed = setFailed;
 //-----------------------------------------------------------------------
 // Logging Commands
 //-----------------------------------------------------------------------
+/**
+ * Gets whether Actions Step Debug is on or not
+ */
+function isDebug() {
+    return process.env['RUNNER_DEBUG'] === '1';
+}
+exports.isDebug = isDebug;
 /**
  * Writes debug message to user log
  * @param message debug message
