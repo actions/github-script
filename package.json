@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
-    "@zeit/ncc": "^0.21.1",
+    "@zeit/ncc": "^0.22.0",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.1",
