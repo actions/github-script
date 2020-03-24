@@ -19,7 +19,7 @@ async function main() {
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
   const result = await callAsyncFunction(
-    {require: require, github, context},
+    {require: require, github, context, core},
     script
   )
 
