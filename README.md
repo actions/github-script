@@ -4,8 +4,8 @@ This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
 
 In order to use this action, a `script` input is provided. The value of that
-input should be the body of an asynchronous function call. Two arguments will
-be provided:
+input should be the body of an asynchronous function call. The following
+arguments will be provided:
 
 - `github` A pre-authenticated
   [octokit/rest.js](https://github.com/octokit/rest.js) client
