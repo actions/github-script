@@ -37,8 +37,7 @@
   "main": "dist/index.js",
   "private": true,
   "scripts": {
-    "build": "tsc",
-    "pack": "ncc build lib/main.js",
+    "build": "tsc && ncc build lib/main.js",
     "test": "jest"
   }
 }
