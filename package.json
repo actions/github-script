@@ -38,7 +38,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "pack": "ncc build",
+    "pack": "ncc build lib/main.js",
     "test": "jest"
   }
 }
