@@ -34,7 +34,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(605);
+/******/ 		return __webpack_require__(833);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -1453,7 +1453,7 @@ module.exports = require("child_process");
 
 var net = __webpack_require__(631);
 var tls = __webpack_require__(16);
-var http = __webpack_require__(876);
+var http = __webpack_require__(605);
 var https = __webpack_require__(211);
 var events = __webpack_require__(614);
 var assert = __webpack_require__(357);
@@ -1865,25 +1865,6 @@ module.exports = opts => {
 	return result;
 };
 
-
-/***/ }),
-
-/***/ 169:
-/***/ (function(module) {
-
-function webpackEmptyContext(req) {
-	if (typeof req === 'number' && __webpack_require__.m[req])
-  return __webpack_require__(req);
-try { return require(req) }
-catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e }
-var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 169;
 
 /***/ }),
 
@@ -5187,7 +5168,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var Stream = _interopDefault(__webpack_require__(413));
-var http = _interopDefault(__webpack_require__(876));
+var http = _interopDefault(__webpack_require__(605));
 var Url = _interopDefault(__webpack_require__(835));
 var https = _interopDefault(__webpack_require__(211));
 var zlib = _interopDefault(__webpack_require__(761));
@@ -7604,7 +7585,7 @@ function hasFirstPage (link) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const url = __webpack_require__(835);
-const http = __webpack_require__(876);
+const http = __webpack_require__(605);
 const https = __webpack_require__(211);
 const pm = __webpack_require__(950);
 let tunnel;
@@ -8336,71 +8317,9 @@ function getPageLinks (link) {
 /***/ }),
 
 /***/ 605:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+/***/ (function(module) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __webpack_require__(470);
-
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var lib_github = __webpack_require__(469);
-
-// CONCATENATED MODULE: ./lib/async-function.js
-const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor;
-function callAsyncFunction(args, source) {
-    const fn = new AsyncFunction(...Object.keys(args), source);
-    return fn(...Object.values(args));
-}
-
-// CONCATENATED MODULE: ./lib/main.js
-
-
-
-process.on('unhandledRejection', handleError);
-main().catch(handleError);
-async function main() {
-    const token = Object(core.getInput)('github-token', { required: true });
-    const debug = Object(core.getInput)('debug');
-    const userAgent = Object(core.getInput)('user-agent');
-    const previews = Object(core.getInput)('previews');
-    const opts = {};
-    if (debug === 'true')
-        opts.log = console;
-    if (userAgent != null)
-        opts.userAgent = userAgent;
-    if (previews != null)
-        opts.previews = previews.split(',');
-    const github = new lib_github.GitHub(token, opts);
-    const script = Object(core.getInput)('script', { required: true });
-    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
-    const result = await callAsyncFunction({ require: __webpack_require__(169), github, context: lib_github.context, core: core }, script);
-    let encoding = Object(core.getInput)('result-encoding');
-    encoding = encoding ? encoding : 'json';
-    let output;
-    switch (encoding) {
-        case 'json':
-            output = JSON.stringify(result);
-            break;
-        case 'string':
-            output = String(result);
-            break;
-        default:
-            throw new Error('"result-encoding" must be either "string" or "json"');
-    }
-    Object(core.setOutput)('result', output);
-}
-function handleError(err) {
-    console.error(err);
-    if (err && err.message) {
-        Object(core.setFailed)(err.message);
-    }
-    else {
-        Object(core.setFailed)(`Unhandled error: ${err}`);
-    }
-}
-
+module.exports = require("http");
 
 /***/ }),
 
@@ -9337,6 +9256,75 @@ function isexe (path, options, cb) {
 
 function sync (path, options) {
   return checkStat(fs.statSync(path), path, options)
+}
+
+
+/***/ }),
+
+/***/ 833:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(470);
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var lib_github = __webpack_require__(469);
+
+// CONCATENATED MODULE: ./src/async-function.ts
+const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor;
+function callAsyncFunction(args, source) {
+    const fn = new AsyncFunction(...Object.keys(args), source);
+    return fn(...Object.values(args));
+}
+
+// CONCATENATED MODULE: ./src/main.ts
+
+
+
+process.on('unhandledRejection', handleError);
+main().catch(handleError);
+async function main() {
+    const token = Object(core.getInput)('github-token', { required: true });
+    const debug = Object(core.getInput)('debug');
+    const userAgent = Object(core.getInput)('user-agent');
+    const previews = Object(core.getInput)('previews');
+    const opts = {};
+    if (debug === 'true')
+        opts.log = console;
+    if (userAgent != null)
+        opts.userAgent = userAgent;
+    if (previews != null)
+        opts.previews = previews.split(',');
+    const github = new lib_github.GitHub(token, opts);
+    const script = Object(core.getInput)('script', { required: true });
+    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
+    const result = await callAsyncFunction({ require: __webpack_require__(875), github, context: lib_github.context, core: core }, script);
+    let encoding = Object(core.getInput)('result-encoding');
+    encoding = encoding ? encoding : 'json';
+    let output;
+    switch (encoding) {
+        case 'json':
+            output = JSON.stringify(result);
+            break;
+        case 'string':
+            output = String(result);
+            break;
+        default:
+            throw new Error('"result-encoding" must be either "string" or "json"');
+    }
+    Object(core.setOutput)('result', output);
+}
+function handleError(err) {
+    console.error(err);
+    if (err && err.message) {
+        Object(core.setFailed)(err.message);
+    }
+    else {
+        Object(core.setFailed)(`Unhandled error: ${err}`);
+    }
 }
 
 
@@ -23621,10 +23609,22 @@ module.exports = function (str) {
 
 /***/ }),
 
-/***/ 876:
+/***/ 875:
 /***/ (function(module) {
 
-module.exports = require("http");
+function webpackEmptyContext(req) {
+	if (typeof req === 'number' && __webpack_require__.m[req])
+  return __webpack_require__(req);
+try { return require(req) }
+catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e }
+var e = new Error("Cannot find module '" + req + "'");
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = 875;
 
 /***/ }),
 
