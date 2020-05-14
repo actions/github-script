@@ -37,7 +37,8 @@ By default, github-script will use the token provided to your workflow.
 
 ```yaml
 on:
-  issues: {types: opened}
+  issues:
+    types: [opened]
 
 jobs:
   comment:
@@ -59,7 +60,8 @@ jobs:
 
 ```yaml
 on:
-  issues: {types: opened}
+  issues:
+    types: [opened]
 
 jobs:
   apply-label:
