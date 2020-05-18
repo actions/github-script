@@ -3,21 +3,20 @@
   "description": "A GitHub action for executing a simple script",
   "version": "0.9.0",
   "author": "GitHub",
-  "dependencies": {
-    "@actions/core": "^1.2.4",
-    "@actions/github": "^2.2.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^25.1.4",
-    "@zeit/ncc": "^0.22.0",
-    "husky": "^4.2.3",
-    "jest": "^25.1.0",
-    "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3"
+  "license": "MIT",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "build": "ncc build src/main.ts",
+    "format": "prettier --write src __test__",
+    "lint": "eslint src __test__",
+    "check": "run-p --continue-on-error --aggregate-output format lint",
+    "pre-commit": "run-s check test build",
+    "test": "jest"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run build && git add dist/"
+      "pre-commit": "npm run pre-commit && git add dist/"
     }
   },
   "jest": {
@@ -33,11 +32,22 @@
       }
     }
   },
-  "license": "MIT",
-  "main": "dist/index.js",
-  "private": true,
-  "scripts": {
-    "build": "ncc build src/main.ts",
-    "test": "jest"
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "@zeit/ncc": "^0.22.0",
+    "eslint": "^7.0.0",
+    "eslint-config-prettier": "^6.11.0",
+    "husky": "^4.2.5",
+    "jest": "^25.1.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.5",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3"
   }
 }

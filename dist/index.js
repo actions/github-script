@@ -9274,7 +9274,7 @@ var core = __webpack_require__(470);
 var lib_github = __webpack_require__(469);
 
 // CONCATENATED MODULE: ./src/async-function.ts
-const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor;
+const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 function callAsyncFunction(args, source) {
     const fn = new AsyncFunction(...Object.keys(args), source);
     return fn(...Object.values(args));
@@ -9300,7 +9300,7 @@ async function main() {
         opts.previews = previews.split(',');
     const github = new lib_github.GitHub(token, opts);
     const script = Object(core.getInput)('script', { required: true });
-    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
+    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({ require: __webpack_require__(875), github, context: lib_github.context, core: core }, script);
     let encoding = Object(core.getInput)('result-encoding');
     encoding = encoding ? encoding : 'json';
@@ -9317,14 +9317,10 @@ async function main() {
     }
     Object(core.setOutput)('result', output);
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleError(err) {
     console.error(err);
-    if (err && err.message) {
-        Object(core.setFailed)(err.message);
-    }
-    else {
-        Object(core.setFailed)(`Unhandled error: ${err}`);
-    }
+    Object(core.setFailed)(`Unhandled error: ${err}`);
 }
 
 

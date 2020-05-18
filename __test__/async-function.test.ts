@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {callAsyncFunction} from '../src/async-function'
 
 describe('callAsyncFunction', () => {
   test('calls the function with its arguments', async () => {
-    const result = await callAsyncFunction({foo: 'bar'}, 'return foo')
+    const result = await callAsyncFunction({foo: 'bar'} as any, 'return foo')
     expect(result).toEqual('bar')
   })
 
@@ -10,17 +12,17 @@ describe('callAsyncFunction', () => {
     expect.assertions(1)
 
     try {
-      await callAsyncFunction({}, 'proces')
+      await callAsyncFunction({} as any, 'proces')
     } catch (err) {
       expect(err).toBeInstanceOf(ReferenceError)
     }
   })
 
   test('can access process', async () => {
-    await callAsyncFunction({}, 'process')
+    await callAsyncFunction({} as any, 'process')
   })
 
   test('can access console', async () => {
-    await callAsyncFunction({}, 'console')
+    await callAsyncFunction({} as any, 'console')
   })
 })
