@@ -147,7 +147,7 @@ contain the actual diff text.
 ### Run a separate file
 
 If you don't want to inline your entire script that you want to run, you can
-use a separate JavaScript file in your repository like so:
+use a separate JavaScript module in your repository like so:
 
 ```yaml
 on: push
@@ -164,7 +164,7 @@ jobs:
             console.log(require(scriptPath)({context}))
 ```
 
-And then export a function from your script:
+And then export a function from your module:
 
 ```javascript
 module.exports = ({context}) => {
@@ -177,7 +177,7 @@ the inline script.
 
 Note that because you can't `require` things like the GitHub context or
 Actions Toolkit libraries, you'll want to pass them as arguments to your
-external script.
+external function.
 
 ### Result encoding
 
