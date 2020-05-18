@@ -187,9 +187,13 @@ output of a github-script step. For some workflows, string encoding is preferred
 
 ```yaml
 - uses: actions/github-script@0.9.0
+  id: my-script
   with:
     github-token: ${{secrets.GITHUB_TOKEN}}
     result-encoding: string
     script: |
       return "I will be string (not JSON) encoded!"
+      
+- name: Prints result
+  run: cat '${{ steps.my-script.outputs.result }}'
 ```
