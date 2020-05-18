@@ -189,6 +189,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
+      - uses: @actions/checkout@v2
       - uses: @actions/github-script@0.9.0
         with:
           script: |
@@ -211,3 +212,7 @@ the inline script.
 Note that because you can't `require` things like the GitHub context or
 Actions Toolkit libraries, you'll want to pass them as arguments to your
 external function.
+
+Additionally, you'll want to use the [checkout
+action](https://github.com/actions/checkout) to make sure your script file is
+available.
