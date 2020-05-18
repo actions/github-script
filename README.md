@@ -38,7 +38,7 @@ The return value of the script will be in the step's outputs under the
     script: return "Hello!"
     result-encoding: string
 - name: Get result
-  run: echo "${{steps.my-script.outputs.result}}"
+  run: echo "${{steps.set-result.outputs.result}}"
 ```
 
 See ["Result encoding"](#result-encoding) for details on how the encoding of
