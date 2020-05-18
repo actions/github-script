@@ -32,7 +32,7 @@ The return value of the script will be in the step's outputs under the
 "result" key.
 
 ```yaml
-- uses: actions/github-script@0.9.0
+- uses: actions/github-script@v1
   id: set-result
   with:
     script: return "Hello!"
@@ -51,7 +51,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 `result-encoding` input:
 
 ```yaml
-- uses: actions/github-script@0.9.0
+- uses: actions/github-script@v1
   id: my-script
   with:
     github-token: ${{secrets.GITHUB_TOKEN}}
@@ -77,7 +77,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.9.0
+      - uses: actions/github-script@v1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -100,7 +100,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.9.0
+      - uses: actions/github-script@v1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -121,7 +121,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.9.0
+      - uses: actions/github-script@v1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -165,7 +165,7 @@ jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@0.9.0
+      - uses: actions/github-script@v1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -190,7 +190,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: @actions/checkout@v2
-      - uses: @actions/github-script@0.9.0
+      - uses: @actions/github-script@v1
         with:
           script: |
             const path = require('path')
