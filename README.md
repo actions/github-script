@@ -26,6 +26,36 @@ future versions. 🙂
 
 See [development.md](/docs/development.md).
 
+## Reading step results
+
+The return value of the script will be in the step's outputs under the
+"result" key.
+
+```yaml
+- uses: actions/github-script@0.9.0
+  id: set-result
+  with:
+    script: return "Hello!"
+    result-encoding: string
+- name: Get result
+  run: echo "${{steps.my-script.outputs.result}}"
+```
+
+## Result encoding
+
+By default, the JSON-encoded return value of the function is set as the "result" in the
+output of a github-script step. For some workflows, string encoding is preferred. This option can be set using the
+`result-encoding` input:
+
+```yaml
+- uses: actions/github-script@0.9.0
+  id: my-script
+  with:
+    github-token: ${{secrets.GITHUB_TOKEN}}
+    result-encoding: string
+    script: return "I will be string (not JSON) encoded!"
+```
+
 ## Examples
 
 Note that `github-token` is optional in this action, and the input is there
@@ -141,6 +171,9 @@ jobs:
             console.log(result)
 ```
 
+See ["Result encoding"](#result-encoding) for details on how the encoding of
+these outputs can be changed.
+
 This will print the full diff object in the screen; `result.data` will
 contain the actual diff text.
 
@@ -178,22 +211,3 @@ the inline script.
 Note that because you can't `require` things like the GitHub context or
 Actions Toolkit libraries, you'll want to pass them as arguments to your
 external function.
-
-### Result encoding
-
-By default, the JSON-encoded return value of the function is set as the "result" in the
-output of a github-script step. For some workflows, string encoding is preferred. This option can be set using the
-`result-encoding` input:
-
-```yaml
-- uses: actions/github-script@0.9.0
-  id: my-script
-  with:
-    github-token: ${{secrets.GITHUB_TOKEN}}
-    result-encoding: string
-    script: |
-      return "I will be string (not JSON) encoded!"
-      
-- name: Prints result
-  run: cat '${{ steps.my-script.outputs.result }}'
-```
