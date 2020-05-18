@@ -7,7 +7,8 @@ branding:
 inputs:
   script:
     description: The script to run
-    required: true
+  file:
+    description: A file containing just the script to run (not a module)
   github-token:
     description: The GitHub token used to create an authenticated client
     default: ${{ github.token }}
@@ -21,7 +22,7 @@ inputs:
   previews:
     description: A comma-separated list of API previews to accept
   result-encoding:
-    description: Either "string" or "json" (default "json")—how the result will be encoded 
+    description: Either "string" or "json" (default "json")—how the result will be encoded
     default: json
 outputs:
   result:
