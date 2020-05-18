@@ -1,7 +1,7 @@
 {
   "name": "github-script",
   "description": "A GitHub action for executing a simple script",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "GitHub",
   "license": "MIT",
   "main": "dist/index.js",
