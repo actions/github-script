@@ -44,9 +44,6 @@ The return value of the script will be in the step's outputs under the
 See ["Result encoding"](#result-encoding) for details on how the encoding of
 these outputs can be changed.
 
-This will print the full diff object in the screen; `result.data` will
-contain the actual diff text.
-
 ## Result encoding
 
 By default, the JSON-encoded return value of the function is set as the "result" in the
@@ -176,6 +173,9 @@ jobs:
             const result = await github.request(diff_url)
             console.log(result)
 ```
+
+This will print the full diff object in the screen; `result.data` will
+contain the actual diff text.
 
 ### Run a separate file
 
