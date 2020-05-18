@@ -1,4 +1,5 @@
 on:
+  pull_request: {branches: master}
   push: {branches: master}
 
 jobs:
@@ -13,5 +14,15 @@ jobs:
           input-value: output
       - run: |
           if [[ "${{steps.output-set.outputs.result}}" != "output" ]]; then
+            exit 1
+          fi
+      - id: file-output-set
+        uses: actions/github-script@run-file
+        with:
+          file: __test__/test-output.js
+          result-encoding: string
+          input-value: output
+      - run: |
+          if [[ "${{steps.file-output-set.outputs.result}}" != "output" ]]; then
             exit 1
           fi
