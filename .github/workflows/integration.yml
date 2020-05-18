@@ -16,13 +16,23 @@ jobs:
           if [[ "${{steps.output-set.outputs.result}}" != "output" ]]; then
             exit 1
           fi
-      - id: file-output-set
+      - id: file-relative
         uses: actions/github-script@run-file
         with:
           file: __test__/test-output.js
           result-encoding: string
           input-value: output
       - run: |
-          if [[ "${{steps.file-output-set.outputs.result}}" != "output" ]]; then
+          if [[ "${{steps.file-relative.outputs.result}}" != "output" ]]; then
+            exit 1
+          fi
+      - id: file-absolute
+        uses: actions/github-script@run-file
+        with:
+          file: ${{github.workspace}}/__test__/test-output.js
+          result-encoding: string
+          input-value: output
+      - run: |
+          if [[ "${{steps.file-absolute.outputs.result}}" != "output" ]]; then
             exit 1
           fi

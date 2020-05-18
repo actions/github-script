@@ -1,5 +1,7 @@
 import * as core from '@actions/core'
 import {context, GitHub} from '@actions/github'
+import * as fs from 'fs'
+import * as path from 'path'
 import {callAsyncFunction} from './async-function'
 
 process.on('unhandledRejection', handleError)
@@ -23,7 +25,7 @@ async function main(): Promise<void> {
   if (previews != null) opts.previews = previews.split(',')
 
   const github = new GitHub(token, opts)
-  const script = core.getInput('script', {required: true})
+  const script = getScript()
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
@@ -48,6 +50,27 @@ async function main(): Promise<void> {
   }
 
   core.setOutput('result', output)
+}
+
+function getScript(): string {
+  const script = core.getInput('script')
+  const filePath = core.getInput('file')
+
+  if (script && filePath) {
+    core.setFailed('A script and a file were provided; only one is allowed')
+    process.exit(1)
+  }
+
+  if (!(script || filePath)) {
+    core.setFailed('Neither a script nor a file were provided')
+    process.exit(1)
+  }
+
+  if (filePath) {
+    return fs.readFileSync(path.resolve(filePath)).toString('utf-8')
+  }
+
+  return script
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -9273,6 +9273,12 @@ var core = __webpack_require__(470);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var lib_github = __webpack_require__(469);
 
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __webpack_require__(747);
+
+// EXTERNAL MODULE: external "path"
+var external_path_ = __webpack_require__(622);
+
 // CONCATENATED MODULE: ./src/async-function.ts
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 function callAsyncFunction(args, source) {
@@ -9281,6 +9287,8 @@ function callAsyncFunction(args, source) {
 }
 
 // CONCATENATED MODULE: ./src/main.ts
+
+
 
 
 
@@ -9299,7 +9307,7 @@ async function main() {
     if (previews != null)
         opts.previews = previews.split(',');
     const github = new lib_github.GitHub(token, opts);
-    const script = Object(core.getInput)('script', { required: true });
+    const script = getScript();
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({ require: __webpack_require__(875), github, context: lib_github.context, core: core }, script);
     let encoding = Object(core.getInput)('result-encoding');
@@ -9316,6 +9324,22 @@ async function main() {
             throw new Error('"result-encoding" must be either "string" or "json"');
     }
     Object(core.setOutput)('result', output);
+}
+function getScript() {
+    const script = Object(core.getInput)('script');
+    const filePath = Object(core.getInput)('file');
+    if (script && filePath) {
+        Object(core.setFailed)('A script and a file were provided; only one is allowed');
+        process.exit(1);
+    }
+    if (!(script || filePath)) {
+        Object(core.setFailed)('Neither a script nor a file were provided');
+        process.exit(1);
+    }
+    if (filePath) {
+        return Object(external_fs_.readFileSync)(Object(external_path_.resolve)(filePath)).toString('utf-8');
+    }
+    return script;
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleError(err) {
