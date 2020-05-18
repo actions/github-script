@@ -5,19 +5,27 @@ import {callAsyncFunction} from './async-function'
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
 
-async function main() {
+type Options = {
+  log?: Console
+  userAgent?: string
+  previews?: string[]
+}
+
+async function main(): Promise<void> {
   const token = core.getInput('github-token', {required: true})
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
-  const opts: {[key: string]: any} = {}
+
+  const opts: Options = {}
   if (debug === 'true') opts.log = console
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
+
   const github = new GitHub(token, opts)
   const script = core.getInput('script', {required: true})
 
-  // Using property/value shorthand on `require` (e.g. `{require}`) causes compilatin errors.
+  // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
     {require: require, github, context, core},
     script
@@ -42,12 +50,8 @@ async function main() {
   core.setOutput('result', output)
 }
 
-function handleError(err: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleError(err: any): void {
   console.error(err)
-
-  if (err && err.message) {
-    core.setFailed(err.message)
-  } else {
-    core.setFailed(`Unhandled error: ${err}`)
-  }
+  core.setFailed(`Unhandled error: ${err}`)
 }

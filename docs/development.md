@@ -15,7 +15,8 @@ bash> npm run build
 
 It also has a pre-commit hook configured via
 [husky](https://www.npmjs.com/package/husky) that should run the build script
-before each commit.
+before each commit. Additionally, this hook formats code and lints it, as
+well.
 
 ## Releasing
 
