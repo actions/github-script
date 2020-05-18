@@ -144,6 +144,41 @@ jobs:
 This will print the full diff object in the screen; `result.data` will
 contain the actual diff text.
 
+### Run a separate file
+
+If you don't want to inline your entire script that you want to run, you can
+use a separate JavaScript file in your repository like so:
+
+```yaml
+on: push
+
+jobs:
+  echo-input:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: @actions/github-script@0.9.0
+        with:
+          script: |
+            const path = require('path')
+            const scriptPath = path.resolve('./path/to/script.js')
+            console.log(require(scriptPath)({context}))
+```
+
+And then export a function from your script:
+
+```javascript
+module.exports = ({context}) => {
+  return context.payload.client_payload.value
+}
+```
+
+You can also use async functions in this manner, as long as you `await` it in
+the inline script.
+
+Note that because you can't `require` things like the GitHub context or
+Actions Toolkit libraries, you'll want to pass them as arguments to your
+external script.
+
 ### Result encoding
 
 By default, the JSON-encoded return value of the function is set as the "result" in the
