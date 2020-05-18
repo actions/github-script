@@ -8,10 +8,12 @@
   "private": true,
   "scripts": {
     "build": "ncc build src/main.ts",
-    "format": "prettier --write src __test__",
+    "format:check": "prettier --check src __test__",
+    "format:write": "prettier --write src __test__",
     "lint": "eslint src __test__",
-    "check": "run-p --continue-on-error --aggregate-output format lint",
-    "pre-commit": "run-s check test build",
+    "style:check": "run-p --continue-on-error --aggregate-output format:check lint",
+    "style:write": "run-p --continue-on-error --aggregate-output format:write lint",
+    "pre-commit": "run-s style:write test build",
     "test": "jest"
   },
   "husky": {

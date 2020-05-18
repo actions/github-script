@@ -15,4 +15,5 @@ jobs:
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
           restore-keys: ${{runner.os}}-npm-
       - run: npm ci
+      - run: npm run style:check
       - run: npm test
