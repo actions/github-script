@@ -12,6 +12,7 @@ arguments will be provided:
 - `context` An object containing the [context of the workflow
   run](https://github.com/actions/toolkit/tree/master/packages/github)
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/master/packages/core) package
+- `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/master/packages/io) package
 
 Since the `script` is just a function body, these values will already be
 defined, so you don't have to (see examples below).
