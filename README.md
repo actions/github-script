@@ -190,8 +190,8 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: @actions/checkout@v2
-      - uses: @actions/github-script@v1
+      - uses: actions/checkout@v2
+      - uses: actions/github-script@v1
         with:
           script: |
             const path = require('path')
