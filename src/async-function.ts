@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import {GitHub} from '@actions/github'
 import {Context} from '@actions/github/lib/context'
+import {GitHub} from '@actions/github/lib/utils'
 import * as io from '@actions/io'
 
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor
@@ -8,7 +8,7 @@ const AsyncFunction = Object.getPrototypeOf(async () => null).constructor
 type AsyncFunctionArguments = {
   context: Context
   core: typeof core
-  github: GitHub
+  github: InstanceType<typeof GitHub>
   io: typeof io
   require: NodeRequire
 }

@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {context, GitHub} from '@actions/github'
+import {context, getOctokit} from '@actions/github'
 import * as io from '@actions/io'
 import {callAsyncFunction} from './async-function'
 
@@ -23,7 +23,7 @@ async function main(): Promise<void> {
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
 
-  const github = new GitHub(token, opts)
+  const github = getOctokit(token, opts)
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
