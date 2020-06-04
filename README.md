@@ -175,6 +175,10 @@ jobs:
             console.log(result)
 ```
 
+_(Note that this particular example only works for a public URL, where the
+diff URL is publicly accessible. Getting the diff for a private URL requires
+using the API.)_
+
 This will print the full diff object in the screen; `result.data` will
 contain the actual diff text.
 
