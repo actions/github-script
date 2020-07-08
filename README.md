@@ -10,7 +10,7 @@ arguments will be provided:
 - `github` A pre-authenticated
   [octokit/rest.js](https://github.com/octokit/rest.js) client
 - `context` An object containing the [context of the workflow
-  run](https://github.com/actions/toolkit/tree/master/packages/github)
+  run](https://github.com/actions/toolkit/blob/master/packages/github/src/context.ts)
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/master/packages/core) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/master/packages/io) package
 
