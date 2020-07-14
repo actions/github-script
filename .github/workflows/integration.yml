@@ -1,12 +1,12 @@
 on:
-  push: {branches: master}
+  push: {branches: main}
 
 jobs:
   integration:
     runs-on: ubuntu-latest
     steps:
       - id: output-set
-        uses: actions/github-script@master
+        uses: actions/github-script@main
         with:
           script: return core.getInput('input-value')
           result-encoding: string
