@@ -202,6 +202,7 @@ jobs:
             const scriptPath = path.resolve('./path/to/script.js')
             console.log(require(scriptPath)({context}))
 ```
+_(Note that the script path given to `require()` must be an absolute path in this case.)_
 
 And then export a function from your module:
 
