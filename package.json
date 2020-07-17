@@ -4,10 +4,10 @@
   "version": "2.0.0",
   "author": "GitHub",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "dist/main.js",
   "private": true,
   "scripts": {
-    "build": "ncc build src/main.ts",
+    "build": "tsc",
     "format:check": "prettier --check src __test__",
     "format:write": "prettier --write src __test__",
     "lint": "eslint src __test__",
@@ -18,7 +18,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run pre-commit && git add dist/"
+      "pre-commit": "npm run pre-commit"
     }
   },
   "jest": {
@@ -46,7 +46,6 @@
     "@types/jest": "^25.1.4",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
-    "@zeit/ncc": "^0.22.0",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.11.0",
     "husky": "^4.2.5",
@@ -54,6 +53,6 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
     "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.7"
   }
 }

@@ -2,8 +2,10 @@
   "compilerOptions": {
     "target": "es2018",
     "moduleResolution": "node",
+    "module": "commonjs",
     "strict": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist"
   },
   "exclude": ["__test__"]
 }
