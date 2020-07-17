@@ -203,6 +203,8 @@ jobs:
             console.log(require(scriptPath)({context}))
 ```
 
+*Note that the script path given to `require()` must be an absolute path in this case, hence the call to `path.resolve()`.*
+
 And then export a function from your module:
 
 ```javascript
