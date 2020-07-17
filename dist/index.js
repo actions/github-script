@@ -34,7 +34,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(833);
+/******/ 		return __webpack_require__(131);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -781,6 +781,63 @@ exports.getApiBaseUrl = getApiBaseUrl;
 /***/ (function(module) {
 
 module.exports = require("child_process");
+
+/***/ }),
+
+/***/ 131:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(470);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(469);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _async_function__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(930);
+
+
+
+
+process.on('unhandledRejection', handleError);
+main().catch(handleError);
+async function main() {
+    const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('github-token', { required: true });
+    const debug = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('debug');
+    const userAgent = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('user-agent');
+    const previews = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('previews');
+    const opts = {};
+    if (debug === 'true')
+        opts.log = console;
+    if (userAgent != null)
+        opts.userAgent = userAgent;
+    if (previews != null)
+        opts.previews = previews.split(',');
+    const github = Object(_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(token, opts);
+    const script = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('script', { required: true });
+    const result = await Object(_async_function__WEBPACK_IMPORTED_MODULE_3__.callAsyncFunction)({ context: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context, core: _actions_core__WEBPACK_IMPORTED_MODULE_0__, github, io: _actions_io__WEBPACK_IMPORTED_MODULE_2__ }, script);
+    let encoding = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('result-encoding');
+    encoding = encoding ? encoding : 'json';
+    let output;
+    switch (encoding) {
+        case 'json':
+            output = JSON.stringify(result);
+            break;
+        case 'string':
+            output = String(result);
+            break;
+        default:
+            throw new Error('"result-encoding" must be either "string" or "json"');
+    }
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('result', output);
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleError(err) {
+    console.error(err);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`Unhandled error: ${err}`);
+}
+
 
 /***/ }),
 
@@ -7964,75 +8021,6 @@ function sync (path, options) {
 
 /***/ }),
 
-/***/ 833:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __webpack_require__(470);
-
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var lib_github = __webpack_require__(469);
-
-// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
-var io = __webpack_require__(1);
-
-// CONCATENATED MODULE: ./src/async-function.ts
-const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
-function callAsyncFunction(args, source) {
-    const fn = new AsyncFunction(...Object.keys(args), source);
-    return fn(...Object.values(args));
-}
-
-// CONCATENATED MODULE: ./src/main.ts
-
-
-
-
-process.on('unhandledRejection', handleError);
-main().catch(handleError);
-async function main() {
-    const token = Object(core.getInput)('github-token', { required: true });
-    const debug = Object(core.getInput)('debug');
-    const userAgent = Object(core.getInput)('user-agent');
-    const previews = Object(core.getInput)('previews');
-    const opts = {};
-    if (debug === 'true')
-        opts.log = console;
-    if (userAgent != null)
-        opts.userAgent = userAgent;
-    if (previews != null)
-        opts.previews = previews.split(',');
-    const github = Object(lib_github.getOctokit)(token, opts);
-    const script = Object(core.getInput)('script', { required: true });
-    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-    const result = await callAsyncFunction({ require: __webpack_require__(875), github, context: lib_github.context, core: core, io: io }, script);
-    let encoding = Object(core.getInput)('result-encoding');
-    encoding = encoding ? encoding : 'json';
-    let output;
-    switch (encoding) {
-        case 'json':
-            output = JSON.stringify(result);
-            break;
-        case 'string':
-            output = String(result);
-            break;
-        default:
-            throw new Error('"result-encoding" must be either "string" or "json"');
-    }
-    Object(core.setOutput)('result', output);
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function handleError(err) {
-    console.error(err);
-    Object(core.setFailed)(`Unhandled error: ${err}`);
-}
-
-
-/***/ }),
-
 /***/ 835:
 /***/ (function(module) {
 
@@ -9826,25 +9814,6 @@ module.exports = function (str) {
 
 /***/ }),
 
-/***/ 875:
-/***/ (function(module) {
-
-function webpackEmptyContext(req) {
-	if (typeof req === 'number' && __webpack_require__.m[req])
-  return __webpack_require__(req);
-try { return require(req) }
-catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e }
-var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 875;
-
-/***/ }),
-
 /***/ 881:
 /***/ (function(module) {
 
@@ -10001,6 +9970,22 @@ function withCustomRequest(customRequest) {
 exports.graphql = graphql$1;
 exports.withCustomRequest = withCustomRequest;
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 930:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "callAsyncFunction", function() { return callAsyncFunction; });
+async function callAsyncFunction(args, source) {
+    const argsKeys = Object.keys(args).join(',');
+    const wrappedFunction = eval(`async({${argsKeys}}) => {
+    ${source}
+  }`);
+    return wrappedFunction(args);
+}
 
 
 /***/ }),
@@ -10582,36 +10567,6 @@ function onceStrict (fn) {
 /******/ 		};
 /******/ 	}();
 /******/ 	
-/******/ 	/* webpack/runtime/define property getter */
-/******/ 	!function() {
-/******/ 		// define getter function for harmony exports
-/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
-/******/ 		__webpack_require__.d = function(exports, name, getter) {
-/******/ 			if(!hasOwnProperty.call(exports, name)) {
-/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 			}
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/create fake namespace object */
-/******/ 	!function() {
-/******/ 		// create a fake namespace object
-/******/ 		// mode & 1: value is a module id, require it
-/******/ 		// mode & 2: merge all properties of value into the ns
-/******/ 		// mode & 4: return value when already ns object
-/******/ 		// mode & 8|1: behave like require
-/******/ 		__webpack_require__.t = function(value, mode) {
-/******/ 			if(mode & 1) value = this(value);
-/******/ 			if(mode & 8) return value;
-/******/ 			if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 			var ns = Object.create(null);
-/******/ 			__webpack_require__.r(ns);
-/******/ 			Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 			if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 			return ns;
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	!function() {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -10621,6 +10576,17 @@ function onceStrict (fn) {
 /******/ 				function getModuleExports() { return module; };
 /******/ 			__webpack_require__.d(getter, 'a', getter);
 /******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getter */
+/******/ 	!function() {
+/******/ 		// define getter function for harmony exports
+/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
+/******/ 		__webpack_require__.d = function(exports, name, getter) {
+/******/ 			if(!hasOwnProperty.call(exports, name)) {
+/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			}
 /******/ 		};
 /******/ 	}();
 /******/ 	

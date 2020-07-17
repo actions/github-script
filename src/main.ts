@@ -25,12 +25,7 @@ async function main(): Promise<void> {
 
   const github = getOctokit(token, opts)
   const script = core.getInput('script', {required: true})
-
-  // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-  const result = await callAsyncFunction(
-    {require: require, github, context, core, io},
-    script
-  )
+  const result = await callAsyncFunction({context, core, github, io}, script)
 
   let encoding = core.getInput('result-encoding')
   encoding = encoding ? encoding : 'json'

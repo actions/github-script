@@ -1,22 +1,14 @@
-import * as core from '@actions/core'
-import {Context} from '@actions/github/lib/context'
-import {GitHub} from '@actions/github/lib/utils'
-import * as io from '@actions/io'
+type AsyncFunction<A, R> = (args: A) => Promise<R>
 
-const AsyncFunction = Object.getPrototypeOf(async () => null).constructor
-
-type AsyncFunctionArguments = {
-  context: Context
-  core: typeof core
-  github: InstanceType<typeof GitHub>
-  io: typeof io
-  require: NodeRequire
-}
-
-export function callAsyncFunction<T>(
-  args: AsyncFunctionArguments,
+export async function callAsyncFunction<A = {}, R = unknown>(
+  args: A,
   source: string
-): Promise<T> {
-  const fn = new AsyncFunction(...Object.keys(args), source)
-  return fn(...Object.values(args))
+): Promise<R> {
+  const argsKeys = Object.keys(args).join(',')
+
+  const wrappedFunction: AsyncFunction<A, R> = eval(`async({${argsKeys}}) => {
+    ${source}
+  }`)
+
+  return wrappedFunction(args)
 }
