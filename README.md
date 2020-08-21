@@ -1,4 +1,8 @@
-# github-script ![.github/workflows/integration.yml](https://github.com/actions/github-script/workflows/.github/workflows/integration.yml/badge.svg?event=push) ![.github/workflows/ci.yml](https://github.com/actions/github-script/workflows/.github/workflows/ci.yml/badge.svg?event=push) ![.github/workflows/licensed.yml](https://github.com/actions/github-script/workflows/Licensed/badge.svg?event=push)
+# actions/github-script
+
+[![.github/workflows/integration.yml](https://github.com/actions/github-script/workflows/.github/workflows/Integration/badge.svg?event=push&branch=main)](https://github.com/actions/github-script/actions?query=workflow%3AIntegration+branch%3Amain+event%3Apush)
+[![.github/workflows/ci.yml](https://github.com/actions/github-script/workflows/.github/workflows/CI/badge.svg?event=push&branch=main)](https://github.com/actions/github-script/actions?query=workflow%3ACI+branch%3Amain+event%3Apush)
+[![.github/workflows/licensed.yml](https://github.com/actions/github-script/workflows/Licensed/badge.svg?event=push&branch=main)](https://github.com/actions/github-script/actions?query=workflow%3ALicensed+branch%3Amain+event%3Apush)
 
 This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
@@ -202,7 +206,7 @@ jobs:
             console.log(script({github, context}))
 ```
 
-*Note that the script path given to `require()` must be an **absolute path** in this case, hence using [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables).*
+_Note that the script path given to `require()` must be an **absolute path** in this case, hence using [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)._
 
 And then export a function from your module:
 
@@ -223,7 +227,6 @@ Additionally, you'll want to use the [checkout
 action](https://github.com/actions/checkout) to make sure your script file is
 available.
 
-
 This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
 
@@ -426,7 +429,7 @@ jobs:
             console.log(script({github, context}))
 ```
 
-*Note that the script path given to `require()` must be an **absolute path** in this case, hence using [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables).*
+_Note that the script path given to `require()` must be an **absolute path** in this case, hence using [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)._
 
 And then export a function from your module:
 

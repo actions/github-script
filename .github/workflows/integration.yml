@@ -1,3 +1,5 @@
+name: Integration
+
 on:
   push: {branches: main}
 
