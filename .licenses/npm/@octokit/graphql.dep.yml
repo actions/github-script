@@ -1,6 +1,6 @@
 ---
 name: "@octokit/graphql"
-version: 4.5.0
+version: 4.5.4
 type: npm
 summary: GitHub GraphQL API client for browsers and Node
 homepage: https://github.com/octokit/graphql.js#readme
