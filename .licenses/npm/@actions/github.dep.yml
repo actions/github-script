@@ -1,6 +1,6 @@
 ---
 name: "@actions/github"
-version: 3.0.0
+version: 4.0.0
 type: npm
 summary: Actions github lib
 homepage: https://github.com/actions/toolkit/tree/master/packages/github
