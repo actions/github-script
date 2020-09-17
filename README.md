@@ -179,7 +179,7 @@ jobs:
             console.log(result)
 ```
 
-### Run customer GraphQL queries
+### Run custom GraphQL queries
 
 You can use the `github.graphql` object to run custom GraphQL queries against the GitHub API.
 
