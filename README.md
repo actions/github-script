@@ -179,6 +179,39 @@ jobs:
             console.log(result)
 ```
 
+### Run customer GraphQL queries
+
+You can use the `github.graphql` object to run custom GraphQL queries against the GitHub API.
+
+```yaml
+
+jobs:
+  list-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const query = `query($owner:String!, $name:String!) {
+              repository(owner:$owner, name:$name){
+                issues(first:100, labels: [$label]) {
+                  nodes {
+                    id
+                  }
+                }
+              }
+            }`;
+            const variables = {
+              owner: context.repo.owner,
+              name: context.repo.repo,
+              label: 'wontfix'
+            }
+            const result = await github.graphql(query, variables)
+            console.log(result)
+
+```
+
 _(Note that this particular example only works for a public URL, where the
 diff URL is publicly accessible. Getting the diff for a private URL requires
 using the API.)_
