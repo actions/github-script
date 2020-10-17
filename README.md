@@ -235,7 +235,7 @@ jobs:
       - uses: actions/github-script@v2
         with:
           script: |
-            const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
+            const script = require(`${{ env.GITHUB_WORKSPACE }}/path/to/script.js`)
             console.log(script({github, context}))
 ```
 
