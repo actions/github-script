@@ -232,7 +232,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v2
+      - uses: actions/github-script@v3
         with:
           script: |
             const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
