@@ -1,6 +1,6 @@
 ---
 name: "@octokit/plugin-paginate-rest"
-version: 2.3.0
+version: 2.6.0
 type: npm
 summary: Octokit plugin to paginate REST API endpoint responses
 homepage: https://github.com/octokit/plugin-paginate-rest.js#readme

@@ -38,9 +38,9 @@
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
     "@actions/io": "^1.0.2",
-    "@octokit/core": "^3.1.2",
-    "@octokit/plugin-paginate-rest": "^2.3.0",
-    "@octokit/plugin-rest-endpoint-methods": "^4.1.2"
+    "@octokit/core": "^3.2.1",
+    "@octokit/plugin-paginate-rest": "^2.6.0",
+    "@octokit/plugin-rest-endpoint-methods": "4.2.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",
