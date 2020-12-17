@@ -71,6 +71,15 @@ in case you need to use a non-default token.
 
 By default, github-script will use the token provided to your workflow.
 
+### Print the available attributes of context:
+
+```yaml
+- name: View context attributes
+  uses: actions/github-script@0.9.0
+  with:
+    script: console.log(context)
+``` 
+
 ### Comment on an issue
 
 ```yaml
