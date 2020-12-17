@@ -33,6 +33,15 @@ See [development.md](/docs/development.md).
 
 ## Reading step results
 
+Print the available attributes of context:
+
+```yaml
+- name: View context attributes
+  uses: actions/github-script@0.9.0
+  with:
+    script: console.log(context)
+``` 
+
 The return value of the script will be in the step's outputs under the
 "result" key.
 
