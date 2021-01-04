@@ -75,7 +75,7 @@ By default, github-script will use the token provided to your workflow.
 
 ```yaml
 - name: View context attributes
-  uses: actions/github-script@0.9.0
+  uses: actions/github-script@v3
   with:
     script: console.log(context)
 ``` 
