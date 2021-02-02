@@ -202,14 +202,14 @@ You can use the `github.graphql` object to run custom GraphQL queries against th
 ```yaml
 
 jobs:
-  list-packages:
+  list-issues:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v3
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const query = `query($owner:String!, $name:String!) {
+            const query = `query($owner:String!, $name:String!, $label:String!) {
               repository(owner:$owner, name:$name){
                 issues(first:100, labels: [$label]) {
                   nodes {
