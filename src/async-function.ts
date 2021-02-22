@@ -19,6 +19,17 @@ export function callAsyncFunction<T>(
   args: AsyncFunctionArguments,
   source: string
 ): Promise<T> {
-  const fn = new AsyncFunction(...Object.keys(args), source)
-  return fn(...Object.values(args))
+  const previousWorkingDirectory = process.cwd()
+  try {
+    if (process.env.GITHUB_WORKSPACE !== undefined) {
+      process.chdir(process.env.GITHUB_WORKSPACE)
+    }
+
+    const fn = new AsyncFunction(...Object.keys(args), source)
+    return fn(...Object.values(args))
+  } finally {
+    if (previousWorkingDirectory !== process.cwd()) {
+      process.chdir(previousWorkingDirectory)
+    }
+  }
 }

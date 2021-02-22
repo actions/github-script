@@ -6117,8 +6117,19 @@ var io = __webpack_require__(436);
 // CONCATENATED MODULE: ./src/async-function.ts
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 function callAsyncFunction(args, source) {
-    const fn = new AsyncFunction(...Object.keys(args), source);
-    return fn(...Object.values(args));
+    const previousWorkingDirectory = process.cwd();
+    try {
+        if (process.env.GITHUB_WORKSPACE !== undefined) {
+            process.chdir(process.env.GITHUB_WORKSPACE);
+        }
+        const fn = new AsyncFunction(...Object.keys(args), source);
+        return fn(...Object.values(args));
+    }
+    finally {
+        if (previousWorkingDirectory !== process.cwd()) {
+            process.chdir(previousWorkingDirectory);
+        }
+    }
 }
 
 // CONCATENATED MODULE: ./src/main.ts

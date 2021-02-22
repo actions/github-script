@@ -243,11 +243,12 @@ jobs:
       - uses: actions/github-script@v3
         with:
           script: |
-            const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
+            const script = require(`./path/to/script.js`)
             console.log(script({github, context}))
 ```
 
-_Note that the script path given to `require()` must be an **absolute path** in this case, hence using [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)._
+The script will be run within the [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)
+directory.
 
 And then export a function from your module:
 
