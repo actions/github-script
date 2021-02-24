@@ -1,0 +1,8 @@
+export * as artifact from '@actions/artifact'
+export * as cache from '@actions/cache'
+export * as core from '@actions/core'
+export * as exec from '@actions/exec'
+export * as github from '@actions/github'
+export * as glob from '@actions/glob'
+export * as io from '@actions/io'
+export * as toolCache from '@actions/tool-cache'

@@ -35,9 +35,14 @@
     }
   },
   "dependencies": {
+    "@actions/artifact": "^0.5.0",
+    "@actions/cache": "^1.0.6",
     "@actions/core": "^1.2.6",
+    "@actions/exec": "^1.0.4",
     "@actions/github": "^4.0.0",
+    "@actions/glob": "^0.1.1",
     "@actions/io": "^1.0.2",
+    "@actions/tool-cache": "^1.6.1",
     "@octokit/core": "^3.2.1",
     "@octokit/plugin-paginate-rest": "^2.6.0",
     "@octokit/plugin-rest-endpoint-methods": "4.2.1"
