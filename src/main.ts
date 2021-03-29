@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import {context, getOctokit} from '@actions/github'
+import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import {callAsyncFunction} from './async-function'
 
@@ -28,7 +29,7 @@ async function main(): Promise<void> {
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
-    {require: require, github, context, core, io},
+    {require: require, github, context, core, glob, io},
     script
   )
 
