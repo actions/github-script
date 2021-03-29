@@ -294,3 +294,25 @@ jobs:
 
             console.log(stdout)
 ```
+
+### Use env as input
+
+You can set env vars to use them in your script:
+
+```yaml
+on: push
+
+jobs:
+  echo-input:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        env:
+          FIRST_NAME: Mona
+          LAST_NAME: Octocat
+        with:
+          script: |
+            const { FIRST_NAME, LAST_NAME } = process.env
+
+            console.log(`Hello ${FIRST_NAME} ${LAST_NAME}`)
+```
