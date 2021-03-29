@@ -284,7 +284,7 @@ jobs:
           node-version: 14
       - run: npm ci
       # or one-off:
-      - run: npm install -g execa
+      - run: npm install execa
       - uses: actions/github-script@v3
         with:
           script: |
