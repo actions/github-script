@@ -71,14 +71,14 @@ in case you need to use a non-default token.
 
 By default, github-script will use the token provided to your workflow.
 
-### Print the available attributes of context:
+### Print the available attributes of context
 
 ```yaml
 - name: View context attributes
   uses: actions/github-script@v3
   with:
     script: console.log(context)
-``` 
+```
 
 ### Comment on an issue
 
@@ -200,7 +200,6 @@ contain the actual diff text.
 You can use the `github.graphql` object to run custom GraphQL queries against the GitHub API.
 
 ```yaml
-
 jobs:
   list-issues:
     runs-on: ubuntu-latest
@@ -225,7 +224,6 @@ jobs:
             }
             const result = await github.graphql(query, variables)
             console.log(result)
-
 ```
 
 ### Run a separate file
@@ -268,3 +266,31 @@ external function.
 Additionally, you'll want to use the [checkout
 action](https://github.com/actions/checkout) to make sure your script file is
 available.
+
+### Use npm packages
+
+Like importing your own files above, you can also use installed modules:
+
+```yaml
+on: push
+
+jobs:
+  echo-input:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: npm ci
+      # or one-off:
+      - run: npm install -g execa
+      - uses: actions/github-script@v3
+        with:
+          script: |
+            const execa = require(`${process.env.GITHUB_WORKSPACE}/node_modules/execa`)
+
+            const { stdout } = await execa('echo', ['hello', 'world'])
+
+            console.log(stdout)
+```
