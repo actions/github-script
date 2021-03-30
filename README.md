@@ -16,6 +16,7 @@ arguments will be provided:
 - `context` An object containing the [context of the workflow
   run](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts)
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
+- `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
 
 Since the `script` is just a function body, these values will already be
