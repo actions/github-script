@@ -257,9 +257,6 @@ module.exports = ({github, context}) => {
 }
 ```
 
-You can also use async functions in this manner, as long as you `await` it in
-the inline script.
-
 Note that because you can't `require` things like the GitHub context or
 Actions Toolkit libraries, you'll want to pass them as arguments to your
 external function.
@@ -267,6 +264,44 @@ external function.
 Additionally, you'll want to use the [checkout
 action](https://github.com/actions/checkout) to make sure your script file is
 available.
+
+### Run a separate file with an async function
+
+You can also use async functions in this manner, as long as you `await` it in
+the inline script.
+
+In your workflow:
+
+```yaml
+on: push
+
+jobs:
+  echo-input:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/github-script@v3
+        env:
+          SHA: "${{env.parentSHA}}"
+        with:
+          script: |
+            const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
+            await script({github, context, core})
+```
+
+And then export an async function from your module:
+
+```javascript
+module.exports = async ({ github, context, core }) => {
+    const { SHA } = process.env
+    const commit = await github.repos.getCommit({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        ref: `${SHA}`
+    })
+    core.exportVariable('author', commit.data.commit.author.email);
+}
+```
 
 ### Use npm packages
 
