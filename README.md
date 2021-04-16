@@ -12,7 +12,7 @@ input should be the body of an asynchronous function call. The following
 arguments will be provided:
 
 - `github` A pre-authenticated
-  [octokit/core.js](https://github.com/octokit/core.js#readme) client with REST endpoints and pagination plugins
+  [octokit/rest.js](https://octokit.github.io/rest.js) client with pagination plugins
 - `context` An object containing the [context of the workflow
   run](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts)
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
