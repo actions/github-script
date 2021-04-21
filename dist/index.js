@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(720);
+/******/ 		return __webpack_require__(272);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -2426,6 +2426,114 @@ exports.request = request;
 
 /***/ }),
 
+/***/ 272:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(186);
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var lib_github = __webpack_require__(438);
+
+// EXTERNAL MODULE: ./node_modules/@actions/glob/lib/glob.js
+var glob = __webpack_require__(90);
+
+// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
+var io = __webpack_require__(436);
+
+// CONCATENATED MODULE: ./src/async-function.ts
+const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
+function callAsyncFunction(args, source) {
+    const fn = new AsyncFunction(...Object.keys(args), source);
+    return fn(...Object.values(args));
+}
+
+// EXTERNAL MODULE: external "path"
+var external_path_ = __webpack_require__(622);
+
+// CONCATENATED MODULE: ./src/wrap-require.ts
+
+const wrapRequire = new Proxy(require, {
+    apply: (target, thisArg, [moduleID]) => {
+        if (moduleID.startsWith('.')) {
+            moduleID = Object(external_path_.resolve)(moduleID);
+            return target.apply(thisArg, [moduleID]);
+        }
+        const modulePath = target.resolve.apply(thisArg, [
+            moduleID,
+            {
+                // Webpack does not have an escape hatch for getting the actual
+                // module, other than `eval`.
+                paths: [process.cwd()]
+            }
+        ]);
+        return target.apply(thisArg, [modulePath]);
+    },
+    get: (target, prop, receiver) => {
+        Reflect.get(target, prop, receiver);
+    }
+});
+
+// CONCATENATED MODULE: ./src/main.ts
+
+
+
+
+
+
+process.on('unhandledRejection', handleError);
+main().catch(handleError);
+async function main() {
+    const token = Object(core.getInput)('github-token', { required: true });
+    const debug = Object(core.getInput)('debug');
+    const userAgent = Object(core.getInput)('user-agent');
+    const previews = Object(core.getInput)('previews');
+    const opts = {};
+    if (debug === 'true')
+        opts.log = console;
+    if (userAgent != null)
+        opts.userAgent = userAgent;
+    if (previews != null)
+        opts.previews = previews.split(',');
+    const github = Object(lib_github.getOctokit)(token, opts);
+    const script = Object(core.getInput)('script', { required: true });
+    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
+    const result = await callAsyncFunction({
+        require: wrapRequire,
+        __original_require__: require,
+        github,
+        context: lib_github.context,
+        core: core,
+        glob: glob,
+        io: io
+    }, script);
+    let encoding = Object(core.getInput)('result-encoding');
+    encoding = encoding ? encoding : 'json';
+    let output;
+    switch (encoding) {
+        case 'json':
+            output = JSON.stringify(result);
+            break;
+        case 'string':
+            output = String(result);
+            break;
+        default:
+            throw new Error('"result-encoding" must be either "string" or "json"');
+    }
+    Object(core.setOutput)('result', output);
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleError(err) {
+    console.error(err);
+    Object(core.setFailed)(`Unhandled error: ${err}`);
+}
+
+
+/***/ }),
+
 /***/ 278:
 /***/ (function(__unusedmodule, exports) {
 
@@ -2882,43 +2990,6 @@ function escapeProperty(s) {
 /***/ (function(module) {
 
 module.exports = require("assert");
-
-/***/ }),
-
-/***/ 366:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "wrapRequire", function() { return wrapRequire; });
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(622);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
-
-const wrapRequire = new Proxy(require, {
-    apply: (target, thisArg, [moduleID]) => {
-        if (moduleID.startsWith('.')) {
-            moduleID = path__WEBPACK_IMPORTED_MODULE_0__.resolve(moduleID);
-            return target.apply(thisArg, [moduleID]);
-        }
-        try {
-            return target.apply(thisArg, [moduleID]);
-        }
-        catch (err) {
-            const modulePath = target.resolve.apply(thisArg, [
-                moduleID,
-                {
-                    // Webpack does not have an escape hatch for getting the actual
-                    // module, other than `eval`.
-                    paths: eval('module').paths.concat(process.cwd())
-                }
-            ]);
-            return target.apply(thisArg, [modulePath]);
-        }
-    },
-    get: (target, prop, receiver) => {
-        Reflect.get(target, prop, receiver);
-    }
-});
-
 
 /***/ }),
 
@@ -6133,91 +6204,6 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
-/***/ 720:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __webpack_require__(186);
-
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var lib_github = __webpack_require__(438);
-
-// EXTERNAL MODULE: ./node_modules/@actions/glob/lib/glob.js
-var glob = __webpack_require__(90);
-
-// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
-var io = __webpack_require__(436);
-
-// CONCATENATED MODULE: ./src/async-function.ts
-const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
-function callAsyncFunction(args, source) {
-    const fn = new AsyncFunction(...Object.keys(args), source);
-    return fn(...Object.values(args));
-}
-
-// EXTERNAL MODULE: ./src/wrap-require.ts
-var wrap_require = __webpack_require__(366);
-
-// CONCATENATED MODULE: ./src/main.ts
-
-
-
-
-
-
-process.on('unhandledRejection', handleError);
-main().catch(handleError);
-async function main() {
-    const token = Object(core.getInput)('github-token', { required: true });
-    const debug = Object(core.getInput)('debug');
-    const userAgent = Object(core.getInput)('user-agent');
-    const previews = Object(core.getInput)('previews');
-    const opts = {};
-    if (debug === 'true')
-        opts.log = console;
-    if (userAgent != null)
-        opts.userAgent = userAgent;
-    if (previews != null)
-        opts.previews = previews.split(',');
-    const github = Object(lib_github.getOctokit)(token, opts);
-    const script = Object(core.getInput)('script', { required: true });
-    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-    const result = await callAsyncFunction({
-        require: wrap_require.wrapRequire,
-        __original_require__: require,
-        github,
-        context: lib_github.context,
-        core: core,
-        glob: glob,
-        io: io
-    }, script);
-    let encoding = Object(core.getInput)('result-encoding');
-    encoding = encoding ? encoding : 'json';
-    let output;
-    switch (encoding) {
-        case 'json':
-            output = JSON.stringify(result);
-            break;
-        case 'string':
-            output = String(result);
-            break;
-        default:
-            throw new Error('"result-encoding" must be either "string" or "json"');
-    }
-    Object(core.setOutput)('result', output);
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function handleError(err) {
-    console.error(err);
-    Object(core.setFailed)(`Unhandled error: ${err}`);
-}
-
-
-/***/ }),
-
 /***/ 747:
 /***/ (function(module) {
 
@@ -8773,15 +8759,14 @@ function regExpEscape (s) {
 /******/ function(__webpack_require__) { // webpackRuntimeModules
 /******/ 	"use strict";
 /******/ 
-/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	/* webpack/runtime/make namespace object */
 /******/ 	!function() {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = function(module) {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				function getDefault() { return module['default']; } :
-/******/ 				function getModuleExports() { return module; };
-/******/ 			__webpack_require__.d(getter, 'a', getter);
-/******/ 			return getter;
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -8793,17 +8778,6 @@ function regExpEscape (s) {
 /******/ 			if(!hasOwnProperty.call(exports, name)) {
 /******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 			}
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	!function() {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = function(exports) {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -8823,6 +8797,18 @@ function regExpEscape (s) {
 /******/ 			Object.defineProperty(ns, 'default', { enumerable: true, value: value });
 /******/ 			if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
 /******/ 			return ns;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function getDefault() { return module['default']; } :
+/******/ 				function getModuleExports() { return module; };
+/******/ 			__webpack_require__.d(getter, 'a', getter);
+/******/ 			return getter;
 /******/ 		};
 /******/ 	}();
 /******/ 	
