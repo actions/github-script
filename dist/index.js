@@ -2427,7 +2427,7 @@ exports.request = request;
 /***/ }),
 
 /***/ 272:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -2455,13 +2455,20 @@ function callAsyncFunction(args, source) {
 var external_path_ = __webpack_require__(622);
 
 // CONCATENATED MODULE: ./src/wrap-require.ts
+/* module decorator */ module = __webpack_require__.hmd(module);
 
 const wrapRequire = new Proxy(require, {
     apply: (target, thisArg, [moduleID]) => {
         if (moduleID.startsWith('.')) {
             moduleID = Object(external_path_.join)(process.cwd(), moduleID);
+            return target.apply(thisArg, [moduleID]);
         }
-        return target.apply(thisArg, [moduleID]);
+        try {
+            return target.apply(thisArg, [moduleID]);
+        }
+        catch (err) {
+            return target.resolve(moduleID, { paths: [...module.paths, process.cwd()] });
+        }
     },
     get: (target, prop, receiver) => {
         Reflect.get(target, prop, receiver);
@@ -2494,7 +2501,7 @@ async function main() {
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({
         require: wrapRequire,
-        nativeRequire: require,
+        __original_require__: require,
         github,
         context: lib_github.context,
         core: core,
@@ -8800,6 +8807,29 @@ function regExpEscape (s) {
 /******/ 				function getModuleExports() { return module; };
 /******/ 			__webpack_require__.d(getter, 'a', getter);
 /******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/harmony module decorator */
+/******/ 	!function() {
+/******/ 		__webpack_require__.hmd = function(module) {
+/******/ 			module = Object.create(module);
+/******/ 			if (!module.children) module.children = [];
+/******/ 			Object.defineProperty(module, 'loaded', {
+/******/ 				enumerable: true,
+/******/ 				get: function () { return module.l; }
+/******/ 			});
+/******/ 			Object.defineProperty(module, 'id', {
+/******/ 				enumerable: true,
+/******/ 				get: function () { return module.i; }
+/******/ 			});
+/******/ 			Object.defineProperty(module, 'exports', {
+/******/ 				enumerable: true,
+/******/ 				set: function () {
+/******/ 					throw new Error('ES Modules may not assign module.exports or exports.*, Use ESM export syntax, instead: ' + module.id);
+/******/ 				}
+/******/ 			});
+/******/ 			return module;
 /******/ 		};
 /******/ 	}();
 /******/ 	
