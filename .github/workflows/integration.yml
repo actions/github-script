@@ -44,7 +44,7 @@ jobs:
           path: ~/.npm
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
           restore-keys: ${{runner.os}}-npm-
-      - uses: npm ci
+      - run: npm ci
       - id: output-set
         uses: ./
         with:
