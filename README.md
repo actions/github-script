@@ -44,7 +44,7 @@ The return value of the script will be in the step's outputs under the
 "result" key.
 
 ```yaml
-- uses: actions/github-script@v3
+- uses: actions/github-script@v4
   id: set-result
   with:
     script: return "Hello!"
@@ -63,7 +63,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 `result-encoding` input:
 
 ```yaml
-- uses: actions/github-script@v3
+- uses: actions/github-script@v4
   id: my-script
   with:
     github-token: ${{secrets.GITHUB_TOKEN}}
@@ -82,7 +82,7 @@ By default, github-script will use the token provided to your workflow.
 
 ```yaml
 - name: View context attributes
-  uses: actions/github-script@v3
+  uses: actions/github-script@v4
   with:
     script: console.log(context)
 ```
@@ -98,7 +98,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -121,7 +121,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -142,7 +142,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -186,7 +186,7 @@ jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -211,7 +211,7 @@ jobs:
   list-issues:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -246,7 +246,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           script: |
             const script = require('./path/to/script.js')
@@ -284,7 +284,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         env:
           SHA: '${{env.parentSHA}}'
         with:
@@ -325,7 +325,7 @@ jobs:
       - run: npm ci
       # or one-off:
       - run: npm install execa
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           script: |
             const execa = require('execa')
@@ -346,7 +346,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         env:
           FIRST_NAME: Mona
           LAST_NAME: Octocat
