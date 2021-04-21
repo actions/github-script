@@ -7,20 +7,17 @@ export const wrapRequire = new Proxy(__non_webpack_require__, {
       return target.apply(thisArg, [moduleID])
     }
 
-    try {
-      return target.apply(thisArg, [moduleID])
-    } catch (err) {
-      const modulePath = target.resolve.apply(thisArg, [
-        moduleID,
-        {
-          // Webpack does not have an escape hatch for getting the actual
-          // module, other than `eval`.
-          paths: eval('module').paths.concat(process.cwd())
-        }
-      ])
+    const modulePath = target.resolve.apply(thisArg, [
+      moduleID,
+      {
+        // Search the current working directory first, then the existing paths.
+        // Webpack does not have an escape hatch for getting the actual
+        // module, other than `eval`.
+        paths: [process.cwd(), ...eval('module').paths]
+      }
+    ])
 
-      return target.apply(thisArg, [modulePath])
-    }
+    return target.apply(thisArg, [modulePath])
   },
 
   get: (target, prop, receiver) => {
