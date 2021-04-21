@@ -8,6 +8,7 @@ jobs:
   test-return:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - id: output-set
         uses: ./
         with:
@@ -22,6 +23,7 @@ jobs:
   test-relative-require:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - id: output-set
         uses: ./
         with:
@@ -36,6 +38,7 @@ jobs:
   test-npm-require:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - id: output-set
         uses: ./
         with:
