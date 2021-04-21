@@ -10,7 +10,9 @@ export const wrapRequire = new Proxy(__non_webpack_require__, {
     try {
       return target.apply(thisArg, [moduleID])
     } catch (err) {
-      return target.resolve(moduleID, {paths: [...module.paths, process.cwd()]})
+      return target.resolve(moduleID, {
+        paths: module.paths.concat(process.cwd())
+      })
     }
   },
 

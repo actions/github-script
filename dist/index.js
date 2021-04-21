@@ -2467,7 +2467,9 @@ const wrapRequire = new Proxy(require, {
             return target.apply(thisArg, [moduleID]);
         }
         catch (err) {
-            return target.resolve(moduleID, { paths: [...module.paths, process.cwd()] });
+            return target.resolve(moduleID, {
+                paths: module.paths.concat(process.cwd())
+            });
         }
     },
     get: (target, prop, receiver) => {
