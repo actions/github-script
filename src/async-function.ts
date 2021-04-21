@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import {Context} from '@actions/github/lib/context'
-import {GitHub} from '@actions/github/lib/utils'
+import { Context } from '@actions/github/lib/context'
+import { GitHub } from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 

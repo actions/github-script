@@ -4,6 +4,8 @@ import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import {callAsyncFunction} from './async-function'
 
+declare const __non_webpack_require__: typeof require
+
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
 
@@ -29,7 +31,7 @@ async function main(): Promise<void> {
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
-    {require: require, github, context, core, glob, io},
+    {require: __non_webpack_require__, github, context, core, glob, io},
     script
   )
 
