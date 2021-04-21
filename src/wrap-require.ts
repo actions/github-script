@@ -13,6 +13,8 @@ export const wrapRequire = new Proxy(__non_webpack_require__, {
       const modulePath = target.resolve.apply(thisArg, [
         moduleID,
         {
+          // Webpack does not have an escape hatch for getting the actual
+          // module, other than `eval`.
           paths: eval('module').paths.concat(process.cwd())
         }
       ])
