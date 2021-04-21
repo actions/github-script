@@ -2885,6 +2885,43 @@ module.exports = require("assert");
 
 /***/ }),
 
+/***/ 366:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "wrapRequire", function() { return wrapRequire; });
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(622);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
+
+const wrapRequire = new Proxy(require, {
+    apply: (target, thisArg, [moduleID]) => {
+        if (moduleID.startsWith('.')) {
+            moduleID = path__WEBPACK_IMPORTED_MODULE_0__.resolve(moduleID);
+            return target.apply(thisArg, [moduleID]);
+        }
+        try {
+            return target.apply(thisArg, [moduleID]);
+        }
+        catch (err) {
+            const modulePath = target.resolve.apply(thisArg, [
+                moduleID,
+                {
+                    // Webpack does not have an escape hatch for getting the actual
+                    // module, other than `eval`.
+                    paths: eval('module').paths.concat(process.cwd())
+                }
+            ]);
+            return target.apply(thisArg, [modulePath]);
+        }
+    },
+    get: (target, prop, receiver) => {
+        Reflect.get(target, prop, receiver);
+    }
+});
+
+
+/***/ }),
+
 /***/ 413:
 /***/ (function(module) {
 
@@ -6121,7 +6158,11 @@ function callAsyncFunction(args, source) {
     return fn(...Object.values(args));
 }
 
+// EXTERNAL MODULE: ./src/wrap-require.ts
+var wrap_require = __webpack_require__(366);
+
 // CONCATENATED MODULE: ./src/main.ts
+
 
 
 
@@ -6144,7 +6185,15 @@ async function main() {
     const github = Object(lib_github.getOctokit)(token, opts);
     const script = Object(core.getInput)('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-    const result = await callAsyncFunction({ require: __webpack_require__(875), github, context: lib_github.context, core: core, glob: glob, io: io }, script);
+    const result = await callAsyncFunction({
+        require: wrap_require.wrapRequire,
+        __original_require__: require,
+        github,
+        context: lib_github.context,
+        core: core,
+        glob: glob,
+        io: io
+    }, script);
     let encoding = Object(core.getInput)('result-encoding');
     encoding = encoding ? encoding : 'json';
     let output;
@@ -6900,25 +6949,6 @@ function expand(str, isTop) {
 }
 
 
-
-/***/ }),
-
-/***/ 875:
-/***/ (function(module) {
-
-function webpackEmptyContext(req) {
-	if (typeof req === 'number' && __webpack_require__.m[req])
-  return __webpack_require__(req);
-try { return require(req) }
-catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e }
-var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 875;
 
 /***/ }),
 
@@ -8743,14 +8773,15 @@ function regExpEscape (s) {
 /******/ function(__webpack_require__) { // webpackRuntimeModules
 /******/ 	"use strict";
 /******/ 
-/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	/* webpack/runtime/compat get default export */
 /******/ 	!function() {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = function(exports) {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function getDefault() { return module['default']; } :
+/******/ 				function getModuleExports() { return module; };
+/******/ 			__webpack_require__.d(getter, 'a', getter);
+/******/ 			return getter;
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -8762,6 +8793,17 @@ function regExpEscape (s) {
 /******/ 			if(!hasOwnProperty.call(exports, name)) {
 /******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -8781,18 +8823,6 @@ function regExpEscape (s) {
 /******/ 			Object.defineProperty(ns, 'default', { enumerable: true, value: value });
 /******/ 			if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
 /******/ 			return ns;
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	!function() {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = function(module) {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				function getDefault() { return module['default']; } :
-/******/ 				function getModuleExports() { return module; };
-/******/ 			__webpack_require__.d(getter, 'a', getter);
-/******/ 			return getter;
 /******/ 		};
 /******/ 	}();
 /******/ 	

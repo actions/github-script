@@ -18,6 +18,12 @@ arguments will be provided:
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
+- `require` A proxy wrapper around the normal Node.js `require` to enable
+  requiring relative paths (relative to the current working directory) and
+  requiring npm packages installed in the current working directory. If for
+  some reason you need the non-wrapped `require`, there is an escape hatch
+  available: `__original_require__` is the original value of `require` without
+  our wrapping applied.
 
 Since the `script` is just a function body, these values will already be
 defined, so you don't have to (see examples below).
@@ -38,7 +44,7 @@ The return value of the script will be in the step's outputs under the
 "result" key.
 
 ```yaml
-- uses: actions/github-script@v3
+- uses: actions/github-script@v4
   id: set-result
   with:
     script: return "Hello!"
@@ -57,7 +63,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 `result-encoding` input:
 
 ```yaml
-- uses: actions/github-script@v3
+- uses: actions/github-script@v4
   id: my-script
   with:
     github-token: ${{secrets.GITHUB_TOKEN}}
@@ -76,7 +82,7 @@ By default, github-script will use the token provided to your workflow.
 
 ```yaml
 - name: View context attributes
-  uses: actions/github-script@v3
+  uses: actions/github-script@v4
   with:
     script: console.log(context)
 ```
@@ -92,7 +98,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -115,7 +121,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -136,7 +142,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -180,7 +186,7 @@ jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -205,7 +211,7 @@ jobs:
   list-issues:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -240,14 +246,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           script: |
-            const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
+            const script = require('./path/to/script.js')
             console.log(script({github, context}))
 ```
-
-_Note that the script path given to `require()` must be an **absolute path** in this case, hence using [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)._
 
 And then export a function from your module:
 
@@ -280,26 +284,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         env:
-          SHA: "${{env.parentSHA}}"
+          SHA: '${{env.parentSHA}}'
         with:
           script: |
-            const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
+            const script = require('./path/to/script.js')
             await script({github, context, core})
 ```
 
 And then export an async function from your module:
 
 ```javascript
-module.exports = async ({ github, context, core }) => {
-    const { SHA } = process.env
-    const commit = await github.repos.getCommit({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        ref: `${SHA}`
-    })
-    core.exportVariable('author', commit.data.commit.author.email);
+module.exports = async ({github, context, core}) => {
+  const {SHA} = process.env
+  const commit = await github.repos.getCommit({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    ref: `${SHA}`
+  })
+  core.exportVariable('author', commit.data.commit.author.email)
 }
 ```
 
@@ -321,10 +325,10 @@ jobs:
       - run: npm ci
       # or one-off:
       - run: npm install execa
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         with:
           script: |
-            const execa = require(`${process.env.GITHUB_WORKSPACE}/node_modules/execa`)
+            const execa = require('execa')
 
             const { stdout } = await execa('echo', ['hello', 'world'])
 
@@ -342,7 +346,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         env:
           FIRST_NAME: Mona
           LAST_NAME: Octocat
