@@ -4,7 +4,7 @@ on:
   push: {branches: main}
 
 jobs:
-  integration:
+  test-return:
     runs-on: ubuntu-latest
     steps:
       - id: output-set
@@ -15,5 +15,33 @@ jobs:
           input-value: output
       - run: |
           if [[ "${{steps.output-set.outputs.result}}" != "output" ]]; then
+            exit 1
+          fi
+
+  test-relative-require:
+    runs-on: ubuntu-latest
+    steps:
+      - id: output-set
+        uses: actions/github-script@main
+        with:
+          script: return require('./package.json').name
+          result-encoding: string
+          input-value: output
+      - run: |
+          if [[ "${{steps.output-set.outputs.result}}" != "github-script" ]]; then
+            exit 1
+          fi
+
+  test-npm-require:
+    runs-on: ubuntu-latest
+    steps:
+      - id: output-set
+        uses: actions/github-script@main
+        with:
+          script: return require('@actions/core/package.json').name
+          result-encoding: string
+          input-value: output
+      - run: |
+          if [[ "${{steps.output-set.outputs.result}}" != "@actions/core" ]]; then
             exit 1
           fi
