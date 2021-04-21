@@ -13,6 +13,7 @@ type AsyncFunctionArguments = {
   glob: typeof glob
   io: typeof io
   require: NodeRequire
+  nativeRequire: NodeRequire
 }
 
 export function callAsyncFunction<T>(

@@ -1,7 +1,5 @@
 import * as path from 'path'
 
-declare const __non_webpack_require__: NodeRequire
-
 export const wrapRequire = new Proxy(__non_webpack_require__, {
   apply: (target, thisArg, [moduleID]) => {
     if (moduleID.startsWith('.')) {

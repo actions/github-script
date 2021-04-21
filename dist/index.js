@@ -2494,6 +2494,7 @@ async function main() {
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({
         require: wrapRequire,
+        nativeRequire: require,
         github,
         context: lib_github.context,
         core: core,
