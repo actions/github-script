@@ -32,7 +32,7 @@ async function main(): Promise<void> {
   const result = await callAsyncFunction(
     {
       require: wrapRequire,
-      nativeRequire: __non_webpack_require__,
+      __original_require__: __non_webpack_require__,
       github,
       context,
       core,
