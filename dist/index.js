@@ -2896,7 +2896,7 @@ module.exports = require("assert");
 const wrapRequire = new Proxy(require, {
     apply: (target, thisArg, [moduleID]) => {
         if (moduleID.startsWith('.')) {
-            moduleID = path__WEBPACK_IMPORTED_MODULE_0__.join(process.cwd(), moduleID);
+            moduleID = path__WEBPACK_IMPORTED_MODULE_0__.resolve(moduleID);
             return target.apply(thisArg, [moduleID]);
         }
         try {
