@@ -6114,6 +6114,9 @@ var glob = __webpack_require__(90);
 // EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
 var io = __webpack_require__(436);
 
+// EXTERNAL MODULE: external "path"
+var external_path_ = __webpack_require__(622);
+
 // CONCATENATED MODULE: ./src/async-function.ts
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 function callAsyncFunction(args, source) {
@@ -6122,6 +6125,7 @@ function callAsyncFunction(args, source) {
 }
 
 // CONCATENATED MODULE: ./src/main.ts
+
 
 
 
@@ -6144,7 +6148,14 @@ async function main() {
     const github = Object(lib_github.getOctokit)(token, opts);
     const script = Object(core.getInput)('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-    const result = await callAsyncFunction({ require: require, github, context: lib_github.context, core: core, glob: glob, io: io }, script);
+    const result = await callAsyncFunction({
+        require: wrapRequire,
+        github,
+        context: lib_github.context,
+        core: core,
+        glob: glob,
+        io: io
+    }, script);
     let encoding = Object(core.getInput)('result-encoding');
     encoding = encoding ? encoding : 'json';
     let output;
@@ -6160,6 +6171,17 @@ async function main() {
     }
     Object(core.setOutput)('result', output);
 }
+const wrapRequire = new Proxy(require, {
+    apply: (target, thisArg, [moduleID]) => {
+        if (moduleID.startsWith('.')) {
+            moduleID = Object(external_path_.join)(process.cwd(), moduleID);
+        }
+        return target.apply(thisArg, [moduleID]);
+    },
+    get: (target, prop, receiver) => {
+        Reflect.get(target, prop, receiver);
+    }
+});
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleError(err) {
     console.error(err);
