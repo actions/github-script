@@ -2,9 +2,10 @@ import * as core from '@actions/core'
 import {context, getOctokit} from '@actions/github'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+import * as path from 'path'
 import {callAsyncFunction} from './async-function'
 
-declare const __non_webpack_require__: typeof require
+declare const __non_webpack_require__: NodeRequire
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
@@ -31,7 +32,14 @@ async function main(): Promise<void> {
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
-    {require: __non_webpack_require__, github, context, core, glob, io},
+    {
+      require: wrapRequire,
+      github,
+      context,
+      core,
+      glob,
+      io
+    },
     script
   )
 
@@ -53,6 +61,19 @@ async function main(): Promise<void> {
 
   core.setOutput('result', output)
 }
+
+const wrapRequire = new Proxy(__non_webpack_require__, {
+  apply: (target, thisArg, [moduleID]) => {
+    if (moduleID.startsWith('.')) {
+      moduleID = path.join(process.cwd(), moduleID)
+    }
+    return target.apply(thisArg, [moduleID])
+  },
+
+  get: (target, prop, receiver) => {
+    Reflect.get(target, prop, receiver)
+  }
+})
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleError(err: any): void {
