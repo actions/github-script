@@ -18,6 +18,18 @@ arguments will be provided:
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
+- `require` Is available, with some caveats:
+  - The location of the module that runs this action is where the Actions
+    runner downloads the github-script action to, so the `require` passed to
+    your script is actually a proxy that intercepts calls to require relative
+    paths and transforms them into an absolute path in the working directory,
+    instead.
+  - If you want to require an npm module in your working directory, you still
+    need to specify the relative path, including `node_modules`, such as
+    `./node_modules/lodash`.
+  - If for some reason you need the non-wrapped `require`, there is an escape
+    hatch available: `__original_require__` is the original value of `require`
+    without our wrapping applied.
 
 Since the `script` is just a function body, these values will already be
 defined, so you don't have to (see examples below).
@@ -243,11 +255,9 @@ jobs:
       - uses: actions/github-script@v3
         with:
           script: |
-            const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
+            const script = require(`./path/to/script.js`)
             console.log(script({github, context}))
 ```
-
-_Note that the script path given to `require()` must be an **absolute path** in this case, hence using [`GITHUB_WORKSPACE`](https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)._
 
 And then export a function from your module:
 
@@ -282,24 +292,24 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/github-script@v3
         env:
-          SHA: "${{env.parentSHA}}"
+          SHA: '${{env.parentSHA}}'
         with:
           script: |
-            const script = require(`${process.env.GITHUB_WORKSPACE}/path/to/script.js`)
+            const script = require(`./path/to/script.js`)
             await script({github, context, core})
 ```
 
 And then export an async function from your module:
 
 ```javascript
-module.exports = async ({ github, context, core }) => {
-    const { SHA } = process.env
-    const commit = await github.repos.getCommit({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        ref: `${SHA}`
-    })
-    core.exportVariable('author', commit.data.commit.author.email);
+module.exports = async ({github, context, core}) => {
+  const {SHA} = process.env
+  const commit = await github.repos.getCommit({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    ref: `${SHA}`
+  })
+  core.exportVariable('author', commit.data.commit.author.email)
 }
 ```
 
@@ -324,12 +334,17 @@ jobs:
       - uses: actions/github-script@v3
         with:
           script: |
-            const execa = require(`${process.env.GITHUB_WORKSPACE}/node_modules/execa`)
+            const execa = require(`./node_modules/execa`)
 
             const { stdout } = await execa('echo', ['hello', 'world'])
 
             console.log(stdout)
 ```
+
+_(Note that at this time, one still has to specify `node_modules` in the
+require path for modules in the working directory of the step that is
+running. Hopefully we will have a solution for this in the future, but not
+quite, yet.)_
 
 ### Use env as input
 
