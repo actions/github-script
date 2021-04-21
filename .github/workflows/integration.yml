@@ -2,13 +2,14 @@ name: Integration
 
 on:
   push: {branches: main}
+  pull_request: {branches: main}
 
 jobs:
   test-return:
     runs-on: ubuntu-latest
     steps:
       - id: output-set
-        uses: actions/github-script@main
+        uses: ./
         with:
           script: return core.getInput('input-value')
           result-encoding: string
@@ -22,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: output-set
-        uses: actions/github-script@main
+        uses: ./
         with:
           script: return require('./package.json').name
           result-encoding: string
@@ -36,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: output-set
-        uses: actions/github-script@main
+        uses: ./
         with:
           script: return require('@actions/core/package.json').name
           result-encoding: string
