@@ -11,7 +11,7 @@ export const wrapRequire = new Proxy(__non_webpack_require__, {
       return target.apply(thisArg, [moduleID])
     } catch (err) {
       return target.resolve(moduleID, {
-        paths: global.module.paths.concat(process.cwd())
+        paths: eval('module').paths.concat(process.cwd())
       })
     }
   },
