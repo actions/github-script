@@ -3,7 +3,7 @@ import * as path from 'path'
 export const wrapRequire = new Proxy(__non_webpack_require__, {
   apply: (target, thisArg, [moduleID]) => {
     if (moduleID.startsWith('.')) {
-      moduleID = path.join(process.cwd(), moduleID)
+      moduleID = path.resolve(moduleID)
       return target.apply(thisArg, [moduleID])
     }
 
