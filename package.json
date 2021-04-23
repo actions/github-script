@@ -1,7 +1,7 @@
 {
   "name": "github-script",
   "description": "A GitHub action for executing a simple script",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "author": "GitHub",
   "license": "MIT",
   "main": "dist/index.js",
@@ -35,7 +35,7 @@
     }
   },
   "dependencies": {
-    "@actions/core": "^1.2.6",
+    "@actions/core": "^1.2.7",
     "@actions/github": "^4.0.0",
     "@actions/glob": "^0.1.1",
     "@actions/io": "^1.0.2",
