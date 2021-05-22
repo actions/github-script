@@ -66,7 +66,6 @@ output of a github-script step. For some workflows, string encoding is preferred
 - uses: actions/github-script@v4
   id: my-script
   with:
-    github-token: ${{secrets.GITHUB_TOKEN}}
     result-encoding: string
     script: return "I will be string (not JSON) encoded!"
 ```
@@ -100,7 +99,6 @@ jobs:
     steps:
       - uses: actions/github-script@v4
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.createComment({
               issue_number: context.issue.number,
@@ -123,7 +121,6 @@ jobs:
     steps:
       - uses: actions/github-script@v4
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.addLabels({
               issue_number: context.issue.number,
@@ -144,7 +141,6 @@ jobs:
     steps:
       - uses: actions/github-script@v4
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             // Get a list of all issues created by the PR opener
             // See: https://octokit.github.io/rest.js/#pagination
@@ -188,7 +184,6 @@ jobs:
     steps:
       - uses: actions/github-script@v4
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const diff_url = context.payload.pull_request.diff_url
             const result = await github.request(diff_url)
@@ -213,7 +208,6 @@ jobs:
     steps:
       - uses: actions/github-script@v4
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const query = `query($owner:String!, $name:String!, $label:String!) {
               repository(owner:$owner, name:$name){
