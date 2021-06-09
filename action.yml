@@ -23,6 +23,9 @@ inputs:
   result-encoding:
     description: Either "string" or "json" (default "json")—how the result will be encoded 
     default: json
+  baseUrl:
+    description: The base URL for the GitHub API service instance 
+    default: string
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
