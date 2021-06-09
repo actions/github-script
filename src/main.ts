@@ -12,6 +12,7 @@ type Options = {
   log?: Console
   userAgent?: string
   previews?: string[]
+  baseUrl?: string
 }
 
 async function main(): Promise<void> {
@@ -19,11 +20,13 @@ async function main(): Promise<void> {
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
+  const baseUrl  = core.getInput('baseUrl')
 
   const opts: Options = {}
   if (debug === 'true') opts.log = console
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
+  if (baseUrl != null) opts.baseUrl = baseUrl
 
   const github = getOctokit(token, opts)
   const script = core.getInput('script', {required: true})
