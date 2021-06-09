@@ -25,7 +25,7 @@ inputs:
     default: json
   baseUrl:
     description: The base URL for the GitHub API service instance 
-    default: string
+    default: https://api.github.com
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
