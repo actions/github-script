@@ -350,3 +350,32 @@ jobs:
 
             console.log(`Hello ${FIRST_NAME} ${LAST_NAME}`)
 ```
+
+### Using a separate GitHub token
+
+The `GITHUB_TOKEN` used by default is scoped to the current repository, see [Authentication in a workflow](https://docs.github.com/actions/reference/authentication-in-a-workflow).
+
+If you need access to a different repository or an API that the `GITHUB_TOKEN` doesn't have permissions to, you can provide your own [PAT](https://help.github.com/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) as a secret using the `github-token` input.
+
+[Learn more about creating and using encrypted secrets](https://docs.github.com/actions/reference/encrypted-secrets)
+
+```yaml
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  apply-label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.MY_PAT }}
+          script: |
+            github.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['Triage']
+            })
+```
