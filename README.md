@@ -100,7 +100,7 @@ jobs:
       - uses: actions/github-script@v4
         with:
           script: |
-            github.issues.createComment({
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -122,7 +122,7 @@ jobs:
       - uses: actions/github-script@v4
         with:
           script: |
-            github.issues.addLabels({
+            github.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -145,7 +145,7 @@ jobs:
             // Get a list of all issues created by the PR opener
             // See: https://octokit.github.io/rest.js/#pagination
             const creator = context.payload.sender.login
-            const opts = github.issues.listForRepo.endpoint.merge({
+            const opts = github.rest.issues.listForRepo.endpoint.merge({
               ...context.issue,
               creator,
               state: 'all'
@@ -162,7 +162,7 @@ jobs:
               }
             }
 
-            await github.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -292,7 +292,7 @@ And then export an async function from your module:
 ```javascript
 module.exports = async ({github, context, core}) => {
   const {SHA} = process.env
-  const commit = await github.repos.getCommit({
+  const commit = await github.rest.repos.getCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
     ref: `${SHA}`
@@ -372,7 +372,7 @@ jobs:
         with:
           github-token: ${{ secrets.MY_PAT }}
           script: |
-            github.issues.addLabels({
+            github.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
