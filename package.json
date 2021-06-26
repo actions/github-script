@@ -37,7 +37,7 @@
   "dependencies": {
     "@actions/core": "^1.4.0",
     "@actions/github": "^5.0.0",
-    "@actions/glob": "^0.1.1",
+    "@actions/glob": "^0.2.0",
     "@actions/io": "^1.0.2",
     "@octokit/core": "^3.2.1",
     "@octokit/plugin-paginate-rest": "^2.6.0",
