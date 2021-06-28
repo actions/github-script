@@ -1,9 +1,9 @@
 ---
 name: "@octokit/types"
-version: 5.5.0
+version: 6.16.7
 type: npm
 summary: Shared TypeScript definitions for Octokit projects
-homepage: https://github.com/octokit/types.ts#readme
+homepage: 
 license: mit
 licenses:
 - sources: LICENSE
