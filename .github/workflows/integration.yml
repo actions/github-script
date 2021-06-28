@@ -1,8 +1,10 @@
 name: Integration
 
 on:
-  push: {branches: main}
-  pull_request: {branches: main}
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   test-return:
@@ -39,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
