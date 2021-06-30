@@ -13,13 +13,8 @@
     "lint": "eslint src __test__",
     "style:check": "run-p --continue-on-error --aggregate-output format:check lint",
     "style:write": "run-p --continue-on-error --aggregate-output format:write lint",
-    "pre-commit": "run-s style:write test build",
-    "test": "jest"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run pre-commit && git add dist/"
-    }
+    "test": "jest",
+    "prepare": "husky install"
   },
   "jest": {
     "preset": "ts-jest",
@@ -50,7 +45,7 @@
     "@vercel/ncc": "^0.23.0",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0",
-    "husky": "^4.2.5",
+    "husky": "^6.0.0",
     "jest": "^26.4.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
