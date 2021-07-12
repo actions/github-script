@@ -35,6 +35,7 @@
     }
   },
   "dependencies": {
+    "@actions/cache": "^1.0.7",
     "@actions/core": "^1.2.7",
     "@actions/github": "^4.0.0",
     "@actions/glob": "^0.1.1",

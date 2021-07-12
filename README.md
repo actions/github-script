@@ -18,6 +18,7 @@ arguments will be provided:
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
+- `cache` A reference to the [@actions/cacbe](https://github.com/actions/toolkit/tree/main/packages/cache) package
 - `require` A proxy wrapper around the normal Node.js `require` to enable
   requiring relative paths (relative to the current working directory) and
   requiring npm packages installed in the current working directory. If for

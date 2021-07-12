@@ -1,3 +1,4 @@
+import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import {context, getOctokit} from '@actions/github'
 import * as glob from '@actions/glob'
@@ -37,7 +38,8 @@ async function main(): Promise<void> {
       context,
       core,
       glob,
-      io
+      io,
+      cache
     },
     script
   )

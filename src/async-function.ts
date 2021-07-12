@@ -1,3 +1,4 @@
+import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
@@ -12,6 +13,7 @@ type AsyncFunctionArguments = {
   github: InstanceType<typeof GitHub>
   glob: typeof glob
   io: typeof io
+  cache: typeof cache
   require: NodeRequire
   __original_require__: NodeRequire
 }
