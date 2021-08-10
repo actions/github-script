@@ -1,10 +1,10 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import { context, getOctokit } from '@actions/github'
+import {context, getOctokit} from '@actions/github'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
-import { callAsyncFunction } from './async-function'
-import { wrapRequire } from './wrap-require'
+import {callAsyncFunction} from './async-function'
+import {wrapRequire} from './wrap-require'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
@@ -16,7 +16,7 @@ type Options = {
 }
 
 async function main(): Promise<void> {
-  const token = core.getInput('github-token', { required: true })
+  const token = core.getInput('github-token', {required: true})
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
@@ -27,7 +27,7 @@ async function main(): Promise<void> {
   if (previews != null) opts.previews = previews.split(',')
 
   const github = getOctokit(token, opts)
-  const script = core.getInput('script', { required: true })
+  const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
