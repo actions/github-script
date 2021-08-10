@@ -2,11 +2,11 @@ name: Licensed
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
-  repository_dispatch:
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   test:
@@ -14,16 +14,11 @@ jobs:
     name: Check licenses
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
       - run: npm ci
       - name: Install licensed
-        run: |-
+        run: |
           cd $RUNNER_TEMP
-          curl -Lfs -o licensed.tar.gz https://github.com/github/licensed/releases/download/2.9.2/licensed-2.9.2-linux-x64.tar.gz
+          curl -Lfs -o licensed.tar.gz https://github.com/github/licensed/releases/download/2.12.2/licensed-2.12.2-linux-x64.tar.gz
           sudo tar -xzf licensed.tar.gz
           sudo mv licensed /usr/local/bin/licensed
       - run: licensed status
