@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 import {context, getOctokit} from '@actions/github'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
@@ -36,6 +37,7 @@ async function main(): Promise<void> {
       github,
       context,
       core,
+      exec,
       glob,
       io
     },

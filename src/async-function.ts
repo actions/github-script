@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
@@ -10,6 +11,7 @@ type AsyncFunctionArguments = {
   context: Context
   core: typeof core
   github: InstanceType<typeof GitHub>
+  exec: typeof exec
   glob: typeof glob
   io: typeof io
   require: NodeRequire
