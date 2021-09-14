@@ -304,7 +304,10 @@ module.exports = async ({github, context, core}) => {
 
 ### Use npm packages
 
-Like importing your own files above, you can also use installed modules:
+Like importing your own files above, you can also use installed modules.
+Note that this is achieved with a wrapper on top `require`, so if you're
+trying to require a module inside your own file, you might need to import
+it externally or pass the `require` wrapper to your file:
 
 ```yaml
 on: push
