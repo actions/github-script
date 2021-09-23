@@ -35,14 +35,14 @@
     }
   },
   "dependencies": {
-    "@actions/core": "^1.2.7",
+    "@actions/core": "^1.5.0",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^4.0.0",
-    "@actions/glob": "^0.1.1",
-    "@actions/io": "^1.0.2",
-    "@octokit/core": "^3.2.1",
-    "@octokit/plugin-paginate-rest": "^2.6.0",
-    "@octokit/plugin-rest-endpoint-methods": "4.2.1"
+    "@actions/glob": "^0.1.2",
+    "@actions/io": "^1.1.1",
+    "@octokit/core": "^3.5.1",
+    "@octokit/plugin-paginate-rest": "^2.16.4",
+    "@octokit/plugin-rest-endpoint-methods": "^4.2.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
