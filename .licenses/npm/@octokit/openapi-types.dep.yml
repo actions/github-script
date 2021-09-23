@@ -1,6 +1,6 @@
 ---
 name: "@octokit/openapi-types"
-version: 10.4.0
+version: 10.5.0
 type: npm
 summary: Generated TypeScript definitions based on GitHub's OpenAPI spec for api.github.com
 homepage: 
