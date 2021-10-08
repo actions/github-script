@@ -298,7 +298,7 @@ And then export an async function from your module:
 ```javascript
 module.exports = async ({github, context, core}) => {
   const {SHA} = process.env
-  const commit = await github.repos.getCommit({
+  const commit = await github.rest.repos.getCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
     ref: `${SHA}`
