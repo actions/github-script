@@ -27,7 +27,7 @@ arguments will be provided:
   our wrapping applied.
 
 Since the `script` is just a function body, these values will already be
-defined, so you don't have to (see examples below).
+defined, so you don't have to import them (see examples below).
 
 See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
