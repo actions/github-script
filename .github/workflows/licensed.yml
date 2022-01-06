@@ -14,11 +14,11 @@ jobs:
     name: Check licenses
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # prefer to use a full fetch for licensed workflows
+      # https://github.com/jonabc/setup-licensed/releases/tag/v1.1.1
+      - uses: jonabc/setup-licensed@82c5f4d19e8968efa74a25b132922382c2671fe2
+        with:
+          version: '3.x'
       - run: npm ci
-      - name: Install licensed
-        run: |
-          cd $RUNNER_TEMP
-          curl -Lfs -o licensed.tar.gz https://github.com/github/licensed/releases/download/2.12.2/licensed-2.12.2-linux-x64.tar.gz
-          sudo tar -xzf licensed.tar.gz
-          sudo mv licensed /usr/local/bin/licensed
       - run: licensed status
