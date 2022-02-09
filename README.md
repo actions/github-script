@@ -338,6 +338,31 @@ jobs:
             console.log(stdout)
 ```
 
+### Use ESM `import`
+
+To import an ESM file, you'll need to reference your script by an absolute path and ensure you have a `package.json` file with `"type": "module"` specified.
+
+For a script in your repository `src/print-stuff.js`:
+```js
+export default function printStuff() { console.log('stuff') }
+```
+
+```yaml
+on: push
+
+jobs:
+  print-stuff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const { default: printStuff } = await import('${{ github.workspace }}/src/print-stuff.js')
+
+            await printStuff()
+```
+
 ### Use env as input
 
 You can set env vars to use them in your script:
