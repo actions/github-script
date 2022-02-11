@@ -32,7 +32,15 @@ defined, so you don't have to import them (see examples below).
 See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
 
-## Breaking changes in V5
+## Breaking Changes
+
+### Breaking changes in V6
+
+Version 6 of this action updated the runtime to Node 16 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#example-using-nodejs-v16
+
+All scripts are now run with Node 16 instead of Node 12 and are affected by any breaking changes between Node 12 and 16.
+
+### Breaking changes in V5
 
 Version 5 of this action includes the version 5 of `@actions/github` and `@octokit/plugin-rest-endpoint-methods`. As part of this update, the Octokit context available via `github` no longer has REST methods directly. These methods are available via `github.rest.*` - https://github.com/octokit/plugin-rest-endpoint-methods.js/releases/tag/v5.0.0
 
@@ -50,7 +58,7 @@ The return value of the script will be in the step's outputs under the
 "result" key.
 
 ```yaml
-- uses: actions/github-script@v5
+- uses: actions/github-script@v6
   id: set-result
   with:
     script: return "Hello!"
@@ -69,7 +77,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 `result-encoding` input:
 
 ```yaml
-- uses: actions/github-script@v5
+- uses: actions/github-script@v6
   id: my-script
   with:
     result-encoding: string
@@ -87,7 +95,7 @@ By default, github-script will use the token provided to your workflow.
 
 ```yaml
 - name: View context attributes
-  uses: actions/github-script@v5
+  uses: actions/github-script@v6
   with:
     script: console.log(context)
 ```
@@ -103,7 +111,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           script: |
             github.rest.issues.createComment({
@@ -125,7 +133,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           script: |
             github.rest.issues.addLabels({
@@ -145,7 +153,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           script: |
             // Get a list of all issues created by the PR opener
@@ -188,7 +196,7 @@ jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           script: |
             const diff_url = context.payload.pull_request.diff_url
@@ -212,7 +220,7 @@ jobs:
   list-issues:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           script: |
             const query = `query($owner:String!, $name:String!, $label:String!) {
@@ -246,7 +254,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           script: |
             const script = require('./path/to/script.js')
@@ -284,7 +292,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         env:
           SHA: '${{env.parentSHA}}'
         with:
@@ -328,7 +336,7 @@ jobs:
       - run: npm ci
       # or one-off:
       - run: npm install execa
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           script: |
             const execa = require('execa')
@@ -349,7 +357,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         env:
           FIRST_NAME: Mona
           LAST_NAME: Octocat
@@ -377,7 +385,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.MY_PAT }}
           script: |
