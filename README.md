@@ -146,6 +146,8 @@ jobs:
 
 ### Welcome a first-time contributor
 
+You can format text in comments using the same [Markdown syntax](https://docs.github.com/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) as the GitHub web interface:
+
 ```yaml
 on: pull_request
 
@@ -180,7 +182,9 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Welcome, new contributor!'
+              body: `**Welcome**, new contributor!
+
+                Please make sure you're read our [contributing guide](CONTRIBUTING.md) and we look forward to reviewing your Pull request shortly ✨`
             })
 ```
 
