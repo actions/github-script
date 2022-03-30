@@ -149,7 +149,7 @@ jobs:
 You can format text in comments using the same [Markdown syntax](https://docs.github.com/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) as the GitHub web interface:
 
 ```yaml
-on: pull_request
+on: pull_request_target
 
 jobs:
   welcome:
