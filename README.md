@@ -166,16 +166,18 @@ jobs:
               creator,
               state: 'all'
             })
-            const issues = await github.paginate(opts)
-
-            for (const issue of issues) {
-              if (issue.number === context.issue.number) {
-                continue
+            
+            const issues = await github.paginate(opts, (response, done) => {
+              const pr = response.data.find((issue) => issue.number !== context.issue.number && issue.pull_request)
+              
+              if (pr) {
+                done() // Stop paginating
+                return pr
               }
+            })
 
-              if (issue.pull_request) {
-                return // Creator is already a contributor.
-              }
+            if (issues.length) {
+              return
             }
 
             await github.rest.issues.createComment({
