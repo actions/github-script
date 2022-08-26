@@ -1,19 +1,20 @@
+name: CI
+
 on:
-  push: {branches: master}
-  pull_request: {branches: master}
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with: {node-version: 13.x}
-      - uses: actions/cache@v1
+      - uses: actions/setup-node@v2
         with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
+          node-version: 12
+          cache: npm
       - run: npm ci
       - run: npm run style:check
       - run: npm test

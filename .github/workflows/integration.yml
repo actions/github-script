@@ -1,17 +1,59 @@
+name: Integration
+
 on:
-  push: {branches: master}
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  integration:
+  test-return:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - id: output-set
-        uses: actions/github-script@master
+        uses: ./
         with:
           script: return core.getInput('input-value')
           result-encoding: string
           input-value: output
       - run: |
           if [[ "${{steps.output-set.outputs.result}}" != "output" ]]; then
+            exit 1
+          fi
+
+  test-relative-require:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: output-set
+        uses: ./
+        with:
+          script: return require('./package.json').name
+          result-encoding: string
+          input-value: output
+      - run: |
+          if [[ "${{steps.output-set.outputs.result}}" != "github-script" ]]; then
+            exit 1
+          fi
+
+  test-npm-require:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
+          restore-keys: ${{runner.os}}-npm-
+      - run: npm ci
+      - id: output-set
+        uses: ./
+        with:
+          script: return require('@actions/core/package.json').name
+          result-encoding: string
+          input-value: output
+      - run: |
+          if [[ "${{steps.output-set.outputs.result}}" != "@actions/core" ]]; then
             exit 1
           fi

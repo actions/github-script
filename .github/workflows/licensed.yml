@@ -1,0 +1,24 @@
+name: Licensed
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Check licenses
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # prefer to use a full fetch for licensed workflows
+      # https://github.com/jonabc/setup-licensed/releases/tag/v1.1.1
+      - uses: jonabc/setup-licensed@82c5f4d19e8968efa74a25b132922382c2671fe2
+        with:
+          version: '3.x'
+      - run: npm ci
+      - run: licensed status
