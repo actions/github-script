@@ -21,8 +21,17 @@ inputs:
   previews:
     description: A comma-separated list of API previews to accept
   result-encoding:
-    description: Either "string" or "json" (default "json")—how the result will be encoded 
+    description: Either "string" or "json" (default "json")—how the result will be encoded
     default: json
+  retries:
+    description: "The number of times to retry a request"
+    default: "0"
+  retry-after:
+    description: "The number of seconds between retries"
+    default: "0"
+  do-not-retry:
+    description: "A comma separated list of status codes that will NOT be retried. Example: '400,500'"
+    default: ""
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
