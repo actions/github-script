@@ -27,10 +27,10 @@ inputs:
     description: "The number of times to retry a request"
     default: "0"
   retry-after:
-    description: "The number of seconds between retries"
+    description: "The number of seconds between retries. No effect unless `retries` is set."
     default: "0"
   do-not-retry:
-    description: "A comma separated list of status codes that will NOT be retried. Example: '400,500'"
+    description: "A comma separated list of status codes that will NOT be retried. Example: '400,500'. No effect unless `retries` is set."
     default: ""
 outputs:
   result:
