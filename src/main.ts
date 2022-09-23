@@ -5,6 +5,12 @@ import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import {retry} from '@octokit/plugin-retry'
 import {callAsyncFunction} from './async-function'
+import {
+  getRetryOptions,
+  parseNumberArray,
+  RequestOptions,
+  RetryOptions
+} from './retry-options'
 import {wrapRequire} from './wrap-require'
 
 process.on('unhandledRejection', handleError)
@@ -14,14 +20,8 @@ type Options = {
   log?: Console
   userAgent?: string
   previews?: string[]
-  retry?: {
-    doNotRetry?: number[]
-    enabled?: boolean
-  }
-  request?: {
-    retries: number
-    retryAfter: number
-  }
+  retry?: RetryOptions
+  request?: RequestOptions
 }
 
 async function main(): Promise<void> {
@@ -32,34 +32,18 @@ async function main(): Promise<void> {
   const retries = parseInt(core.getInput('retries'))
   const retryAfter = parseInt(core.getInput('retry-after'))
   const doNotRetry = parseNumberArray(core.getInput('do-not-retry'))
+  const [retryOpts, requestOpts] = getRetryOptions(
+    retries,
+    retryAfter,
+    doNotRetry
+  )
 
   const opts: Options = {}
   if (debug === 'true') opts.log = console
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
-
-  if (retries > 0) {
-    if (doNotRetry.length > 0) {
-      opts.retry = {doNotRetry}
-    }
-
-    opts.request = {
-      retries,
-      retryAfter
-    }
-
-    core.info(
-      `GitHub client configured with: (retries: ${retries}, retryAfter: ${retryAfter}, doNotRetry: ${
-        doNotRetry.length == 0
-          ? 'octokit default: [400, 401, 403, 404, 422]'
-          : doNotRetry
-      })`
-    )
-  } else {
-    opts.retry = {
-      enabled: false
-    }
-  }
+  if (retryOpts) opts.retry = retryOpts
+  if (requestOpts) opts.request = requestOpts
 
   const github = getOctokit(token, opts, retry)
 
@@ -103,13 +87,4 @@ async function main(): Promise<void> {
 function handleError(err: any): void {
   console.error(err)
   core.setFailed(`Unhandled error: ${err}`)
-}
-
-function parseNumberArray(listString: string): number[] {
-  if (!listString) {
-    return []
-  }
-
-  const split = listString.trim().split(',')
-  return split.map(x => parseInt(x))
 }
