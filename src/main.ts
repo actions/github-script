@@ -43,7 +43,6 @@ async function main(): Promise<void> {
   if (requestOpts) opts.request = requestOpts
 
   const github = getOctokit(token, opts, retry)
-
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
