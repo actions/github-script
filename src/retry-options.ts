@@ -7,13 +7,11 @@ export type RetryOptions = {
 
 export type RequestOptions = {
   retries?: number
-  retryAfter?: number
 }
 
 export function getRetryOptions(
   retries: number,
-  retryAfter: number,
-  doNotRetry: number[]
+  exemptStatusCodes: number[]
 ): [RetryOptions, RequestOptions] {
   if (retries <= 0) {
     return [{enabled: false}, {}]
@@ -23,19 +21,18 @@ export function getRetryOptions(
     enabled: true
   }
 
-  if (doNotRetry.length > 0) {
-    retryOptions.doNotRetry = doNotRetry
+  if (exemptStatusCodes.length > 0) {
+    retryOptions.doNotRetry = exemptStatusCodes
   }
 
   const requestOptions: RequestOptions = {
-    retries,
-    retryAfter: retryAfter
+    retries
   }
 
   core.info(
     `GitHub client configured with: (retries: ${
       requestOptions.retries
-    }, retryAfter: ${requestOptions.retryAfter}, doNotRetry: ${
+    }, retry-exempt-status-code: ${
       retryOptions?.doNotRetry ?? 'octokit default: [400, 401, 403, 404, 422]'
     })`
   )

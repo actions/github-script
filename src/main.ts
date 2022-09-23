@@ -30,13 +30,10 @@ async function main(): Promise<void> {
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
   const retries = parseInt(core.getInput('retries'))
-  const retryAfter = parseInt(core.getInput('retry-after'))
-  const doNotRetry = parseNumberArray(core.getInput('do-not-retry'))
-  const [retryOpts, requestOpts] = getRetryOptions(
-    retries,
-    retryAfter,
-    doNotRetry
+  const exemptStatusCodes = parseNumberArray(
+    core.getInput('retry-exempt-status-codes')
   )
+  const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes)
 
   const opts: Options = {}
   if (debug === 'true') opts.log = console

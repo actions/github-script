@@ -13340,7 +13340,7 @@ function callAsyncFunction(args, source) {
 
 // CONCATENATED MODULE: ./src/retry-options.ts
 
-function getRetryOptions(retries, retryAfter, doNotRetry) {
+function getRetryOptions(retries, exemptStatusCodes) {
     var _a;
     if (retries <= 0) {
         return [{ enabled: false }, {}];
@@ -13348,14 +13348,13 @@ function getRetryOptions(retries, retryAfter, doNotRetry) {
     const retryOptions = {
         enabled: true
     };
-    if (doNotRetry.length > 0) {
-        retryOptions.doNotRetry = doNotRetry;
+    if (exemptStatusCodes.length > 0) {
+        retryOptions.doNotRetry = exemptStatusCodes;
     }
     const requestOptions = {
-        retries,
-        retryAfter: retryAfter
+        retries
     };
-    Object(core.info)(`GitHub client configured with: (retries: ${requestOptions.retries}, retryAfter: ${requestOptions.retryAfter}, doNotRetry: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
+    Object(core.info)(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
     return [retryOptions, requestOptions];
 }
 function parseNumberArray(listString) {
@@ -13410,9 +13409,8 @@ async function main() {
     const userAgent = Object(core.getInput)('user-agent');
     const previews = Object(core.getInput)('previews');
     const retries = parseInt(Object(core.getInput)('retries'));
-    const retryAfter = parseInt(Object(core.getInput)('retry-after'));
-    const doNotRetry = parseNumberArray(Object(core.getInput)('do-not-retry'));
-    const [retryOpts, requestOpts] = getRetryOptions(retries, retryAfter, doNotRetry);
+    const exemptStatusCodes = parseNumberArray(Object(core.getInput)('retry-exempt-status-codes'));
+    const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes);
     const opts = {};
     if (debug === 'true')
         opts.log = console;
