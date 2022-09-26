@@ -13354,7 +13354,7 @@ function getRetryOptions(retries, exemptStatusCodes) {
     const requestOptions = {
         retries
     };
-    Object(core.info)(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
+    Object(core.debug)(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
     return [retryOptions, requestOptions];
 }
 function parseNumberArray(listString) {

@@ -29,7 +29,7 @@ export function getRetryOptions(
     retries
   }
 
-  core.info(
+  core.debug(
     `GitHub client configured with: (retries: ${
       requestOptions.retries
     }, retry-exempt-status-code: ${
