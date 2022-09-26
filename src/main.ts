@@ -3,7 +3,14 @@ import * as exec from '@actions/exec'
 import {context, getOctokit} from '@actions/github'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+import {retry} from '@octokit/plugin-retry'
 import {callAsyncFunction} from './async-function'
+import {
+  getRetryOptions,
+  parseNumberArray,
+  RequestOptions,
+  RetryOptions
+} from './retry-options'
 import {wrapRequire} from './wrap-require'
 
 process.on('unhandledRejection', handleError)
@@ -13,6 +20,8 @@ type Options = {
   log?: Console
   userAgent?: string
   previews?: string[]
+  retry?: RetryOptions
+  request?: RequestOptions
 }
 
 async function main(): Promise<void> {
@@ -20,13 +29,20 @@ async function main(): Promise<void> {
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
+  const retries = parseInt(core.getInput('retries'))
+  const exemptStatusCodes = parseNumberArray(
+    core.getInput('retry-exempt-status-codes')
+  )
+  const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes)
 
   const opts: Options = {}
   if (debug === 'true') opts.log = console
   if (userAgent != null) opts.userAgent = userAgent
   if (previews != null) opts.previews = previews.split(',')
+  if (retryOpts) opts.retry = retryOpts
+  if (requestOpts) opts.request = requestOpts
 
-  const github = getOctokit(token, opts)
+  const github = getOctokit(token, opts, retry)
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
