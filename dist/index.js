@@ -246,7 +246,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOctokitOptions = exports.GitHub = exports.context = void 0;
+exports.getOctokitOptions = exports.GitHub = exports.defaults = exports.context = void 0;
 const Context = __importStar(__webpack_require__(53));
 const Utils = __importStar(__webpack_require__(914));
 // octokit + plugins
@@ -255,13 +255,13 @@ const plugin_rest_endpoint_methods_1 = __webpack_require__(45);
 const plugin_paginate_rest_1 = __webpack_require__(193);
 exports.context = new Context.Context();
 const baseUrl = Utils.getApiBaseUrl();
-const defaults = {
+exports.defaults = {
     baseUrl,
     request: {
         agent: Utils.getProxyAgent(baseUrl)
     }
 };
-exports.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(defaults);
+exports.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(exports.defaults);
 /**
  * Convience function to correctly format Octokit Options to pass into the constructor.
  *
@@ -13322,6 +13322,9 @@ var exec = __webpack_require__(514);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var lib_github = __webpack_require__(438);
 
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/utils.js
+var utils = __webpack_require__(30);
+
 // EXTERNAL MODULE: ./node_modules/@actions/glob/lib/glob.js
 var glob = __webpack_require__(90);
 
@@ -13340,10 +13343,10 @@ function callAsyncFunction(args, source) {
 
 // CONCATENATED MODULE: ./src/retry-options.ts
 
-function getRetryOptions(retries, exemptStatusCodes) {
+function getRetryOptions(retries, exemptStatusCodes, defaultOptions) {
     var _a;
     if (retries <= 0) {
-        return [{ enabled: false }, {}];
+        return [{ enabled: false }, defaultOptions.request];
     }
     const retryOptions = {
         enabled: true
@@ -13351,7 +13354,11 @@ function getRetryOptions(retries, exemptStatusCodes) {
     if (exemptStatusCodes.length > 0) {
         retryOptions.doNotRetry = exemptStatusCodes;
     }
+    // The GitHub type has some defaults for `options.request`
+    // see: https://github.com/actions/toolkit/blob/4fbc5c941a57249b19562015edbd72add14be93d/packages/github/src/utils.ts#L15
+    // We pass these in here so they are not overidden.
     const requestOptions = {
+        ...defaultOptions.request,
         retries
     };
     Object(core.debug)(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
@@ -13401,6 +13408,7 @@ const wrapRequire = new Proxy(require, {
 
 
 
+
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
 async function main() {
@@ -13410,7 +13418,7 @@ async function main() {
     const previews = Object(core.getInput)('previews');
     const retries = parseInt(Object(core.getInput)('retries'));
     const exemptStatusCodes = parseNumberArray(Object(core.getInput)('retry-exempt-status-codes'));
-    const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes);
+    const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
     const opts = {};
     if (debug === 'true')
         opts.log = console;
