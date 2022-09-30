@@ -1,16 +1,13 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import {context, getOctokit} from '@actions/github'
+import {defaults as defaultGitHubOptions} from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import {retry} from '@octokit/plugin-retry'
+import {RequestRequestOptions} from '@octokit/types'
 import {callAsyncFunction} from './async-function'
-import {
-  getRetryOptions,
-  parseNumberArray,
-  RequestOptions,
-  RetryOptions
-} from './retry-options'
+import {getRetryOptions, parseNumberArray, RetryOptions} from './retry-options'
 import {wrapRequire} from './wrap-require'
 
 process.on('unhandledRejection', handleError)
@@ -21,7 +18,7 @@ type Options = {
   userAgent?: string
   previews?: string[]
   retry?: RetryOptions
-  request?: RequestOptions
+  request?: RequestRequestOptions
 }
 
 async function main(): Promise<void> {
@@ -33,7 +30,11 @@ async function main(): Promise<void> {
   const exemptStatusCodes = parseNumberArray(
     core.getInput('retry-exempt-status-codes')
   )
-  const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes)
+  const [retryOpts, requestOpts] = getRetryOptions(
+    retries,
+    exemptStatusCodes,
+    defaultGitHubOptions
+  )
 
   const opts: Options = {}
   if (debug === 'true') opts.log = console
