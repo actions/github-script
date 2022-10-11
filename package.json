@@ -1,7 +1,7 @@
 {
   "name": "github-script",
   "description": "A GitHub action for executing a simple script",
-  "version": "6.0.0",
+  "version": "6.3.2",
   "author": "GitHub",
   "license": "MIT",
   "main": "dist/index.js",
@@ -31,14 +31,15 @@
     }
   },
   "dependencies": {
-    "@actions/core": "^1.8.1",
+    "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
     "@actions/glob": "^0.3.0",
     "@actions/io": "^1.1.1",
     "@octokit/core": "^3.5.1",
     "@octokit/plugin-paginate-rest": "^2.17.0",
-    "@octokit/plugin-rest-endpoint-methods": "^5.13.0"
+    "@octokit/plugin-rest-endpoint-methods": "^6.3.0",
+    "@octokit/plugin-retry": "^3.0.9"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",

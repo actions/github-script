@@ -7,7 +7,7 @@
 This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
 
-To use this action, provide an input named `script` that contains the body of an asynchronous function call. 
+To use this action, provide an input named `script` that contains the body of an asynchronous function call.
 The following arguments will be provided:
 
 - `github` A pre-authenticated
@@ -82,6 +82,47 @@ output of a github-script step. For some workflows, string encoding is preferred
     result-encoding: string
     script: return "I will be string (not JSON) encoded!"
 ```
+
+## Retries
+
+By default, requests made with the `github` instance will not be retried. You can configure this with the `retries` option:
+
+```yaml
+- uses: actions/github-script@v6
+  id: my-script
+  with:
+    result-encoding: string
+    retries: 3
+    script: |
+      github.rest.issues.get({
+        issue_number: context.issue.number,
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+      })
+```
+
+In this example, request failures from `github.rest.issues.get()` will be retried up to 3 times.
+
+You can also configure which status codes should be exempt from retries via the `retry-exempt-status-codes` option:
+
+```yaml
+- uses: actions/github-script@v6
+  id: my-script
+  with:
+    result-encoding: string
+    retries: 3
+    retry-exempt-status-codes: 400,401
+    script: |
+      github.rest.issues.get({
+        issue_number: context.issue.number,
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+      })
+```
+
+By default, the following status codes will not be retried: `400, 401, 403, 404, 422` [(source)](https://github.com/octokit/plugin-retry.js/blob/9a2443746c350b3beedec35cf26e197ea318a261/src/index.ts#L14).
+
+These retries are implemented using the [octokit/plugin-retry.js](https://github.com/octokit/plugin-retry.js) plugin. The retries use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) to space out retries. ([source](https://github.com/octokit/plugin-retry.js/blob/9a2443746c350b3beedec35cf26e197ea318a261/src/error-request.ts#L13))
 
 ## Examples
 
@@ -354,8 +395,11 @@ jobs:
 To import an ESM file, you'll need to reference your script by an absolute path and ensure you have a `package.json` file with `"type": "module"` specified.
 
 For a script in your repository `src/print-stuff.js`:
+
 ```js
-export default function printStuff() { console.log('stuff') }
+export default function printStuff() {
+  console.log('stuff')
+}
 ```
 
 ```yaml
