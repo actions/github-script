@@ -297,7 +297,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/github-script@v6
         with:
           script: |
@@ -335,7 +335,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/github-script@v6
         env:
           SHA: '${{env.parentSHA}}'
@@ -373,8 +373,8 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 14
       - run: npm ci
@@ -409,7 +409,7 @@ jobs:
   print-stuff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/github-script@v6
         with:
           script: |

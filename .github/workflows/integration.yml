@@ -10,7 +10,7 @@ jobs:
   test-return:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: output-set
         uses: ./
         with:
@@ -25,7 +25,7 @@ jobs:
   test-relative-require:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: output-set
         uses: ./
         with:
@@ -40,8 +40,8 @@ jobs:
   test-npm-require:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
