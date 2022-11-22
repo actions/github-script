@@ -6087,7 +6087,10 @@ function onceStrict (fn) {
 __webpack_require__.r(__webpack_exports__);
 var se_namespaceObject = {};
 __webpack_require__.r(se_namespaceObject);
+__webpack_require__.d(se_namespaceObject, "Helper", function() { return Helper; });
 __webpack_require__.d(se_namespaceObject, "createMetaJson", function() { return createMetaJson; });
+__webpack_require__.d(se_namespaceObject, "helper", function() { return helper; });
+__webpack_require__.d(se_namespaceObject, "setHelper", function() { return setHelper; });
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __webpack_require__(186);
@@ -6183,8 +6186,18 @@ var external_fs_ = __webpack_require__(747);
 // CONCATENATED MODULE: ./src/se.ts
 
 
+class Helper {
+    constructor(currentBuild) {
+        this.currentBuild = currentBuild;
+    }
+}
+let helper;
+function setHelper(helperInstance) {
+    helper = helperInstance;
+}
 function createMetaJson(root) {
     const execSync = external_child_process_.execSync;
+    console.log('Run number: ' + helper.currentBuild.runNumber);
     const xmllint = execSync('sudo apt install libxml2-utils', {
         shell: '/bin/bash'
     });

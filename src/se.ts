@@ -1,9 +1,24 @@
+import {context} from '@actions/github'
 import * as child from 'child_process'
 import * as fs from 'fs'
 
+export class Helper {
+  public currentBuild: typeof context
+
+  public constructor(currentBuild: typeof context) {
+    this.currentBuild = currentBuild
+  }
+}
+
+export let helper: Helper
+
+export function setHelper(helperInstance: Helper) {
+  helper = helperInstance
+}
+
 export function createMetaJson(root: string): string[] {
   const execSync = child.execSync
-
+  console.log('Run number: ' + helper.currentBuild.runNumber)
   const xmllint = execSync('sudo apt install libxml2-utils', {
     shell: '/bin/bash'
   })
