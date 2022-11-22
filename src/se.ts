@@ -50,7 +50,7 @@ export function createMetaJson(root: string): string[] {
             cd ` +
         root +
         `
-            xmllint --xpath "/*[local-name()='project']/*[local-name()='groupId']/text()" ` +
+            xmllint --xpath "/*[local-name()='project']/*[local-name()='groupId']/text()" .` +
         pom +
         `
             `
@@ -59,7 +59,7 @@ export function createMetaJson(root: string): string[] {
             cd ` +
         root +
         `
-            xmllint --xpath "/*[local-name()='project']/*[local-name()='artifactId']/text()" ` +
+            xmllint --xpath "/*[local-name()='project']/*[local-name()='artifactId']/text()" .` +
         pom +
         `
             `

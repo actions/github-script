@@ -6223,7 +6223,7 @@ function createMetaJson(root) {
             cd ` +
                 root +
                 `
-            xmllint --xpath "/*[local-name()='project']/*[local-name()='groupId']/text()" ` +
+            xmllint --xpath "/*[local-name()='project']/*[local-name()='groupId']/text()" .` +
                 pom +
                 `
             `;
@@ -6231,7 +6231,7 @@ function createMetaJson(root) {
             cd ` +
                 root +
                 `
-            xmllint --xpath "/*[local-name()='project']/*[local-name()='artifactId']/text()" ` +
+            xmllint --xpath "/*[local-name()='project']/*[local-name()='artifactId']/text()" .` +
                 pom +
                 `
             `;
