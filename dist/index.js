@@ -13603,8 +13603,9 @@ var external_fs_ = __webpack_require__(747);
 
 
 class se_Helper {
-    constructor(currentBuild) {
+    constructor(currentBuild, github) {
         this.currentBuild = currentBuild;
+        this.github = github;
     }
     createMetaJson(root) {
         const execSync = external_child_process_.execSync;
@@ -13683,6 +13684,28 @@ class se_Helper {
         }
         return ret;
     }
+    async startCheck(name, status) {
+        const result = await this.github.rest.checks.create({
+            owner: this.currentBuild.repo.owner,
+            repo: this.currentBuild.repo.repo,
+            name: name,
+            head_sha: this.currentBuild.sha,
+            status: status
+        });
+        return result;
+    }
+    async completeCheck(name, check_run_id, conclusion) {
+        const result = await this.github.rest.checks.create({
+            owner: this.currentBuild.repo.owner,
+            repo: this.currentBuild.repo.repo,
+            name: name,
+            check_run_id: check_run_id,
+            head_sha: this.currentBuild.sha,
+            status: 'completed',
+            conclusion: conclusion
+        });
+        return result;
+    }
 }
 
 // EXTERNAL MODULE: external "path"
@@ -13746,7 +13769,7 @@ async function main() {
         opts.request = requestOpts;
     const github = Object(lib_github.getOctokit)(token, opts, dist_node.retry);
     const script = Object(core.getInput)('script', { required: true });
-    const se = new se_Helper(lib_github.context);
+    const se = new se_Helper(lib_github.context, github);
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({
         require: wrapRequire,

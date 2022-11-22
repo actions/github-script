@@ -1,12 +1,18 @@
 import {context} from '@actions/github'
+import {GitHub} from '@actions/github/lib/utils'
 import * as child from 'child_process'
 import * as fs from 'fs'
 
 export class Helper {
-  public currentBuild: typeof context
+  currentBuild: typeof context
+  github: InstanceType<typeof GitHub>
 
-  public constructor(currentBuild: typeof context) {
+  public constructor(
+    currentBuild: typeof context,
+    github: InstanceType<typeof GitHub>
+  ) {
     this.currentBuild = currentBuild
+    this.github = github
   }
 
   public createMetaJson(root: string) {
@@ -97,5 +103,33 @@ export class Helper {
       }
     }
     return ret
+  }
+
+  public async startCheck(name: string, status: string) {
+    const result = await this.github.rest.checks.create({
+      owner: this.currentBuild.repo.owner,
+      repo: this.currentBuild.repo.repo,
+      name: name,
+      head_sha: this.currentBuild.sha,
+      status: status
+    })
+    return result
+  }
+
+  public async completeCheck(
+    name: string,
+    check_run_id: string,
+    conclusion: string
+  ) {
+    const result = await this.github.rest.checks.create({
+      owner: this.currentBuild.repo.owner,
+      repo: this.currentBuild.repo.repo,
+      name: name,
+      check_run_id: check_run_id,
+      head_sha: this.currentBuild.sha,
+      status: 'completed',
+      conclusion: conclusion
+    })
+    return result
   }
 }

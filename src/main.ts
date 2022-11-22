@@ -46,7 +46,7 @@ async function main(): Promise<void> {
 
   const github = getOctokit(token, opts, retry)
   const script = core.getInput('script', {required: true})
-  const se = new helper.Helper(context)
+  const se = new helper.Helper(context, github)
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
