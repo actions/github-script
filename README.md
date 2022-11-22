@@ -19,6 +19,7 @@ The following arguments will be provided:
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
 - `exec` A reference to the [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package
 - `require` A proxy wrapper around the normal Node.js `require` to enable
+- 'se' A library for resusbale functions
   requiring relative paths (relative to the current working directory) and
   requiring npm packages installed in the current working directory. If for
   some reason you need the non-wrapped `require`, there is an escape hatch
