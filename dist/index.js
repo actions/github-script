@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(858);
+/******/ 		return __webpack_require__(226);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -6075,6 +6075,257 @@ function onceStrict (fn) {
   f.onceError = name + " shouldn't be called more than once"
   f.called = false
   return f
+}
+
+
+/***/ }),
+
+/***/ 226:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var se_namespaceObject = {};
+__webpack_require__.r(se_namespaceObject);
+__webpack_require__.d(se_namespaceObject, "createMetaJson", function() { return createMetaJson; });
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(186);
+
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __webpack_require__(514);
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var lib_github = __webpack_require__(438);
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/utils.js
+var utils = __webpack_require__(30);
+
+// EXTERNAL MODULE: ./node_modules/@actions/glob/lib/glob.js
+var glob = __webpack_require__(90);
+
+// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
+var io = __webpack_require__(436);
+
+// EXTERNAL MODULE: ./node_modules/@octokit/plugin-retry/dist-node/index.js
+var dist_node = __webpack_require__(745);
+
+// CONCATENATED MODULE: ./src/async-function.ts
+const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
+function callAsyncFunction(args, source) {
+    const fn = new AsyncFunction(...Object.keys(args), source);
+    return fn(...Object.values(args));
+}
+
+// CONCATENATED MODULE: ./src/retry-options.ts
+
+function getRetryOptions(retries, exemptStatusCodes, defaultOptions) {
+    var _a;
+    if (retries <= 0) {
+        return [{ enabled: false }, defaultOptions.request];
+    }
+    const retryOptions = {
+        enabled: true
+    };
+    if (exemptStatusCodes.length > 0) {
+        retryOptions.doNotRetry = exemptStatusCodes;
+    }
+    // The GitHub type has some defaults for `options.request`
+    // see: https://github.com/actions/toolkit/blob/4fbc5c941a57249b19562015edbd72add14be93d/packages/github/src/utils.ts#L15
+    // We pass these in here so they are not overidden.
+    const requestOptions = {
+        ...defaultOptions.request,
+        retries
+    };
+    Object(core.debug)(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
+    return [retryOptions, requestOptions];
+}
+function parseNumberArray(listString) {
+    if (!listString) {
+        return [];
+    }
+    const split = listString.trim().split(',');
+    return split.map(x => parseInt(x));
+}
+
+// EXTERNAL MODULE: external "path"
+var external_path_ = __webpack_require__(622);
+
+// CONCATENATED MODULE: ./src/wrap-require.ts
+
+const wrapRequire = new Proxy(require, {
+    apply: (target, thisArg, [moduleID]) => {
+        if (moduleID.startsWith('.')) {
+            moduleID = Object(external_path_.resolve)(moduleID);
+            return target.apply(thisArg, [moduleID]);
+        }
+        const modulePath = target.resolve.apply(thisArg, [
+            moduleID,
+            {
+                // Webpack does not have an escape hatch for getting the actual
+                // module, other than `eval`.
+                paths: [process.cwd()]
+            }
+        ]);
+        return target.apply(thisArg, [modulePath]);
+    },
+    get: (target, prop, receiver) => {
+        Reflect.get(target, prop, receiver);
+    }
+});
+
+// EXTERNAL MODULE: external "child_process"
+var external_child_process_ = __webpack_require__(129);
+
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __webpack_require__(747);
+
+// CONCATENATED MODULE: ./src/se.ts
+
+
+function createMetaJson(root) {
+    const execSync = external_child_process_.execSync;
+    const xmllint = execSync('sudo apt install libxml2-utils', {
+        shell: '/bin/bash'
+    });
+    console.log(xmllint.toString());
+    const command = `#!/bin/bash
+    cd ` +
+        root +
+        `
+    find . -name 'pom.xml' -type f > ` +
+        root +
+        `poms.txt
+    `;
+    const output = execSync(command, { shell: '/bin/bash' });
+    console.log(output.toString());
+    const ret = [];
+    const poms = Object(external_fs_.readFileSync)(root + 'poms.txt', 'utf8').toString();
+    const ownersFile = Object(external_fs_.readFileSync)(root + '.github/CODEOWNERS', 'utf8')
+        .toString();
+    for (const pomRaw of poms.split('\n')) {
+        const pom = pomRaw.replace('./', '/');
+        const name = pom.split('/')[2];
+        if (pom.startsWith('/components') &&
+            pom.indexOf(name + '-deployment/') > -1) {
+            const owners = [];
+            const reviewers = [];
+            for (const ownerRaw of ownersFile.split('\n')) {
+                const path = ownerRaw.split(' ')[0];
+                if (path.length > 3 &&
+                    ownerRaw.indexOf(' @') > -1 &&
+                    pom.startsWith(path)) {
+                    owners.push(ownerRaw.split(' ')[1]);
+                    reviewers.push(ownerRaw.split(' ')[1]);
+                }
+            }
+            const gid = `#!/bin/bash
+            cd ` +
+                root +
+                `
+            xmllint --xpath "/*[local-name()='project']/*[local-name()='groupId']/text()" ` +
+                pom +
+                `
+            `;
+            const aid = `#!/bin/bash
+            cd ` +
+                root +
+                `
+            xmllint --xpath "/*[local-name()='project']/*[local-name()='artifactId']/text()" ` +
+                pom +
+                `
+            `;
+            const groupId = execSync(gid, { shell: '/bin/bash' }).toString();
+            console.log(groupId);
+            const artifactId = execSync(aid, { shell: '/bin/bash' }).toString();
+            console.log(artifactId);
+            const meta = {};
+            meta['manifestSource'] = pom.replace('/pom.xml', '').substring(1);
+            meta['manifestTarget'] =
+                'helm-chart/components/charts/' +
+                    name +
+                    '/' +
+                    name +
+                    '-deployment/templates/';
+            meta['owners'] = owners;
+            meta['reviewers'] = reviewers;
+            meta['branchName'] = name + '-deployment';
+            meta['mavenGroupId'] = groupId.trim();
+            meta['mavenArtifactId'] = artifactId.trim();
+            console.log(JSON.stringify(meta));
+            ret.push(pomRaw.replace('/pom.xml', '/meta.json').substring(1));
+            Object(external_fs_.writeFileSync)(root + pomRaw.replace('/pom.xml', '/meta.json').substring(1), JSON.stringify(meta));
+        }
+    }
+    return ret;
+}
+
+// CONCATENATED MODULE: ./src/main.ts
+
+
+
+
+
+
+
+
+
+
+
+process.on('unhandledRejection', handleError);
+main().catch(handleError);
+async function main() {
+    const token = Object(core.getInput)('github-token', { required: true });
+    const debug = Object(core.getInput)('debug');
+    const userAgent = Object(core.getInput)('user-agent');
+    const previews = Object(core.getInput)('previews');
+    const retries = parseInt(Object(core.getInput)('retries'));
+    const exemptStatusCodes = parseNumberArray(Object(core.getInput)('retry-exempt-status-codes'));
+    const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
+    const opts = {};
+    if (debug === 'true')
+        opts.log = console;
+    if (userAgent != null)
+        opts.userAgent = userAgent;
+    if (previews != null)
+        opts.previews = previews.split(',');
+    if (retryOpts)
+        opts.retry = retryOpts;
+    if (requestOpts)
+        opts.request = requestOpts;
+    const github = Object(lib_github.getOctokit)(token, opts, dist_node.retry);
+    const script = Object(core.getInput)('script', { required: true });
+    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
+    const result = await callAsyncFunction({
+        require: wrapRequire,
+        __original_require__: require,
+        github,
+        context: lib_github.context,
+        core: core,
+        exec: exec,
+        glob: glob,
+        io: io,
+        se: se_namespaceObject
+    }, script);
+    let encoding = Object(core.getInput)('result-encoding');
+    encoding = encoding ? encoding : 'json';
+    let output;
+    switch (encoding) {
+        case 'json':
+            output = JSON.stringify(result);
+            break;
+        case 'string':
+            output = String(result);
+            break;
+        default:
+            throw new Error('"result-encoding" must be either "string" or "json"');
+    }
+    Object(core.setOutput)('result', output);
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleError(err) {
+    console.error(err);
+    Object(core.setFailed)(`Unhandled error: ${err}`);
 }
 
 
@@ -13319,166 +13570,6 @@ function expand(str, isTop) {
   return expansions;
 }
 
-
-
-/***/ }),
-
-/***/ 858:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __webpack_require__(186);
-
-// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
-var exec = __webpack_require__(514);
-
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var lib_github = __webpack_require__(438);
-
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/utils.js
-var utils = __webpack_require__(30);
-
-// EXTERNAL MODULE: ./node_modules/@actions/glob/lib/glob.js
-var glob = __webpack_require__(90);
-
-// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
-var io = __webpack_require__(436);
-
-// EXTERNAL MODULE: ./node_modules/@octokit/plugin-retry/dist-node/index.js
-var dist_node = __webpack_require__(745);
-
-// CONCATENATED MODULE: ./src/async-function.ts
-const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
-function callAsyncFunction(args, source) {
-    const fn = new AsyncFunction(...Object.keys(args), source);
-    return fn(...Object.values(args));
-}
-
-// CONCATENATED MODULE: ./src/retry-options.ts
-
-function getRetryOptions(retries, exemptStatusCodes, defaultOptions) {
-    var _a;
-    if (retries <= 0) {
-        return [{ enabled: false }, defaultOptions.request];
-    }
-    const retryOptions = {
-        enabled: true
-    };
-    if (exemptStatusCodes.length > 0) {
-        retryOptions.doNotRetry = exemptStatusCodes;
-    }
-    // The GitHub type has some defaults for `options.request`
-    // see: https://github.com/actions/toolkit/blob/4fbc5c941a57249b19562015edbd72add14be93d/packages/github/src/utils.ts#L15
-    // We pass these in here so they are not overidden.
-    const requestOptions = {
-        ...defaultOptions.request,
-        retries
-    };
-    Object(core.debug)(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
-    return [retryOptions, requestOptions];
-}
-function parseNumberArray(listString) {
-    if (!listString) {
-        return [];
-    }
-    const split = listString.trim().split(',');
-    return split.map(x => parseInt(x));
-}
-
-// EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(622);
-
-// CONCATENATED MODULE: ./src/wrap-require.ts
-
-const wrapRequire = new Proxy(require, {
-    apply: (target, thisArg, [moduleID]) => {
-        if (moduleID.startsWith('.')) {
-            moduleID = Object(external_path_.resolve)(moduleID);
-            return target.apply(thisArg, [moduleID]);
-        }
-        const modulePath = target.resolve.apply(thisArg, [
-            moduleID,
-            {
-                // Webpack does not have an escape hatch for getting the actual
-                // module, other than `eval`.
-                paths: [process.cwd()]
-            }
-        ]);
-        return target.apply(thisArg, [modulePath]);
-    },
-    get: (target, prop, receiver) => {
-        Reflect.get(target, prop, receiver);
-    }
-});
-
-// CONCATENATED MODULE: ./src/main.ts
-
-
-
-
-
-
-
-
-
-
-process.on('unhandledRejection', handleError);
-main().catch(handleError);
-async function main() {
-    const token = Object(core.getInput)('github-token', { required: true });
-    const debug = Object(core.getInput)('debug');
-    const userAgent = Object(core.getInput)('user-agent');
-    const previews = Object(core.getInput)('previews');
-    const retries = parseInt(Object(core.getInput)('retries'));
-    const exemptStatusCodes = parseNumberArray(Object(core.getInput)('retry-exempt-status-codes'));
-    const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
-    const opts = {};
-    if (debug === 'true')
-        opts.log = console;
-    if (userAgent != null)
-        opts.userAgent = userAgent;
-    if (previews != null)
-        opts.previews = previews.split(',');
-    if (retryOpts)
-        opts.retry = retryOpts;
-    if (requestOpts)
-        opts.request = requestOpts;
-    const github = Object(lib_github.getOctokit)(token, opts, dist_node.retry);
-    const script = Object(core.getInput)('script', { required: true });
-    // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-    const result = await callAsyncFunction({
-        require: wrapRequire,
-        __original_require__: require,
-        github,
-        context: lib_github.context,
-        core: core,
-        exec: exec,
-        glob: glob,
-        io: io
-    }, script);
-    let encoding = Object(core.getInput)('result-encoding');
-    encoding = encoding ? encoding : 'json';
-    let output;
-    switch (encoding) {
-        case 'json':
-            output = JSON.stringify(result);
-            break;
-        case 'string':
-            output = String(result);
-            break;
-        default:
-            throw new Error('"result-encoding" must be either "string" or "json"');
-    }
-    Object(core.setOutput)('result', output);
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function handleError(err) {
-    console.error(err);
-    Object(core.setFailed)(`Unhandled error: ${err}`);
-}
 
 
 /***/ }),
