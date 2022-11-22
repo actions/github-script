@@ -8,8 +8,8 @@ import {retry} from '@octokit/plugin-retry'
 import {RequestRequestOptions} from '@octokit/types'
 import {callAsyncFunction} from './async-function'
 import {getRetryOptions, parseNumberArray, RetryOptions} from './retry-options'
+import * as helper from './se'
 import {wrapRequire} from './wrap-require'
-import * as se from './se'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
@@ -46,6 +46,7 @@ async function main(): Promise<void> {
 
   const github = getOctokit(token, opts, retry)
   const script = core.getInput('script', {required: true})
+  const se = new helper.Helper(context)
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(

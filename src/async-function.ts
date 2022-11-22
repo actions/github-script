@@ -4,7 +4,7 @@ import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
-import * as se from './se'
+import * as helper from './se'
 
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor
 
@@ -15,7 +15,7 @@ type AsyncFunctionArguments = {
   exec: typeof exec
   glob: typeof glob
   io: typeof io
-  se: typeof se
+  se: helper.Helper
   require: NodeRequire
   __original_require__: NodeRequire
 }
