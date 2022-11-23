@@ -13692,9 +13692,9 @@ class se_Helper {
                 meta['mavenGroupId'] = groupId.trim();
                 meta['mavenArtifactId'] = artifactId.trim();
                 console.log(JSON.stringify(meta));
-                ret.push(pomEntity['pomRaw'].replace('/pom.xml', '/meta.json').substring(1));
+                ret.push(pomEntity['raw'].replace('/pom.xml', '/meta.json').substring(1));
                 Object(external_fs_.writeFileSync)(root +
-                    pomEntity['pomRaw'].replace('/pom.xml', '/meta.json').substring(1), JSON.stringify(meta));
+                    pomEntity['raw'].replace('/pom.xml', '/meta.json').substring(1), JSON.stringify(meta));
             }
         }
         return ret;
