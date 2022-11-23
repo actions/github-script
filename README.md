@@ -19,12 +19,16 @@ The following arguments will be provided:
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
 - `exec` A reference to the [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package
 - `require` A proxy wrapper around the normal Node.js `require` to enable
-- 'se' A library for resusbale functions
-  requiring relative paths (relative to the current working directory) and
-  requiring npm packages installed in the current working directory. If for
-  some reason you need the non-wrapped `require`, there is an escape hatch
-  available: `__original_require__` is the original value of `require` without
-  our wrapping applied.
+- `se` A library for resusbale functions
+  - `createMetaJson` Create meta.json files for all deployable component
+  - `startCheck` Helper method to create a check without annotations
+  - `completeCheck` Helper method to finish a check without annotations
+
+requiring relative paths (relative to the current working directory) and
+requiring npm packages installed in the current working directory. If for
+some reason you need the non-wrapped `require`, there is an escape hatch
+available: `__original_require__` is the original value of `require` without
+our wrapping applied.
 
 Since the `script` is just a function body, these values will already be
 defined, so you don't have to import them (see examples below).
