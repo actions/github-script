@@ -13646,7 +13646,7 @@ class se_Helper {
             .toString();
         for (const pomEntity of poms) {
             if (pomEntity['pom'].startsWith('/components') &&
-                pomEntity['pom'].indexOf(name + '-deployment/') > -1) {
+                pomEntity['pom'].indexOf(pomEntity['name'] + '-deployment/') > -1) {
                 const owners = [];
                 const reviewers = [];
                 for (const ownerRaw of ownersFile.split('\n')) {

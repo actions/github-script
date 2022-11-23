@@ -58,7 +58,7 @@ export class Helper {
     for (const pomEntity of poms) {
       if (
         pomEntity['pom'].startsWith('/components') &&
-        pomEntity['pom'].indexOf(name + '-deployment/') > -1
+        pomEntity['pom'].indexOf(pomEntity['name'] + '-deployment/') > -1
       ) {
         const owners = []
         const reviewers = []
