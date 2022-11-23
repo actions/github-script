@@ -15,13 +15,8 @@ export class Helper {
     this.github = github
   }
 
-  public createMetaJson(root: string) {
+  public listPoms(root: string): {[key: string]: string}[] {
     const execSync = child.execSync
-    console.log('Run number: ' + this.currentBuild.runNumber)
-    const xmllint = execSync('sudo apt install libxml2-utils', {
-      shell: '/bin/bash'
-    })
-    console.log(xmllint.toString())
     const command =
       `#!/bin/bash
       cd ` +
@@ -33,17 +28,37 @@ export class Helper {
       `
     const output = execSync(command, {shell: '/bin/bash'})
     console.log(output.toString())
-    const ret: string[] = []
+    const ret: {[key: string]: any}[] = []
     const poms = fs.readFileSync(root + 'poms.txt', 'utf8').toString()
+    for (const pomRaw of poms.split('\n')) {
+      const pom = pomRaw.replace('./', '/')
+      const pomEntity: {[key: string]: any} = {}
+      pomEntity['path'] = pom.replace('/pom.xml', '').substring(1)
+      pomEntity['raw'] = pomRaw
+      pomEntity['pom'] = pom
+      pomEntity['name'] = pom.split('/')[2]
+      pomEntity['fullPath'] = root + pomRaw.substring(1)
+      ret.push(pomEntity)
+    }
+    return ret
+  }
+
+  public createMetaJson(root: string) {
+    const execSync = child.execSync
+    console.log('Run number: ' + this.currentBuild.runNumber)
+    const xmllint = execSync('sudo apt install libxml2-utils', {
+      shell: '/bin/bash'
+    })
+    console.log(xmllint.toString())
+    const ret: string[] = []
+    const poms = this.listPoms(root)
     const ownersFile = fs
       .readFileSync(root + '.github/CODEOWNERS', 'utf8')
       .toString()
-    for (const pomRaw of poms.split('\n')) {
-      const pom = pomRaw.replace('./', '/')
-      const name = pom.split('/')[2]
+    for (const pomEntity of poms) {
       if (
-        pom.startsWith('/components') &&
-        pom.indexOf(name + '-deployment/') > -1
+        pomEntity['pom'].startsWith('/components') &&
+        pomEntity['pom'].indexOf(name + '-deployment/') > -1
       ) {
         const owners = []
         const reviewers = []
@@ -53,7 +68,7 @@ export class Helper {
           if (
             path.length > 3 &&
             ownerRaw.indexOf(' @') > -1 &&
-            pom.startsWith(path)
+            pomEntity['pom'].startsWith(path)
           ) {
             owners.push(ownerRaw.split(' ')[1])
             reviewers.push(ownerRaw.split(' ')[1])
@@ -65,7 +80,7 @@ export class Helper {
           root +
           `
               xmllint --xpath "/*[local-name()='project']/*[local-name()='groupId']/text()" .` +
-          pom +
+          pomEntity['pom'] +
           `
               `
         const aid =
@@ -74,7 +89,7 @@ export class Helper {
           root +
           `
               xmllint --xpath "/*[local-name()='project']/*[local-name()='artifactId']/text()" .` +
-          pom +
+          pomEntity['pom'] +
           `
               `
         const groupId = execSync(gid, {shell: '/bin/bash'}).toString()
@@ -82,22 +97,25 @@ export class Helper {
         const artifactId = execSync(aid, {shell: '/bin/bash'}).toString()
         console.log(artifactId)
         const meta: {[key: string]: any} = {}
-        meta['manifestSource'] = pom.replace('/pom.xml', '').substring(1)
+        meta['manifestSource'] = pomEntity['path']
         meta['manifestTarget'] =
           'helm-chart/components/charts/' +
-          name +
+          pomEntity['name'] +
           '/' +
-          name +
+          pomEntity['name'] +
           '-deployment/templates/'
         meta['owners'] = owners
         meta['reviewers'] = reviewers
-        meta['branchName'] = name + '-deployment'
+        meta['branchName'] = pomEntity['name'] + '-deployment'
         meta['mavenGroupId'] = groupId.trim()
         meta['mavenArtifactId'] = artifactId.trim()
         console.log(JSON.stringify(meta))
-        ret.push(pomRaw.replace('/pom.xml', '/meta.json').substring(1))
+        ret.push(
+          pomEntity['pomRaw'].replace('/pom.xml', '/meta.json').substring(1)
+        )
         fs.writeFileSync(
-          root + pomRaw.replace('/pom.xml', '/meta.json').substring(1),
+          root +
+            pomEntity['pomRaw'].replace('/pom.xml', '/meta.json').substring(1),
           JSON.stringify(meta)
         )
       }
