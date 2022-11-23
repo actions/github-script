@@ -13614,6 +13614,7 @@ class se_Helper {
             shell: '/bin/bash'
         });
         console.log(xmllint.toString());
+        const x = '22';
         const command = `#!/bin/bash
       cd ` +
             root +
