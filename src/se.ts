@@ -118,17 +118,17 @@ export class Helper {
 
   public async completeCheck(
     name: string,
-    check_run_id: string,
-    conclusion: string
+    id: string,
+    conclusionString: string
   ) {
     const result = await this.github.rest.checks.create({
       owner: this.currentBuild.repo.owner,
       repo: this.currentBuild.repo.repo,
       name: name,
-      check_run_id: check_run_id,
+      check_run_id: id,
       head_sha: this.currentBuild.sha,
       status: 'completed',
-      conclusion: conclusion
+      conclusion: conclusionString
     })
     return result
   }

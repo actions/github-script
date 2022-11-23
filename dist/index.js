@@ -13694,15 +13694,15 @@ class se_Helper {
         });
         return result;
     }
-    async completeCheck(name, check_run_id, conclusion) {
+    async completeCheck(name, id, conclusionString) {
         const result = await this.github.rest.checks.create({
             owner: this.currentBuild.repo.owner,
             repo: this.currentBuild.repo.repo,
             name: name,
-            check_run_id: check_run_id,
+            check_run_id: id,
             head_sha: this.currentBuild.sha,
             status: 'completed',
-            conclusion: conclusion
+            conclusion: conclusionString
         });
         return result;
     }
