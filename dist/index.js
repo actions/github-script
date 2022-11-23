@@ -13695,7 +13695,7 @@ class se_Helper {
         return result;
     }
     async completeCheck(name, id, conclusionString) {
-        const result = await this.github.rest.checks.create({
+        const result = await this.github.rest.checks.update({
             owner: this.currentBuild.repo.owner,
             repo: this.currentBuild.repo.repo,
             name: name,

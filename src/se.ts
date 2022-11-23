@@ -121,7 +121,7 @@ export class Helper {
     id: string,
     conclusionString: string
   ) {
-    const result = await this.github.rest.checks.create({
+    const result = await this.github.rest.checks.update({
       owner: this.currentBuild.repo.owner,
       repo: this.currentBuild.repo.repo,
       name: name,
