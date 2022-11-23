@@ -21,8 +21,15 @@ The following arguments will be provided:
 - `require` A proxy wrapper around the normal Node.js `require` to enable
 - `se` A library for resusbale functions
   - `createMetaJson` Create meta.json files for all deployable component
+    - returns a list of files created
   - `startCheck` Helper method to create a check without annotations
   - `completeCheck` Helper method to finish a check without annotations
+  - `listPoms`List all pom entities - returns an array of elements containing
+    - `pom` the pom file from repo root
+    - `path` path to folder for pom
+    - `pomRaw` path as matched with codeowners starts with /
+    - `name`the component name - if any
+    - `fullPath` path to pom from workdir if checked out in a subfolder
 
 requiring relative paths (relative to the current working directory) and
 requiring npm packages installed in the current working directory. If for
