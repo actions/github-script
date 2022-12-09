@@ -13636,10 +13636,22 @@ class se_Helper {
     createMetaJson(root) {
         const execSync = external_child_process_.execSync;
         console.log('Run number: ' + this.currentBuild.runNumber);
-        const xmllint = execSync('sudo apt install libxml2-utils', {
-            shell: '/bin/bash'
-        });
-        console.log(xmllint.toString());
+        try {
+            const xmllint = execSync('sudo apt install libxml2-utils', {
+                shell: '/bin/bash'
+            });
+            console.log(xmllint.toString());
+        }
+        catch (err) {
+            let message;
+            if (err instanceof Error) {
+                message = err.message;
+            }
+            else {
+                message = String(err);
+            }
+            console.log(message);
+        }
         const ret = [];
         const poms = this.listPoms(root);
         const ownersFile = Object(external_fs_.readFileSync)(root + '.github/CODEOWNERS', 'utf8')

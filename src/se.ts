@@ -46,10 +46,21 @@ export class Helper {
   public createMetaJson(root: string) {
     const execSync = child.execSync
     console.log('Run number: ' + this.currentBuild.runNumber)
-    const xmllint = execSync('sudo apt install libxml2-utils', {
-      shell: '/bin/bash'
-    })
-    console.log(xmllint.toString())
+    try {
+      const xmllint = execSync('sudo apt install libxml2-utils', {
+        shell: '/bin/bash'
+      })
+
+      console.log(xmllint.toString())
+    } catch (err) {
+      let message
+      if (err instanceof Error) {
+        message = err.message
+      } else {
+        message = String(err)
+      }
+      console.log(message)
+    }
     const ret: string[] = []
     const poms = this.listPoms(root)
     const ownersFile = fs
