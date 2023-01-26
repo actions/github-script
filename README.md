@@ -18,6 +18,7 @@ The following arguments will be provided:
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
 - `exec` A reference to the [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package
+- `fetch` A reference to the [node-fetch](https://github.com/node-fetch/node-fetch) package
 - `require` A proxy wrapper around the normal Node.js `require` to enable
   requiring relative paths (relative to the current working directory) and
   requiring npm packages installed in the current working directory. If for
@@ -297,7 +298,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/github-script@v6
         with:
           script: |
@@ -335,7 +336,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/github-script@v6
         env:
           SHA: '${{env.parentSHA}}'
@@ -373,10 +374,10 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - run: npm ci
       # or one-off:
       - run: npm install execa
@@ -409,7 +410,7 @@ jobs:
   print-stuff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/github-script@v6
         with:
           script: |
