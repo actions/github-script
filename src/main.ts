@@ -9,6 +9,7 @@ import {RequestRequestOptions} from '@octokit/types'
 import {callAsyncFunction} from './async-function'
 import {getRetryOptions, parseNumberArray, RetryOptions} from './retry-options'
 import {wrapRequire} from './wrap-require'
+import fetch from 'node-fetch'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
@@ -56,7 +57,8 @@ async function main(): Promise<void> {
       core,
       exec,
       glob,
-      io
+      io,
+      fetch
     },
     script
   )
