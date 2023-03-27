@@ -26,6 +26,9 @@ inputs:
   retries:
     description: The number of times to retry a request
     default: "0"
+  retry-after:
+    description: The number of seconds after which the retry attempt should be made. No effect unless `retries` is set
+    default: "1000"
   retry-exempt-status-codes:
     description: A comma separated list of status codes that will NOT be retried e.g. "400,500". No effect unless `retries` is set
     default: 400,401,403,404,422 # from https://github.com/octokit/plugin-retry.js/blob/9a2443746c350b3beedec35cf26e197ea318a261/src/index.ts#L14

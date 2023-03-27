@@ -1,23 +1,29 @@
 import * as core from '@actions/core'
-import {OctokitOptions} from '@octokit/core/dist-types/types'
-import {RequestRequestOptions} from '@octokit/types'
+import { OctokitOptions } from '@octokit/core/dist-types/types'
+import { RequestRequestOptions } from '@octokit/types'
 
 export type RetryOptions = {
   doNotRetry?: number[]
   enabled?: boolean
+  delay?: number
 }
 
 export function getRetryOptions(
   retries: number,
   exemptStatusCodes: number[],
+  retryAfter: number,
   defaultOptions: OctokitOptions
 ): [RetryOptions, RequestRequestOptions | undefined] {
   if (retries <= 0) {
-    return [{enabled: false}, defaultOptions.request]
+    return [{ enabled: false }, defaultOptions.request]
   }
 
   const retryOptions: RetryOptions = {
     enabled: true
+  }
+
+  if (retryAfter > 0) {
+    retryOptions.delay = retryAfter
   }
 
   if (exemptStatusCodes.length > 0) {
@@ -33,10 +39,9 @@ export function getRetryOptions(
   }
 
   core.debug(
-    `GitHub client configured with: (retries: ${
-      requestOptions.retries
-    }, retry-exempt-status-code: ${
-      retryOptions?.doNotRetry ?? 'octokit default: [400, 401, 403, 404, 422]'
+    `GitHub client configured with: (retries: ${requestOptions.retries
+    }, retryAfter: ${retryOptions.delay ?? 'octokit default: 1000'
+    } retry-exempt-status-code: ${retryOptions?.doNotRetry ?? 'octokit default: [400, 401, 403, 404, 422]'
     })`
   )
 

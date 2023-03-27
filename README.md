@@ -104,6 +104,23 @@ By default, requests made with the `github` instance will not be retried. You ca
 
 In this example, request failures from `github.rest.issues.get()` will be retried up to 3 times.
 
+You can also configure the delay (delayInSeconds) before retrying via the `retry-after` option:
+
+```yaml
+- uses: actions/github-script@v6
+  id: my-script
+  with:
+    result-encoding: string
+    retries: 3
+    retry-after: 500
+    script: |
+      github.rest.issues.get({
+        issue_number: context.issue.number,
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+      })
+```
+
 You can also configure which status codes should be exempt from retries via the `retry-exempt-status-codes` option:
 
 ```yaml
