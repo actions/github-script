@@ -1,15 +1,15 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import {context, getOctokit} from '@actions/github'
-import {defaults as defaultGitHubOptions} from '@actions/github/lib/utils'
+import { context, getOctokit } from '@actions/github'
+import { defaults as defaultGitHubOptions } from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
-import {retry} from '@octokit/plugin-retry'
-import {RequestRequestOptions} from '@octokit/types'
-import {callAsyncFunction} from './async-function'
-import {getRetryOptions, parseNumberArray, RetryOptions} from './retry-options'
-import {wrapRequire} from './wrap-require'
+import { retry } from '@octokit/plugin-retry'
+import { RequestRequestOptions } from '@octokit/types'
 import fetch from 'node-fetch'
+import { callAsyncFunction } from './async-function'
+import { getRetryOptions, parseNumberArray, RetryOptions } from './retry-options'
+import { wrapRequire } from './wrap-require'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
@@ -23,17 +23,19 @@ type Options = {
 }
 
 async function main(): Promise<void> {
-  const token = core.getInput('github-token', {required: true})
+  const token = core.getInput('github-token', { required: true })
   const debug = core.getInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
   const retries = parseInt(core.getInput('retries'))
+  const retryAfter = parseInt(core.getInput('retry-after'))
   const exemptStatusCodes = parseNumberArray(
     core.getInput('retry-exempt-status-codes')
   )
   const [retryOpts, requestOpts] = getRetryOptions(
     retries,
     exemptStatusCodes,
+    retryAfter,
     defaultGitHubOptions
   )
 
@@ -45,7 +47,7 @@ async function main(): Promise<void> {
   if (requestOpts) opts.request = requestOpts
 
   const github = getOctokit(token, opts, retry)
-  const script = core.getInput('script', {required: true})
+  const script = core.getInput('script', { required: true })
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
   const result = await callAsyncFunction(
