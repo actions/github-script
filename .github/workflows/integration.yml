@@ -57,3 +57,16 @@ jobs:
           if [[ "${{steps.output-set.outputs.result}}" != "@actions/core" ]]; then
             exit 1
           fi
+
+  test-retry-after:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test retry with after
+        uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          retries: 3
+          retry-after: 999
+          script: |
+            console.log('Exec the plugin', context.repo.owner);
