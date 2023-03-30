@@ -4,6 +4,7 @@ import {context, getOctokit} from '@actions/github'
 import {defaults as defaultGitHubOptions} from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+import {requestLog} from '@octokit/plugin-request-log'
 import {retry} from '@octokit/plugin-retry'
 import {RequestRequestOptions} from '@octokit/types'
 import fetch from 'node-fetch'
@@ -45,7 +46,7 @@ async function main(): Promise<void> {
   if (previews) opts.previews = previews.split(',')
   if (requestOpts) opts.request = requestOpts
 
-  const github = getOctokit(token, opts, retry)
+  const github = getOctokit(token, opts, retry, requestLog)
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
