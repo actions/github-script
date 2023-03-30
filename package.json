@@ -38,6 +38,7 @@
     "@actions/io": "^1.1.1",
     "@octokit/core": "^3.5.1",
     "@octokit/plugin-paginate-rest": "^2.17.0",
+    "@octokit/plugin-request-log": "^1.0.4",
     "@octokit/plugin-rest-endpoint-methods": "^6.3.0",
     "@octokit/plugin-retry": "^3.0.9",
     "node-fetch": "^2.6.7"
