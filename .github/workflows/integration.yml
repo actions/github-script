@@ -8,6 +8,7 @@ on:
 
 jobs:
   test-return:
+    name: 'Integration test: return'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,26 +19,34 @@ jobs:
           result-encoding: string
           input-value: output
       - run: |
-          if [[ "${{steps.output-set.outputs.result}}" != "output" ]]; then
+          echo "- Validating output is produced"
+          expected="output"
+          if [[ "${{steps.output-set.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.output-set.outputs.result}}"
             exit 1
           fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
 
   test-relative-require:
+    name: 'Integration test: relative-path require'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - id: output-set
+      - id: relative-require
         uses: ./
         with:
           script: return require('./package.json').name
           result-encoding: string
-          input-value: output
       - run: |
-          if [[ "${{steps.output-set.outputs.result}}" != "github-script" ]]; then
+          echo "- Validating relative require output"
+          if [[ "${{steps.relative-require.outputs.result}}" != "github-script" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.relative-require.outputs.result}}"
             exit 1
           fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
 
   test-npm-require:
+    name: 'Integration test: npm package require'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -47,13 +56,16 @@ jobs:
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
           restore-keys: ${{runner.os}}-npm-
       - run: npm ci
-      - id: output-set
+      - id: npm-require
         uses: ./
         with:
           script: return require('@actions/core/package.json').name
           result-encoding: string
-          input-value: output
       - run: |
-          if [[ "${{steps.output-set.outputs.result}}" != "@actions/core" ]]; then
+          echo "- Validating npm require output"
+          expected="@actions/core"
+          if [[ "${{steps.npm-require.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.npm-require.outputs.result}}"
             exit 1
           fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
