@@ -15134,6 +15134,9 @@ var io = __nccwpck_require__(7436);
 var dist_node = __nccwpck_require__(8883);
 // EXTERNAL MODULE: ./node_modules/@octokit/plugin-retry/dist-node/index.js
 var plugin_retry_dist_node = __nccwpck_require__(6298);
+// EXTERNAL MODULE: ./node_modules/node-fetch/lib/index.js
+var lib = __nccwpck_require__(467);
+var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
 ;// CONCATENATED MODULE: ./src/async-function.ts
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 function callAsyncFunction(args, source) {
@@ -15161,7 +15164,7 @@ function getRetryOptions(retries, exemptStatusCodes, defaultOptions) {
         ...defaultOptions.request,
         retries
     };
-    core.debug(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions === null || retryOptions === void 0 ? void 0 : retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
+    core.debug(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
     return [retryOptions, requestOptions];
 }
 function parseNumberArray(listString) {
@@ -15197,9 +15200,6 @@ const wrapRequire = new Proxy(require, {
     }
 });
 
-// EXTERNAL MODULE: ./node_modules/node-fetch/lib/index.js
-var lib = __nccwpck_require__(467);
-var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
 ;// CONCATENATED MODULE: ./src/main.ts
 
 
@@ -15217,23 +15217,19 @@ process.on('unhandledRejection', handleError);
 main().catch(handleError);
 async function main() {
     const token = core.getInput('github-token', { required: true });
-    const debug = core.getInput('debug');
+    const debug = core.getBooleanInput('debug');
     const userAgent = core.getInput('user-agent');
     const previews = core.getInput('previews');
     const retries = parseInt(core.getInput('retries'));
     const exemptStatusCodes = parseNumberArray(core.getInput('retry-exempt-status-codes'));
     const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
-    const opts = {};
-    if (debug === 'true')
-        opts.log = console;
-    if (userAgent != null)
-        opts.userAgent = userAgent;
-    if (previews != null)
-        opts.previews = previews.split(',');
-    if (retryOpts)
-        opts.retry = retryOpts;
-    if (requestOpts)
-        opts.request = requestOpts;
+    const opts = {
+        log: debug ? console : undefined,
+        userAgent: userAgent || undefined,
+        previews: previews ? previews.split(',') : undefined,
+        retry: retryOpts,
+        request: requestOpts
+    };
     const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node/* retry */.XD, dist_node/* requestLog */.g);
     const script = core.getInput('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.

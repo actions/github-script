@@ -69,3 +69,183 @@ jobs:
             exit 1
           fi
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-previews:
+    name: 'Integration test: previews option'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
+          restore-keys: ${{runner.os}}-npm-
+      - run: npm ci
+      - id: previews-default
+        name: Default previews not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers.accept
+          result-encoding: string
+      - id: previews-set-single
+        name: Previews set to a single value
+        uses: ./
+        with:
+          previews: foo
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers.accept
+          result-encoding: string
+      - id: previews-set-multiple
+        name: Previews set to comma-separated list
+        uses: ./
+        with:
+          previews: foo,bar,baz
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers.accept
+          result-encoding: string
+      - run: |
+          echo "- Validating previews default"
+          expected="application/vnd.github.v3+json"
+          if [[ "${{steps.previews-default.outputs.result}}" != $expected ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.previews-default.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating previews set to a single value"
+          expected="application/vnd.github.foo-preview+json"
+          if [[ "${{steps.previews-set-single.outputs.result}}" != $expected ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.previews-set-single.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating previews set to multiple values"
+          expected="application/vnd.github.foo-preview+json,application/vnd.github.bar-preview+json,application/vnd.github.baz-preview+json"
+          if [[ "${{steps.previews-set-multiple.outputs.result}}" != $expected ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.previews-set-multiple.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-user-agent:
+    name: 'Integration test: user-agent option'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
+          restore-keys: ${{runner.os}}-npm-
+      - run: npm ci
+      - id: user-agent-default
+        name: Default user-agent not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers['user-agent']
+          result-encoding: string
+      - id: user-agent-set
+        name: User-agent set
+        uses: ./
+        with:
+          user-agent: foobar
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers['user-agent']
+          result-encoding: string
+      - id: user-agent-empty
+        name: User-agent set to an empty string
+        uses: ./
+        with:
+          user-agent: ''
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers['user-agent']
+          result-encoding: string
+      - run: |
+          echo "- Validating user-agent default"
+          expected="actions/github-script octokit-core.js/"
+          if [[ "${{steps.user-agent-default.outputs.result}}" != "$expected"* ]]; then
+            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-default.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating user-agent set to a value"
+          expected="foobar octokit-core.js/"
+          if [[ "${{steps.user-agent-set.outputs.result}}" != "$expected"* ]]; then
+            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-set.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating user-agent set to an empty string"
+          expected="octokit-core.js/"
+          if [[ "${{steps.user-agent-empty.outputs.result}}" != "$expected"* ]]; then
+            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-empty.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-debug:
+    name: 'Integration test: debug option'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
+          restore-keys: ${{runner.os}}-npm-
+      - run: npm ci
+      - id: debug-default
+        name: Default debug not set
+        uses: ./
+        with:
+          script: |
+            const log = github.log
+            return {
+              debug: log.debug === console.debug,
+              info: log.info === console.info
+            }
+      - id: debug-true
+        name: Debug set to true
+        uses: ./
+        with:
+          debug: true
+          script: |
+            const log = github.log
+            return {
+              debug: log.debug === console.debug,
+              info: log.info === console.info
+            }
+      - id: debug-false
+        name: Debug set to false
+        uses: ./
+        with:
+          debug: false
+          script: |
+            const log = github.log
+            return {
+              debug: log.debug === console.debug,
+              info: log.info === console.info
+            }
+      - run: |
+          echo "- Validating debug default"
+          expected='{debug:false,info:false}'
+          if [[ "${{steps.debug-default.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.debug-default.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating debug set to true"
+          expected='{debug:true,info:true}'
+          if [[ "${{steps.debug-true.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.debug-true.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating debug set to false"
+          expected='{debug:false,info:false}'
+          if [[ "${{steps.debug-false.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.debug-false.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
