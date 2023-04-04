@@ -6,8 +6,11 @@ extends:
   - plugin:@typescript-eslint/eslint-recommended
   - plugin:@typescript-eslint/recommended
   - prettier/@typescript-eslint
+parserOptions:
+  project: ['tsconfig.eslint.json']
 rules:
   # '@typescript-eslint/explicit-function-return-type': 0
   '@typescript-eslint/no-use-before-define':
     - 2
     - functions: false
+  '@typescript-eslint/no-unnecessary-condition': error

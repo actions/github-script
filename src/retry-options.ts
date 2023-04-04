@@ -36,7 +36,7 @@ export function getRetryOptions(
     `GitHub client configured with: (retries: ${
       requestOptions.retries
     }, retry-exempt-status-code: ${
-      retryOptions?.doNotRetry ?? 'octokit default: [400, 401, 403, 404, 422]'
+      retryOptions.doNotRetry ?? 'octokit default: [400, 401, 403, 404, 422]'
     })`
   )
 
