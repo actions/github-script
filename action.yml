@@ -13,8 +13,8 @@ inputs:
     default: ${{ github.token }}
     required: false
   debug:
-    description: Whether to tell the GitHub client to log details of its requests
-    default: false
+    description: Whether to tell the GitHub client to log details of its requests. true or false. Default is to run in debug mode when the GitHub Actions step debug logging is turned on.
+    default: ${{ runner.debug == '1' }}
   user-agent:
     description: An optional user-agent string
     default: actions/github-script
