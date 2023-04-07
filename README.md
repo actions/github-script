@@ -225,7 +225,7 @@ jobs:
               repo: context.repo.repo,
               body: `**Welcome**, new contributor!
 
-                Please make sure you're read our [contributing guide](CONTRIBUTING.md) and we look forward to reviewing your Pull request shortly ✨`
+                Please make sure you've read our [contributing guide](CONTRIBUTING.md) and we look forward to reviewing your Pull request shortly ✨`
             })
 ```
 
