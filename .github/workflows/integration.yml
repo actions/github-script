@@ -187,7 +187,11 @@ jobs:
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
 
   test-debug:
-    name: 'Integration test: debug option'
+    strategy:
+      matrix:
+        environment: ['', 'debug-integration-test']
+    environment: ${{ matrix.environment }}
+    name: "Integration test: debug option (runner.debug mode ${{ matrix.environment && 'enabled' || 'disabled' }})"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -204,6 +208,7 @@ jobs:
           script: |
             const log = github.log
             return {
+              runnerDebugMode: core.isDebug(),
               debug: log.debug === console.debug,
               info: log.info === console.info
             }
@@ -215,6 +220,7 @@ jobs:
           script: |
             const log = github.log
             return {
+              runnerDebugMode: core.isDebug(),
               debug: log.debug === console.debug,
               info: log.info === console.info
             }
@@ -226,26 +232,39 @@ jobs:
           script: |
             const log = github.log
             return {
+              runnerDebugMode: core.isDebug(),
               debug: log.debug === console.debug,
               info: log.info === console.info
             }
-      - run: |
-          echo "- Validating debug default"
-          expected='{debug:false,info:false}'
-          if [[ "${{steps.debug-default.outputs.result}}" != "$expected" ]]; then
-            echo $'::error::\u274C' "Expected '$expected', got ${{steps.debug-default.outputs.result}}"
-            exit 1
-          fi
-          echo "- Validating debug set to true"
-          expected='{debug:true,info:true}'
-          if [[ "${{steps.debug-true.outputs.result}}" != "$expected" ]]; then
-            echo $'::error::\u274C' "Expected '$expected', got ${{steps.debug-true.outputs.result}}"
-            exit 1
-          fi
-          echo "- Validating debug set to false"
-          expected='{debug:false,info:false}'
-          if [[ "${{steps.debug-false.outputs.result}}" != "$expected" ]]; then
-            echo $'::error::\u274C' "Expected '$expected', got ${{steps.debug-false.outputs.result}}"
-            exit 1
-          fi
+      - id: evaluate-tests
+        name: Evaluate test outputs
+        env:
+          RDMODE: ${{ runner.debug == '1' }}
+        run: |
+          # tests table, pipe separated: label | output | expected
+          # leading and trailing spaces on any field are trimmed
+          tests=$(cat << 'TESTS'
+            Validating debug default |\
+              ${{ steps.debug-default.outputs.result }} |\
+              {"runnerDebugMode":${{ env.RDMODE }},"debug":${{ env.RDMODE }},"info":${{ env.RDMODE }}}
+            Validating debug set to true |\
+              ${{ steps.debug-true.outputs.result }} |\
+              {"runnerDebugMode":${{ env.RDMODE }},"debug":true,"info":true}
+            Validating debug set to false |\
+              ${{ steps.debug-false.outputs.result }} |\
+              {"runnerDebugMode":${{ env.RDMODE }},"debug":false,"info":false}
+          TESTS
+          )
+
+          strim() { shopt -s extglob; lt="${1##+( )}"; echo "${lt%%+( )}"; }
+          while IFS='|' read label output expected; do
+            label="$(strim "$label")"; output="$(strim "$output")"; expected="$(strim "$expected")"
+            echo -n "- $label:"
+            if [[ "$output" != "$expected" ]]; then
+              echo $'\n::error::\u274C' "Expected '$expected', got '$output'"
+              exit 1
+            fi
+            echo $' \u2705'
+          done <<< "$tests"
+
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
