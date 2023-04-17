@@ -322,6 +322,23 @@ Additionally, you'll want to use the [checkout
 action](https://github.com/actions/checkout) to make sure your script file is
 available.
 
+### Running in Composite Actions
+
+When used from a composite-action the current working directory is the invoking workflow,
+*not* the composite action's. Be sure to use an absolute path to any of the action's
+resources in this case like so:
+
+```yaml
+name: My Composite Action Using Github Scripts
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/github-script@v6
+      script: |
+          const script = require(process.env.GITHUB_ACTION_PATH + '/my-action-main.js')
+          console.log(script({context, core})
+```
+
 ### Run a separate file with an async function
 
 You can also use async functions in this manner, as long as you `await` it in
