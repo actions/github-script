@@ -1,0 +1,12 @@
+getgenv().RecurringPoint = "Torso"
+getgenv().Hitbox = "Torso"
+getgenv().Keybind = "q"
+getgenv().AimbotStrengthAmount = 2
+getgenv().PredictionAmout = 15
+getgenv().Radius = 25
+getgenv().UsePrediction = true
+getgenv().AimbotStrenght = true
+getgenv().FirstPerson = true
+getgenv().ThirdPerson = true
+getgenv().TeamCheck = false
+getgenv().Enabled = true
