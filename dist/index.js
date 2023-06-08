@@ -5611,6 +5611,114 @@ exports.createTokenAuth = createTokenAuth;
 
 /***/ }),
 
+/***/ 9567:
+/***/ ((module) => {
+
+"use strict";
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// pkg/dist-src/index.js
+var dist_src_exports = {};
+__export(dist_src_exports, {
+  createUnauthenticatedAuth: () => createUnauthenticatedAuth
+});
+module.exports = __toCommonJS(dist_src_exports);
+
+// pkg/dist-src/auth.js
+async function auth(reason) {
+  return {
+    type: "unauthenticated",
+    reason
+  };
+}
+
+// pkg/dist-src/is-rate-limit-error.js
+function isRateLimitError(error) {
+  if (error.status !== 403) {
+    return false;
+  }
+  if (!error.response) {
+    return false;
+  }
+  return error.response.headers["x-ratelimit-remaining"] === "0";
+}
+
+// pkg/dist-src/is-abuse-limit-error.js
+var REGEX_ABUSE_LIMIT_MESSAGE = /\babuse\b/i;
+function isAbuseLimitError(error) {
+  if (error.status !== 403) {
+    return false;
+  }
+  return REGEX_ABUSE_LIMIT_MESSAGE.test(error.message);
+}
+
+// pkg/dist-src/hook.js
+async function hook(reason, request, route, parameters) {
+  const endpoint = request.endpoint.merge(
+    route,
+    parameters
+  );
+  return request(endpoint).catch((error) => {
+    if (error.status === 404) {
+      error.message = `Not found. May be due to lack of authentication. Reason: ${reason}`;
+      throw error;
+    }
+    if (isRateLimitError(error)) {
+      error.message = `API rate limit exceeded. This maybe caused by the lack of authentication. Reason: ${reason}`;
+      throw error;
+    }
+    if (isAbuseLimitError(error)) {
+      error.message = `You have triggered an abuse detection mechanism. This maybe caused by the lack of authentication. Reason: ${reason}`;
+      throw error;
+    }
+    if (error.status === 401) {
+      error.message = `Unauthorized. "${endpoint.method} ${endpoint.url}" failed most likely due to lack of authentication. Reason: ${reason}`;
+      throw error;
+    }
+    if (error.status >= 400 && error.status < 500) {
+      error.message = error.message.replace(
+        /\.?$/,
+        `. May be caused by lack of authentication (${reason}).`
+      );
+    }
+    throw error;
+  });
+}
+
+// pkg/dist-src/index.js
+var createUnauthenticatedAuth = function createUnauthenticatedAuth2(options) {
+  if (!options || !options.reason) {
+    throw new Error(
+      "[@octokit/auth-unauthenticated] No reason passed to createUnauthenticatedAuth"
+    );
+  }
+  return Object.assign(auth.bind(null, options.reason), {
+    hook: hook.bind(null, options.reason)
+  });
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (0);
+
+
+/***/ }),
+
 /***/ 6762:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -15130,8 +15238,12 @@ var utils = __nccwpck_require__(3030);
 var glob = __nccwpck_require__(8090);
 // EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
 var io = __nccwpck_require__(7436);
+// EXTERNAL MODULE: ./node_modules/@octokit/auth-token/dist-node/index.js
+var dist_node = __nccwpck_require__(334);
+// EXTERNAL MODULE: ./node_modules/@octokit/auth-unauthenticated/dist-node/index.js
+var auth_unauthenticated_dist_node = __nccwpck_require__(9567);
 // EXTERNAL MODULE: ./node_modules/@octokit/plugin-request-log/dist-node/index.js
-var dist_node = __nccwpck_require__(8883);
+var plugin_request_log_dist_node = __nccwpck_require__(8883);
 // EXTERNAL MODULE: ./node_modules/@octokit/plugin-retry/dist-node/index.js
 var plugin_retry_dist_node = __nccwpck_require__(6298);
 // EXTERNAL MODULE: ./node_modules/node-fetch/lib/index.js
@@ -15213,10 +15325,15 @@ const wrapRequire = new Proxy(require, {
 
 
 
+
+
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
 async function main() {
-    const token = core.getInput('github-token', { required: true });
+    const allowEmptyToken = core.getBooleanInput('allow-empty-token', {
+        required: true
+    });
+    const token = core.getInput('github-token', { required: !allowEmptyToken });
     const debug = core.getBooleanInput('debug');
     const userAgent = core.getInput('user-agent');
     const previews = core.getInput('previews');
@@ -15228,9 +15345,16 @@ async function main() {
         userAgent: userAgent || undefined,
         previews: previews ? previews.split(',') : undefined,
         retry: retryOpts,
-        request: requestOpts
+        request: requestOpts,
+        authStrategy: allowEmptyToken && !token ? auth_unauthenticated_dist_node.createUnauthenticatedAuth : dist_node.createTokenAuth,
+        auth: allowEmptyToken && !token
+            ? {
+                reason: 'No github-token was provided to actions/github-scripts, and allow-empty-token is true.'
+            }
+            : token
     };
-    const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node/* retry */.XD, dist_node/* requestLog */.g);
+    const GitHubWithPlugins = utils.GitHub.plugin(plugin_retry_dist_node/* retry */.XD, plugin_request_log_dist_node/* requestLog */.g);
+    const github = new GitHubWithPlugins(opts);
     const script = core.getInput('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({

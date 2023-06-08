@@ -12,6 +12,10 @@ inputs:
     description: The GitHub token used to create an authenticated client
     default: ${{ github.token }}
     required: false
+  allow-empty-token:
+    description: Whether to allow for the github-token to be empty. If true, and the github-token is empty, results in anonymous API calls.
+    default: false
+    required: false
   debug:
     description: Whether to tell the GitHub client to log details of its requests. true or false. Default is to run in debug mode when the GitHub Actions step debug logging is turned on.
     default: ${{ runner.debug == '1' }}
