@@ -419,6 +419,25 @@ jobs:
             await printStuff()
 ```
 
+### Use scripts with jsDoc support
+
+If you want type support for your scripts, you could use the the command below to install the
+`github-script` type declaration.
+```sh
+$ npm i -D @types/github-script@github:actions/github-script
+```
+
+And then add the `jsDoc` declaration to your script like this:
+```js
+// @ts-check
+/** @param {import('@types/github-script').AsyncFunctionArguments} AsyncFunctionArguments */
+export default async ({ core, context }) => {
+  core.debug("Running something at the moment");
+  return context.actor;
+};
+```
+For an alternative setup, please read (alternative-setup)[./docs/alternative-setup.md].
+
 ### Use env as input
 
 You can set env vars to use them in your script:
