@@ -421,7 +421,7 @@ jobs:
 
 ### Use scripts with jsDoc support
 
-If you want type support for your scripts, you could use the the command below to install the
+If you want type support for your scripts, you could use the command below to install the
 `github-script` type declaration.
 ```sh
 $ npm i -D @types/github-script@github:actions/github-script
