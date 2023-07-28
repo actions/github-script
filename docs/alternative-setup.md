@@ -13,7 +13,7 @@ root # Your repository
  ├── ...
  ├── actions
  │  ├── action.yml    (optional)
- │  └── ci-test.js
+ │  └── ci-test.mjs
  ├── ...
  └── package.json
 ```
@@ -57,7 +57,7 @@ jobs:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             result-encoding: string
             script: |
-              const { default: script } = await import('${{ github.workspace }}/actions/ci-test.js');
+              const { default: script } = await import('${{ github.workspace }}/actions/ci-test.mjs');
               return await script({ github, context, core, exec, glob, io, fetch, __original_require__ });
 ```
 
@@ -76,7 +76,7 @@ branding:
   icon: code
 inputs:
   script:
-    description: The path to script (e.g actions/ci-test.js)
+    description: The path to script (e.g actions/ci-test.mjs)
     required: true
   github-token:
     description: The GitHub token used to create an authenticated client
@@ -125,7 +125,7 @@ runs:
 
 
 ### The `ci-workflow.yml` file
-Note that we only need to specify the script here because the path will be 
+Note that we only need to specify the script name here because the path will be 
 resolved to the `uses: ./actions` path by `process.env.GITHUB_ACTION_PATH`.
 i.e the same folder as we are executing the action from.
 ```yml
@@ -149,6 +149,6 @@ jobs:
           with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             result-encoding: string
-            script: ci-test.js
+            script: ci-test.mjs
 ```
 
