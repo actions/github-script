@@ -436,7 +436,6 @@ export default async ({ core, context }) => {
   return context.actor;
 };
 ```
-For an alternative setup, please read (alternative-setup)[./docs/alternative-setup.md].
 
 ### Use env as input
 
