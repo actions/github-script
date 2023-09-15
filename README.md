@@ -34,6 +34,13 @@ documentation.
 
 ## Breaking Changes
 
+### Breaking changes in V7
+
+Version 7 of this action updated the runtime to Node 20 - https://github.com/github/docs/issues/28156
+
+All scripts are now run with Node 20 instead of Node 16 and are affected by any breaking changes between Node 16 and 20.
+
+
 ### Breaking changes in V6
 
 Version 6 of this action updated the runtime to Node 16 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#example-using-nodejs-v16
@@ -377,7 +384,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - run: npm ci
       # or one-off:
       - run: npm install execa
