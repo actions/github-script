@@ -20,5 +20,9 @@ jobs:
       - uses: jonabc/setup-licensed@82c5f4d19e8968efa74a25b132922382c2671fe2
         with:
           version: '3.x'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: npm
       - run: npm ci
       - run: licensed status
