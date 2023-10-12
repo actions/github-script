@@ -35,7 +35,7 @@ documentation.
 
 ### V7
 
-Version 6 of this action updated the runtime to Node 20 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
+Version 7 of this action updated the runtime to Node 20 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
 
 All scripts are now run with Node 20 instead of Node 16 and are affected by any breaking changes between Node 16 and 20
 
