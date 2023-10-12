@@ -9,3 +9,4 @@ runs:
         cache: npm
 
     - run: npm ci
+      shell: bash
