@@ -50,12 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: npm-require
         uses: ./
         with:
@@ -75,12 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: previews-default
         name: Default previews not set
         uses: ./
@@ -133,12 +123,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: user-agent-default
         name: Default user-agent not set
         uses: ./
@@ -195,12 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: debug-default
         name: Default debug not set
         uses: ./
