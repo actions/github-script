@@ -18,6 +18,7 @@ main().catch(handleError)
 type Options = {
   log?: Console
   userAgent?: string
+  baseUrl?: string
   previews?: string[]
   retry?: RetryOptions
   request?: RequestRequestOptions
@@ -28,6 +29,7 @@ async function main(): Promise<void> {
   const debug = core.getBooleanInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
+  const baseUrl = core.getInput('base-url')
   const retries = parseInt(core.getInput('retries'))
   const exemptStatusCodes = parseNumberArray(
     core.getInput('retry-exempt-status-codes')
@@ -43,7 +45,8 @@ async function main(): Promise<void> {
     userAgent: userAgent || undefined,
     previews: previews ? previews.split(',') : undefined,
     retry: retryOpts,
-    request: requestOpts
+    request: requestOpts,
+    baseUrl: baseUrl || undefined
   }
 
   const github = getOctokit(token, opts, retry, requestLog)
