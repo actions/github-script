@@ -39,6 +39,8 @@ Version 7 of this action updated the runtime to Node 20 - https://docs.github.co
 
 All scripts are now run with Node 20 instead of Node 16 and are affected by any breaking changes between Node 16 and 20
 
+The `previews` input now only applies to GraphQL API calls as REST API previews are no longer necessary - https://github.blog/changelog/2021-10-14-rest-api-preview-promotions/.
+
 ### V6
 
 Version 6 of this action updated the runtime to Node 16 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
