@@ -35500,6 +35500,7 @@ async function main() {
     const debug = core.getBooleanInput('debug');
     const userAgent = core.getInput('user-agent');
     const previews = core.getInput('previews');
+    const baseUrl = core.getInput('base-url');
     const retries = parseInt(core.getInput('retries'));
     const exemptStatusCodes = parseNumberArray(core.getInput('retry-exempt-status-codes'));
     const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
@@ -35508,7 +35509,8 @@ async function main() {
         userAgent: userAgent || undefined,
         previews: previews ? previews.split(',') : undefined,
         retry: retryOpts,
-        request: requestOpts
+        request: requestOpts,
+        baseUrl: baseUrl || undefined
     };
     const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog);
     const script = core.getInput('script', { required: true });

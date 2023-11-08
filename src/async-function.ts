@@ -7,7 +7,7 @@ import * as io from '@actions/io'
 
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor
 
-type AsyncFunctionArguments = {
+export declare type AsyncFunctionArguments = {
   context: Context
   core: typeof core
   github: InstanceType<typeof GitHub>
