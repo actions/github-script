@@ -8,7 +8,7 @@ import fetch from 'node-fetch'
 
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor
 
-type AsyncFunctionArguments = {
+export declare type AsyncFunctionArguments = {
   context: Context
   core: typeof core
   github: InstanceType<typeof GitHub>
