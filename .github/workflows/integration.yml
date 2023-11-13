@@ -50,12 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: npm-require
         uses: ./
         with:
@@ -71,23 +66,18 @@ jobs:
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
 
   test-previews:
-    name: 'Integration test: previews option'
+    name: 'Integration test: GraphQL previews option'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: previews-default
         name: Default previews not set
         uses: ./
         with:
           script: |
             const endpoint = github.request.endpoint
-            return endpoint({}).headers.accept
+            return endpoint({url: "/graphql"}).headers.accept
           result-encoding: string
       - id: previews-set-single
         name: Previews set to a single value
@@ -96,7 +86,7 @@ jobs:
           previews: foo
           script: |
             const endpoint = github.request.endpoint
-            return endpoint({}).headers.accept
+            return endpoint({url: "/graphql"}).headers.accept
           result-encoding: string
       - id: previews-set-multiple
         name: Previews set to comma-separated list
@@ -105,7 +95,7 @@ jobs:
           previews: foo,bar,baz
           script: |
             const endpoint = github.request.endpoint
-            return endpoint({}).headers.accept
+            return endpoint({url: "/graphql"}).headers.accept
           result-encoding: string
       - run: |
           echo "- Validating previews default"
@@ -133,12 +123,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: user-agent-default
         name: Default user-agent not set
         uses: ./
@@ -195,12 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: debug-default
         name: Default debug not set
         uses: ./

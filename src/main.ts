@@ -7,7 +7,6 @@ import * as io from '@actions/io'
 import {requestLog} from '@octokit/plugin-request-log'
 import {retry} from '@octokit/plugin-retry'
 import {RequestRequestOptions} from '@octokit/types'
-import fetch from 'node-fetch'
 import {callAsyncFunction} from './async-function'
 import {RetryOptions, getRetryOptions, parseNumberArray} from './retry-options'
 import {wrapRequire} from './wrap-require'
@@ -62,8 +61,7 @@ async function main(): Promise<void> {
       core,
       exec,
       glob,
-      io,
-      fetch
+      io
     },
     script
   )

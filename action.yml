@@ -19,7 +19,7 @@ inputs:
     description: An optional user-agent string
     default: actions/github-script
   previews:
-    description: A comma-separated list of API previews to accept
+    description: A comma-separated list of GraphQL API previews to accept
   result-encoding:
     description: Either "string" or "json" (default "json")—how the result will be encoded
     default: json
@@ -36,5 +36,5 @@ outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
