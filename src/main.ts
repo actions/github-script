@@ -45,7 +45,7 @@ async function main(): Promise<void> {
     previews: previews ? previews.split(',') : undefined,
     retry: retryOpts,
     request: requestOpts,
-    baseUrl: baseUrl || context.serverUrl
+    baseUrl: baseUrl || context.apiUrl
   }
 
   const github = getOctokit(token, opts, retry, requestLog)

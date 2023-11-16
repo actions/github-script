@@ -35510,7 +35510,7 @@ async function main() {
         previews: previews ? previews.split(',') : undefined,
         retry: retryOpts,
         request: requestOpts,
-        baseUrl: baseUrl || lib_github.context.serverUrl
+        baseUrl: baseUrl || lib_github.context.apiUrl
     };
     const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog);
     const script = core.getInput('script', { required: true });
