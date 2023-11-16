@@ -35512,7 +35512,11 @@ async function main() {
         request: requestOpts
     };
     if (baseUrl) {
+        debug && console.log(`Using custom base URL: ${baseUrl}`);
         opts.baseUrl = baseUrl;
+    }
+    else {
+        debug && console.log('Using default base URL');
     }
     const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog);
     const script = core.getInput('script', { required: true });

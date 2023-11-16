@@ -48,7 +48,10 @@ async function main(): Promise<void> {
   }
 
   if (baseUrl) {
+    debug && console.log(`Using custom base URL: ${baseUrl}`)
     opts.baseUrl = baseUrl
+  } else {
+    debug && console.log('Using default base URL')
   }
 
   const github = getOctokit(token, opts, retry, requestLog)
