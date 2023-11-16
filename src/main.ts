@@ -28,7 +28,7 @@ async function main(): Promise<void> {
   const debug = core.getBooleanInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
-  const baseUrl = core.getInput('base-url')
+  // const baseUrl = core.getInput('base-url')
   const retries = parseInt(core.getInput('retries'))
   const exemptStatusCodes = parseNumberArray(
     core.getInput('retry-exempt-status-codes')
@@ -47,12 +47,13 @@ async function main(): Promise<void> {
     request: requestOpts
   }
 
-  if (baseUrl) {
-    debug && console.log(`Using custom base URL: ${baseUrl}`)
-    opts.baseUrl = baseUrl
-  } else {
-    debug && console.log('Using default base URL')
-  }
+  // Testing without base URL entirely.
+  // if (baseUrl) {
+  //   debug && console.log(`Using custom base URL: ${baseUrl}`)
+  //   opts.baseUrl = baseUrl
+  // } else {
+  //   debug && console.log('Using default base URL')
+  // }
 
   const github = getOctokit(token, opts, retry, requestLog)
   const script = core.getInput('script', {required: true})

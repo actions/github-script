@@ -35500,7 +35500,7 @@ async function main() {
     const debug = core.getBooleanInput('debug');
     const userAgent = core.getInput('user-agent');
     const previews = core.getInput('previews');
-    const baseUrl = core.getInput('base-url');
+    // const baseUrl = core.getInput('base-url')
     const retries = parseInt(core.getInput('retries'));
     const exemptStatusCodes = parseNumberArray(core.getInput('retry-exempt-status-codes'));
     const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
@@ -35511,13 +35511,13 @@ async function main() {
         retry: retryOpts,
         request: requestOpts
     };
-    if (baseUrl) {
-        debug && console.log(`Using custom base URL: ${baseUrl}`);
-        opts.baseUrl = baseUrl;
-    }
-    else {
-        debug && console.log('Using default base URL');
-    }
+    // Testing without base URL entirely.
+    // if (baseUrl) {
+    //   debug && console.log(`Using custom base URL: ${baseUrl}`)
+    //   opts.baseUrl = baseUrl
+    // } else {
+    //   debug && console.log('Using default base URL')
+    // }
     const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog);
     const script = core.getInput('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
