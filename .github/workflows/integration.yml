@@ -299,3 +299,5 @@ jobs:
           expected="https://my.github-enterprise-server.com/api/v3/"
           if [[ "${{steps.base-url-env.outputs.result}}" != "$expected" ]]; then
             echo $'::error::\u274C' "Expected base-url to equal '$expected', got ${{steps.base-url-env.outputs.result}}"
+            exit 1
+          fi
