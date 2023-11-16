@@ -267,7 +267,7 @@ jobs:
         name: base-url set
         uses: ./
         with:
-          base-url: https://my.github-enterprise-server.com/api/v3/
+          base-url: https://my.github-enterprise-server.com/api/v3
           script: |
             const endpoint = github.request.endpoint
             return endpoint({}).url
@@ -276,7 +276,7 @@ jobs:
         name: base-url does not override GITHUB_API_URL when not set
         uses: ./
         env:
-          GITHUB_API_URL: https://my.github-enterprise-server.com/api/v3/
+          GITHUB_API_URL: https://my.github-enterprise-server.com/api/v3
         with:
           script: |
             const endpoint = github.request.endpoint
