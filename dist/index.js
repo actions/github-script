@@ -35509,9 +35509,13 @@ async function main() {
         userAgent: userAgent || undefined,
         previews: previews ? previews.split(',') : undefined,
         retry: retryOpts,
-        request: requestOpts,
-        baseUrl: baseUrl || undefined
+        request: requestOpts
     };
+    // Setting `baseUrl` to undefined will prevent the default value from being used
+    // https://github.com/actions/github-script/issues/436
+    if (baseUrl) {
+        opts.baseUrl = baseUrl;
+    }
     const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog);
     const script = core.getInput('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
