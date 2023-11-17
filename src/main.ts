@@ -44,8 +44,13 @@ async function main(): Promise<void> {
     userAgent: userAgent || undefined,
     previews: previews ? previews.split(',') : undefined,
     retry: retryOpts,
-    request: requestOpts,
-    baseUrl: baseUrl || undefined
+    request: requestOpts
+  }
+
+  // Setting `baseUrl` to undefined will prevent the default value from being used
+  // https://github.com/actions/github-script/issues/436
+  if (baseUrl) {
+    opts.baseUrl = baseUrl
   }
 
   const github = getOctokit(token, opts, retry, requestLog)
