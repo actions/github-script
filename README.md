@@ -338,8 +338,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/github-script@v6
-        env:
-          SHA: '${{env.parentSHA}}'
         with:
           script: |
             const script = require('./path/to/script.js')
