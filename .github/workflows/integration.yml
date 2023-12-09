@@ -50,12 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: npm-require
         uses: ./
         with:
@@ -71,23 +66,18 @@ jobs:
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
 
   test-previews:
-    name: 'Integration test: previews option'
+    name: 'Integration test: GraphQL previews option'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: previews-default
         name: Default previews not set
         uses: ./
         with:
           script: |
             const endpoint = github.request.endpoint
-            return endpoint({}).headers.accept
+            return endpoint({url: "/graphql"}).headers.accept
           result-encoding: string
       - id: previews-set-single
         name: Previews set to a single value
@@ -96,7 +86,7 @@ jobs:
           previews: foo
           script: |
             const endpoint = github.request.endpoint
-            return endpoint({}).headers.accept
+            return endpoint({url: "/graphql"}).headers.accept
           result-encoding: string
       - id: previews-set-multiple
         name: Previews set to comma-separated list
@@ -105,7 +95,7 @@ jobs:
           previews: foo,bar,baz
           script: |
             const endpoint = github.request.endpoint
-            return endpoint({}).headers.accept
+            return endpoint({url: "/graphql"}).headers.accept
           result-encoding: string
       - run: |
           echo "- Validating previews default"
@@ -133,12 +123,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: user-agent-default
         name: Default user-agent not set
         uses: ./
@@ -195,12 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-npm-
-      - run: npm ci
+      - uses: ./.github/actions/install-dependencies
       - id: debug-default
         name: Default debug not set
         uses: ./
@@ -268,3 +248,78 @@ jobs:
           done <<< "$tests"
 
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-base-url:
+    name: 'Integration test: base-url option'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
+
+      - id: base-url-default
+        name: API URL with base-url not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).url
+          result-encoding: string
+
+      - id: base-url-default-graphql
+        name: GraphQL URL with base-url not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({url: "/graphql"}).url
+          result-encoding: string
+
+      - id: base-url-set
+        name: API URL with base-url set
+        uses: ./
+        with:
+          base-url: https://my.github-enterprise-server.com/api/v3
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).url
+          result-encoding: string
+
+      - id: base-url-set-graphql
+        name: GraphQL URL with base-url set
+        uses: ./
+        with:
+          base-url: https://my.github-enterprise-server.com/api/v3
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({url: "/graphql"}).url
+          result-encoding: string
+
+      - run: |
+          echo "- Validating API URL default"
+          expected="https://api.github.com/"
+          actual="${{steps.base-url-default.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
+            exit 1
+          fi
+          echo "- Validating GraphQL URL default"
+          expected="https://api.github.com/graphql"
+          actual="${{steps.base-url-default-graphql.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
+            exit 1
+          fi
+          echo "- Validating base-url set to a value"
+          expected="https://my.github-enterprise-server.com/api/v3/"
+          actual="${{steps.base-url-set.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
+            exit 1
+          fi
+          echo "- Validating GraphQL URL with base-url set to a value"
+          expected="https://my.github-enterprise-server.com/api/v3/graphql"
+          actual="${{steps.base-url-set-graphql.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
+            exit 1
+          fi
