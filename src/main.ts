@@ -7,7 +7,6 @@ import * as io from '@actions/io'
 import {requestLog} from '@octokit/plugin-request-log'
 import {retry} from '@octokit/plugin-retry'
 import {RequestRequestOptions} from '@octokit/types'
-import fetch from 'node-fetch'
 import {callAsyncFunction} from './async-function'
 import {RetryOptions, getRetryOptions, parseNumberArray} from './retry-options'
 import {wrapRequire} from './wrap-require'
@@ -18,6 +17,7 @@ main().catch(handleError)
 type Options = {
   log?: Console
   userAgent?: string
+  baseUrl?: string
   previews?: string[]
   retry?: RetryOptions
   request?: RequestRequestOptions
@@ -28,6 +28,7 @@ async function main(): Promise<void> {
   const debug = core.getBooleanInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
+  const baseUrl = core.getInput('base-url')
   const retries = parseInt(core.getInput('retries'))
   const exemptStatusCodes = parseNumberArray(
     core.getInput('retry-exempt-status-codes')
@@ -46,6 +47,12 @@ async function main(): Promise<void> {
     request: requestOpts
   }
 
+  // Setting `baseUrl` to undefined will prevent the default value from being used
+  // https://github.com/actions/github-script/issues/436
+  if (baseUrl) {
+    opts.baseUrl = baseUrl
+  }
+
   const github = getOctokit(token, opts, retry, requestLog)
   const script = core.getInput('script', {required: true})
 
@@ -59,8 +66,7 @@ async function main(): Promise<void> {
       core,
       exec,
       glob,
-      io,
-      fetch
+      io
     },
     script
   )

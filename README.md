@@ -18,7 +18,6 @@ The following arguments will be provided:
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
 - `exec` A reference to the [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package
-- `fetch` A reference to the [node-fetch](https://github.com/node-fetch/node-fetch) package
 - `require` A proxy wrapper around the normal Node.js `require` to enable
   requiring relative paths (relative to the current working directory) and
   requiring npm packages installed in the current working directory. If for
@@ -34,13 +33,21 @@ documentation.
 
 ## Breaking Changes
 
-### Breaking changes in V6
+### V7
 
-Version 6 of this action updated the runtime to Node 16 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#example-using-nodejs-v16
+Version 7 of this action updated the runtime to Node 20 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
+
+All scripts are now run with Node 20 instead of Node 16 and are affected by any breaking changes between Node 16 and 20
+
+The `previews` input now only applies to GraphQL API calls as REST API previews are no longer necessary - https://github.blog/changelog/2021-10-14-rest-api-preview-promotions/.
+
+### V6
+
+Version 6 of this action updated the runtime to Node 16 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
 
 All scripts are now run with Node 16 instead of Node 12 and are affected by any breaking changes between Node 12 and 16.
 
-### Breaking changes in V5
+### V5
 
 Version 5 of this action includes the version 5 of `@actions/github` and `@octokit/plugin-rest-endpoint-methods`. As part of this update, the Octokit context available via `github` no longer has REST methods directly. These methods are available via `github.rest.*` - https://github.com/octokit/plugin-rest-endpoint-methods.js/releases/tag/v5.0.0
 
@@ -58,7 +65,7 @@ The return value of the script will be in the step's outputs under the
 "result" key.
 
 ```yaml
-- uses: actions/github-script@v6
+- uses: actions/github-script@v7
   id: set-result
   with:
     script: return "Hello!"
@@ -77,7 +84,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 `result-encoding` input:
 
 ```yaml
-- uses: actions/github-script@v6
+- uses: actions/github-script@v7
   id: my-script
   with:
     result-encoding: string
@@ -89,7 +96,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 By default, requests made with the `github` instance will not be retried. You can configure this with the `retries` option:
 
 ```yaml
-- uses: actions/github-script@v6
+- uses: actions/github-script@v7
   id: my-script
   with:
     result-encoding: string
@@ -107,7 +114,7 @@ In this example, request failures from `github.rest.issues.get()` will be retrie
 You can also configure which status codes should be exempt from retries via the `retry-exempt-status-codes` option:
 
 ```yaml
-- uses: actions/github-script@v6
+- uses: actions/github-script@v7
   id: my-script
   with:
     result-encoding: string
@@ -136,7 +143,7 @@ By default, github-script will use the token provided to your workflow.
 
 ```yaml
 - name: View context attributes
-  uses: actions/github-script@v6
+  uses: actions/github-script@v7
   with:
     script: console.log(context)
 ```
@@ -152,7 +159,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.createComment({
@@ -174,7 +181,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.addLabels({
@@ -196,7 +203,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             // Get a list of all issues created by the PR opener
@@ -241,7 +248,7 @@ jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             const diff_url = context.payload.pull_request.diff_url
@@ -265,7 +272,7 @@ jobs:
   list-issues:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             const query = `query($owner:String!, $name:String!, $label:String!) {
@@ -299,7 +306,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             const script = require('./path/to/script.js')
@@ -337,7 +344,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             const script = require('./path/to/script.js')
@@ -352,7 +359,7 @@ module.exports = async ({github, context, core}) => {
   const commit = await github.rest.repos.getCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    ref: `${GITHUB_SHA}`
+    ref: GITHUB_SHA
   })
   core.exportVariable('author', commit.data.commit.author.email)
 }
@@ -375,11 +382,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: '20.x'
       - run: npm ci
       # or one-off:
       - run: npm install execa
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             const execa = require('execa')
@@ -409,12 +416,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             const { default: printStuff } = await import('${{ github.workspace }}/src/print-stuff.js')
 
             await printStuff()
+```
+
+### Use scripts with jsDoc support
+
+If you want type support for your scripts, you could use the command below to install the
+`github-script` type declaration.
+```sh
+$ npm i -D @types/github-script@github:actions/github-script
+```
+
+And then add the `jsDoc` declaration to your script like this:
+```js
+// @ts-check
+/** @param {import('@types/github-script').AsyncFunctionArguments} AsyncFunctionArguments */
+export default async ({ core, context }) => {
+  core.debug("Running something at the moment");
+  return context.actor;
+};
 ```
 
 ### Use env as input
@@ -428,7 +453,7 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         env:
           FIRST_NAME: Mona
           LAST_NAME: Octocat
@@ -456,7 +481,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.MY_PAT }}
           script: |

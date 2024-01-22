@@ -19,7 +19,7 @@ inputs:
     description: An optional user-agent string
     default: actions/github-script
   previews:
-    description: A comma-separated list of API previews to accept
+    description: A comma-separated list of GraphQL API previews to accept
   result-encoding:
     description: Either "string" or "json" (default "json")—how the result will be encoded
     default: json
@@ -29,9 +29,12 @@ inputs:
   retry-exempt-status-codes:
     description: A comma separated list of status codes that will NOT be retried e.g. "400,500". No effect unless `retries` is set
     default: 400,401,403,404,422 # from https://github.com/octokit/plugin-retry.js/blob/9a2443746c350b3beedec35cf26e197ea318a261/src/index.ts#L14
+  base-url:
+    description: An optional GitHub REST API URL to connect to a different GitHub instance. For example, https://my.github-enterprise-server.com/api/v3
+    required: false
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
 runs:
-  using: node16
+  using: node20
   main: dist/index.js

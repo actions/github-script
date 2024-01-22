@@ -1,0 +1,12 @@
+name: 'Install dependencies'
+description: 'Set up node and install dependencies'
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+        cache: npm
+
+    - run: npm ci
+      shell: bash
