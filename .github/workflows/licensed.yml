@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # prefer to use a full fetch for licensed workflows
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@8575951200e472d5f2d95c625da0c7bec8217c42 # v1.161.0
         with:
           ruby-version: ruby
       - uses: github/setup-licensed@v1
