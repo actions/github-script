@@ -11,12 +11,12 @@ const scripts: Record<SupportedLanguage, string> = {
   [SupportedLanguage.cts]: `
   const FS = require('node:fs') // Proof that we are in CommonJS.
   let a: string // Proof that we are in TypeScript.
-  exports = foo // Proof that we executed correctly.
+  return foo // Proof that we executed correctly.
   `,
   [SupportedLanguage.mts]: `
   import FS from 'node:fs' // Proof that we are in an ES Module.
   let a: string // Proof that we are in TypeScript.
-  export default foo // Proof that we executed correctly.
+  return foo // Proof that we executed correctly.
   `
 }
 
@@ -108,7 +108,7 @@ describe(interpretScript.name, () => {
         {require} as any,
         `
         const {test} = require('../test/requireable')
-        exports = test()
+        return test()
         `
       )
       return expect(result()).resolves.toEqual('hello')
@@ -165,13 +165,12 @@ describe(interpretScript.name, () => {
       const result = await interpretScript(
         SupportedLanguage.mts,
         {} as any,
-        `export default {a: 'b'}`
+        `return {a: 'b'}`
       )
       return expect(result()).resolves.toEqual({a: 'b'})
     })
 
-    test.skip(`a script that uses a root level await`, async () => {
-      // Will not work until we can actually run in ESM. Current code is transpiling the mts to cjs, so we don't get root level awaits yet.
+    test(`a script that uses a root level await`, async () => {
       const result = await interpretScript(
         SupportedLanguage.mts,
         {} as any,
@@ -180,14 +179,13 @@ describe(interpretScript.name, () => {
       return expect(result()).resolves
     })
 
-    test.skip(`a script imports a script from disk`, async () => {
-      // Will not work until we can actually run in ESM. Current code is transpiling the mts to cjs, so we don't get root level awaits yet.
+    test(`a script imports a script from disk`, async () => {
       const result = await interpretScript(
         SupportedLanguage.mts,
         {require} as any,
         `
         const {test} = await import('../test/importable')
-        export default test()
+        return test()
         `
       )
       return expect(result()).resolves.toEqual('hello')

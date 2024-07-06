@@ -1,5 +1,3 @@
-import * as VM from 'node:vm'
-
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import {Context} from '@actions/github/lib/context'
@@ -36,35 +34,20 @@ export async function interpretScript<T>(
   script: string
 ): Promise<() => Promise<T>> {
   switch (language) {
-    case SupportedLanguage.cjs:
-      return async () => callAsyncFunction(context, script)
     case SupportedLanguage.cts:
     case SupportedLanguage.mts: {
       const fileName = `github-script.${language}`
 
-      const compilerResult = transpileModule(script, {
+      script = transpileModule(script, {
         compilerOptions: {
           module: ModuleKind.CommonJS, // Take the incoming TypeScript and compile it to CommonJS to run in the CommonJS environment of this action.
           target: ScriptTarget.Latest,
           strict: true
         },
         fileName
-      })
-
-      return async () => {
-        const runContext: CjsContext & Record<string, unknown> = {
-          module: {exports: {}},
-          exports: {},
-          process,
-          ...context
-        }
-        const runResult = VM.runInNewContext(
-          compilerResult.outputText,
-          runContext
-        )
-
-        return runResult
-      }
+      }).outputText
     }
   }
+
+  return async () => callAsyncFunction(context, script)
 }
