@@ -32,6 +32,9 @@ inputs:
   base-url:
     description: An optional GitHub REST API URL to connect to a different GitHub instance. For example, https://my.github-enterprise-server.com/api/v3
     required: false
+  language:
+    description: The language to interpret the script as. Pick from "cjs", "cts", "mts".
+    default: "cjs"
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
