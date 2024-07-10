@@ -7,7 +7,7 @@
 This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
 
-To use this action, provide an input named `script` that contains the body of an asynchronous function call.
+To use this action, provide an input named `script` that contains the body of an asynchronous JavaScript function call.
 The following arguments will be provided:
 
 - `github` A pre-authenticated
