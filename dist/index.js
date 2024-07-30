@@ -9321,6 +9321,258 @@ retry.VERSION = VERSION;
 
 /***/ }),
 
+/***/ 9968:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// pkg/dist-src/index.js
+var dist_src_exports = {};
+__export(dist_src_exports, {
+  throttling: () => throttling
+});
+module.exports = __toCommonJS(dist_src_exports);
+var import_light = __toESM(__nccwpck_require__(1174));
+var import_core = __nccwpck_require__(6762);
+
+// pkg/dist-src/version.js
+var VERSION = "8.2.0";
+
+// pkg/dist-src/wrap-request.js
+var noop = () => Promise.resolve();
+function wrapRequest(state, request, options) {
+  return state.retryLimiter.schedule(doRequest, state, request, options);
+}
+async function doRequest(state, request, options) {
+  const isWrite = options.method !== "GET" && options.method !== "HEAD";
+  const { pathname } = new URL(options.url, "http://github.test");
+  const isSearch = options.method === "GET" && pathname.startsWith("/search/");
+  const isGraphQL = pathname.startsWith("/graphql");
+  const retryCount = ~~request.retryCount;
+  const jobOptions = retryCount > 0 ? { priority: 0, weight: 0 } : {};
+  if (state.clustering) {
+    jobOptions.expiration = 1e3 * 60;
+  }
+  if (isWrite || isGraphQL) {
+    await state.write.key(state.id).schedule(jobOptions, noop);
+  }
+  if (isWrite && state.triggersNotification(pathname)) {
+    await state.notifications.key(state.id).schedule(jobOptions, noop);
+  }
+  if (isSearch) {
+    await state.search.key(state.id).schedule(jobOptions, noop);
+  }
+  const req = state.global.key(state.id).schedule(jobOptions, request, options);
+  if (isGraphQL) {
+    const res = await req;
+    if (res.data.errors != null && res.data.errors.some((error) => error.type === "RATE_LIMITED")) {
+      const error = Object.assign(new Error("GraphQL Rate Limit Exceeded"), {
+        response: res,
+        data: res.data
+      });
+      throw error;
+    }
+  }
+  return req;
+}
+
+// pkg/dist-src/generated/triggers-notification-paths.js
+var triggers_notification_paths_default = [
+  "/orgs/{org}/invitations",
+  "/orgs/{org}/invitations/{invitation_id}",
+  "/orgs/{org}/teams/{team_slug}/discussions",
+  "/orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments",
+  "/repos/{owner}/{repo}/collaborators/{username}",
+  "/repos/{owner}/{repo}/commits/{commit_sha}/comments",
+  "/repos/{owner}/{repo}/issues",
+  "/repos/{owner}/{repo}/issues/{issue_number}/comments",
+  "/repos/{owner}/{repo}/pulls",
+  "/repos/{owner}/{repo}/pulls/{pull_number}/comments",
+  "/repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies",
+  "/repos/{owner}/{repo}/pulls/{pull_number}/merge",
+  "/repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers",
+  "/repos/{owner}/{repo}/pulls/{pull_number}/reviews",
+  "/repos/{owner}/{repo}/releases",
+  "/teams/{team_id}/discussions",
+  "/teams/{team_id}/discussions/{discussion_number}/comments"
+];
+
+// pkg/dist-src/route-matcher.js
+function routeMatcher(paths) {
+  const regexes = paths.map(
+    (path) => path.split("/").map((c) => c.startsWith("{") ? "(?:.+?)" : c).join("/")
+  );
+  const regex2 = `^(?:${regexes.map((r) => `(?:${r})`).join("|")})[^/]*$`;
+  return new RegExp(regex2, "i");
+}
+
+// pkg/dist-src/index.js
+var regex = routeMatcher(triggers_notification_paths_default);
+var triggersNotification = regex.test.bind(regex);
+var groups = {};
+var createGroups = function(Bottleneck, common) {
+  groups.global = new Bottleneck.Group({
+    id: "octokit-global",
+    maxConcurrent: 10,
+    ...common
+  });
+  groups.search = new Bottleneck.Group({
+    id: "octokit-search",
+    maxConcurrent: 1,
+    minTime: 2e3,
+    ...common
+  });
+  groups.write = new Bottleneck.Group({
+    id: "octokit-write",
+    maxConcurrent: 1,
+    minTime: 1e3,
+    ...common
+  });
+  groups.notifications = new Bottleneck.Group({
+    id: "octokit-notifications",
+    maxConcurrent: 1,
+    minTime: 3e3,
+    ...common
+  });
+};
+function throttling(octokit, octokitOptions) {
+  const {
+    enabled = true,
+    Bottleneck = import_light.default,
+    id = "no-id",
+    timeout = 1e3 * 60 * 2,
+    // Redis TTL: 2 minutes
+    connection
+  } = octokitOptions.throttle || {};
+  if (!enabled) {
+    return {};
+  }
+  const common = { connection, timeout };
+  if (groups.global == null) {
+    createGroups(Bottleneck, common);
+  }
+  const state = Object.assign(
+    {
+      clustering: connection != null,
+      triggersNotification,
+      fallbackSecondaryRateRetryAfter: 60,
+      retryAfterBaseValue: 1e3,
+      retryLimiter: new Bottleneck(),
+      id,
+      ...groups
+    },
+    octokitOptions.throttle
+  );
+  if (typeof state.onSecondaryRateLimit !== "function" || typeof state.onRateLimit !== "function") {
+    throw new Error(`octokit/plugin-throttling error:
+        You must pass the onSecondaryRateLimit and onRateLimit error handlers.
+        See https://octokit.github.io/rest.js/#throttling
+
+        const octokit = new Octokit({
+          throttle: {
+            onSecondaryRateLimit: (retryAfter, options) => {/* ... */},
+            onRateLimit: (retryAfter, options) => {/* ... */}
+          }
+        })
+    `);
+  }
+  const events = {};
+  const emitter = new Bottleneck.Events(events);
+  events.on("secondary-limit", state.onSecondaryRateLimit);
+  events.on("rate-limit", state.onRateLimit);
+  events.on(
+    "error",
+    (e) => octokit.log.warn("Error in throttling-plugin limit handler", e)
+  );
+  state.retryLimiter.on("failed", async function(error, info) {
+    const [state2, request, options] = info.args;
+    const { pathname } = new URL(options.url, "http://github.test");
+    const shouldRetryGraphQL = pathname.startsWith("/graphql") && error.status !== 401;
+    if (!(shouldRetryGraphQL || error.status === 403)) {
+      return;
+    }
+    const retryCount = ~~request.retryCount;
+    request.retryCount = retryCount;
+    options.request.retryCount = retryCount;
+    const { wantRetry, retryAfter = 0 } = await async function() {
+      if (/\bsecondary rate\b/i.test(error.message)) {
+        const retryAfter2 = Number(error.response.headers["retry-after"]) || state2.fallbackSecondaryRateRetryAfter;
+        const wantRetry2 = await emitter.trigger(
+          "secondary-limit",
+          retryAfter2,
+          options,
+          octokit,
+          retryCount
+        );
+        return { wantRetry: wantRetry2, retryAfter: retryAfter2 };
+      }
+      if (error.response.headers != null && error.response.headers["x-ratelimit-remaining"] === "0" || (error.response.data?.errors ?? []).some(
+        (error2) => error2.type === "RATE_LIMITED"
+      )) {
+        const rateLimitReset = new Date(
+          ~~error.response.headers["x-ratelimit-reset"] * 1e3
+        ).getTime();
+        const retryAfter2 = Math.max(
+          // Add one second so we retry _after_ the reset time
+          // https://docs.github.com/en/rest/overview/resources-in-the-rest-api?apiVersion=2022-11-28#exceeding-the-rate-limit
+          Math.ceil((rateLimitReset - Date.now()) / 1e3) + 1,
+          0
+        );
+        const wantRetry2 = await emitter.trigger(
+          "rate-limit",
+          retryAfter2,
+          options,
+          octokit,
+          retryCount
+        );
+        return { wantRetry: wantRetry2, retryAfter: retryAfter2 };
+      }
+      return {};
+    }();
+    if (wantRetry) {
+      request.retryCount++;
+      return retryAfter * state2.retryAfterBaseValue;
+    }
+  });
+  octokit.hook.wrap("request", wrapRequest.bind(null, state));
+  return {};
+}
+throttling.VERSION = VERSION;
+throttling.triggersNotification = triggersNotification;
+// Annotate the CommonJS export names for ESM import in node:
+0 && (0);
+
+
+/***/ }),
+
 /***/ 537:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -35418,6 +35670,8 @@ var io = __nccwpck_require__(7436);
 var dist_node = __nccwpck_require__(8883);
 // EXTERNAL MODULE: ./node_modules/@octokit/plugin-retry/dist-node/index.js
 var plugin_retry_dist_node = __nccwpck_require__(6298);
+// EXTERNAL MODULE: ./node_modules/@octokit/plugin-throttling/dist-node/index.js
+var plugin_throttling_dist_node = __nccwpck_require__(9968);
 ;// CONCATENATED MODULE: ./src/async-function.ts
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 function callAsyncFunction(args, source) {
@@ -35430,7 +35684,7 @@ function callAsyncFunction(args, source) {
 function getRetryOptions(retries, exemptStatusCodes, defaultOptions) {
     var _a;
     if (retries <= 0) {
-        return [{ enabled: false }, defaultOptions.request];
+        return [{ enabled: false }, defaultOptions.request, undefined];
     }
     const retryOptions = {
         enabled: true
@@ -35445,8 +35699,18 @@ function getRetryOptions(retries, exemptStatusCodes, defaultOptions) {
         ...defaultOptions.request,
         retries
     };
+    const throttleOptions = {
+        onRateLimit: (retryAfter, options, octokit, retryCount) => {
+            core.debug(`Request quota exhausted for request ${options.method} ${options.url}`);
+            return retryCount < retries;
+        },
+        onSecondaryRateLimit: (retryAfter, options, octokit, retryCount) => {
+            core.debug(`Secondary quota detected for request ${options.method} ${options.url}`);
+            return retryCount < retries;
+        }
+    };
     core.debug(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
-    return [retryOptions, requestOptions];
+    return [retryOptions, requestOptions, throttleOptions];
 }
 function parseNumberArray(listString) {
     if (!listString) {
@@ -35493,6 +35757,7 @@ const wrapRequire = new Proxy(require, {
 
 
 
+
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
 async function main() {
@@ -35503,20 +35768,21 @@ async function main() {
     const baseUrl = core.getInput('base-url');
     const retries = parseInt(core.getInput('retries'));
     const exemptStatusCodes = parseNumberArray(core.getInput('retry-exempt-status-codes'));
-    const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
+    const [retryOpts, requestOpts, throttleOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
     const opts = {
         log: debug ? console : undefined,
         userAgent: userAgent || undefined,
         previews: previews ? previews.split(',') : undefined,
         retry: retryOpts,
-        request: requestOpts
+        request: requestOpts,
+        throttle: throttleOpts
     };
     // Setting `baseUrl` to undefined will prevent the default value from being used
     // https://github.com/actions/github-script/issues/436
     if (baseUrl) {
         opts.baseUrl = baseUrl;
     }
-    const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog);
+    const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog, plugin_throttling_dist_node.throttling);
     const script = core.getInput('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({
