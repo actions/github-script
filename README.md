@@ -155,6 +155,10 @@ on:
   issues:
     types: [opened]
 
+# see: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token
+permissions:
+  pull-requests: 'write'
+
 jobs:
   comment:
     runs-on: ubuntu-latest
