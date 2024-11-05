@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import {OctokitOptions} from '@octokit/core/dist-types/types'
+import {ThrottlingOptions} from '@octokit/plugin-throttling'
 import {RequestRequestOptions} from '@octokit/types'
 
 export type RetryOptions = {
@@ -11,9 +12,13 @@ export function getRetryOptions(
   retries: number,
   exemptStatusCodes: number[],
   defaultOptions: OctokitOptions
-): [RetryOptions, RequestRequestOptions | undefined] {
+): [
+  RetryOptions,
+  RequestRequestOptions | undefined,
+  ThrottlingOptions | undefined
+] {
   if (retries <= 0) {
-    return [{enabled: false}, defaultOptions.request]
+    return [{enabled: false}, defaultOptions.request, undefined]
   }
 
   const retryOptions: RetryOptions = {
@@ -32,6 +37,21 @@ export function getRetryOptions(
     retries
   }
 
+  const throttleOptions: ThrottlingOptions = {
+    onRateLimit: (retryAfter, options, octokit, retryCount) => {
+      core.debug(
+        `Request quota exhausted for request ${options.method} ${options.url}`
+      )
+      return retryCount < retries
+    },
+    onSecondaryRateLimit: (retryAfter, options, octokit, retryCount) => {
+      core.debug(
+        `Secondary quota detected for request ${options.method} ${options.url}`
+      )
+      return retryCount < retries
+    }
+  }
+
   core.debug(
     `GitHub client configured with: (retries: ${
       requestOptions.retries
@@ -40,7 +60,7 @@ export function getRetryOptions(
     })`
   )
 
-  return [retryOptions, requestOptions]
+  return [retryOptions, requestOptions, throttleOptions]
 }
 
 export function parseNumberArray(listString: string): number[] {
