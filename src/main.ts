@@ -4,6 +4,7 @@ import {context, getOctokit} from '@actions/github'
 import {defaults as defaultGitHubOptions} from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+import * as tc from '@actions/tool-cache'
 import {requestLog} from '@octokit/plugin-request-log'
 import {retry} from '@octokit/plugin-retry'
 import {RequestRequestOptions} from '@octokit/types'
@@ -66,7 +67,8 @@ async function main(): Promise<void> {
       core,
       exec,
       glob,
-      io
+      io,
+      tc
     },
     script
   )
