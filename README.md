@@ -31,6 +31,10 @@ defined, so you don't have to import them (see examples below).
 See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
 
+You can use [Workflow Script Highlighter](https://marketplace.visualstudio.com/items?itemName=yamachu.workflow-script-highlighter) VS Code extension to make it easier to write scripts
+and avoid simple syntax errors, like forgotten `)` or `cosnt` typo.
+
+
 ## Breaking Changes
 
 ### V7
