@@ -39,7 +39,7 @@ jobs:
           result-encoding: string
       - run: |
           echo "- Validating relative require output"
-          if [[ "${{steps.relative-require.outputs.result}}" != "github-script" ]]; then
+          if [[ "${{steps.relative-require.outputs.result}}" != "@actions/github-script" ]]; then
             echo $'::error::\u274C' "Expected '$expected', got ${{steps.relative-require.outputs.result}}"
             exit 1
           fi
