@@ -429,15 +429,15 @@ jobs:
 ### Use scripts with jsDoc support
 
 If you want type support for your scripts, you could use the command below to install the
-`github-script` type declaration.
+`@actions/github-script` type declaration.
 ```sh
-$ npm i -D @types/github-script@github:actions/github-script
+$ npm i -D @actions/github-script@github:actions/github-script
 ```
 
 And then add the `jsDoc` declaration to your script like this:
 ```js
 // @ts-check
-/** @param {import('@types/github-script').AsyncFunctionArguments} AsyncFunctionArguments */
+/** @param {import('@actions/github-script').AsyncFunctionArguments} AsyncFunctionArguments */
 export default async ({ core, context }) => {
   core.debug("Running something at the moment");
   return context.actor;
