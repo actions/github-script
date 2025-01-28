@@ -47,7 +47,7 @@
     "@octokit/core": "^5.0.1",
     "@octokit/plugin-request-log": "^4.0.0",
     "@octokit/plugin-retry": "^6.0.1",
-    "@types/node": "^20.9.0"
+    "@types/node": "^22.12.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.5",
