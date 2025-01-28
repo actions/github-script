@@ -10,7 +10,7 @@ jobs:
     name: Mark issues and PRs as stale
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v3
+      - uses: actions/stale@v9
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           exempt-issue-labels: Not Stale
