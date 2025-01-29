@@ -8,12 +8,15 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     name: Check licenses
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # prefer to use a full fetch for licensed workflows
       # https://github.com/jonabc/setup-licensed/releases/tag/v1.1.1
