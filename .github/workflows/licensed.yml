@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0 # prefer to use a full fetch for licensed workflows
       # https://github.com/jonabc/setup-licensed/releases/tag/v1.1.1
-      - uses: jonabc/setup-licensed@82c5f4d19e8968efa74a25b132922382c2671fe2
+      - uses: jonabc/setup-licensed@d6b3a6f7058c2b40c06d205e13e15c2418977566
         with:
           version: '3.x'
       - uses: ./.github/actions/install-dependencies
