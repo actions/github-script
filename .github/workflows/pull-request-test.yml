@@ -5,11 +5,15 @@ on:
     branches: [main]
     types: [opened, synchronize]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   pull-request-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./
         with:
           script: |
@@ -20,9 +24,9 @@ jobs:
               issue_number: context.payload.number,
             })
 
-            // Find any comment already made by the bot.                                                                                                    
-            const botComment = comments.find(comment => comment.user.id === 41898282)                                                                       
-            const commentBody = "Hello from actions/github-script! (${{ github.sha }})"                  
+            // Find any comment already made by the bot.
+            const botComment = comments.find(comment => comment.user.id === 41898282)
+            const commentBody = "Hello from actions/github-script! (${{ github.sha }})"
 
             if (context.payload.pull_request.head.repo.full_name !== 'actions/github-script') {
               console.log('Not attempting to write comment on PR from fork');
