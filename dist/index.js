@@ -36286,6 +36286,7 @@ async function main() {
         require: wrapRequire,
         __original_require__: require,
         github,
+        octokit: github,
         context: lib_github.context,
         core: core,
         exec: exec,
