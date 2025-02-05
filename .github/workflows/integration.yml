@@ -6,12 +6,15 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test-return:
     name: 'Integration test: return'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: output-set
         uses: ./
         with:
@@ -31,7 +34,7 @@ jobs:
     name: 'Integration test: relative-path require'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: relative-require
         uses: ./
         with:
@@ -39,7 +42,7 @@ jobs:
           result-encoding: string
       - run: |
           echo "- Validating relative require output"
-          if [[ "${{steps.relative-require.outputs.result}}" != "github-script" ]]; then
+          if [[ "${{steps.relative-require.outputs.result}}" != "@actions/github-script" ]]; then
             echo $'::error::\u274C' "Expected '$expected', got ${{steps.relative-require.outputs.result}}"
             exit 1
           fi
@@ -49,7 +52,7 @@ jobs:
     name: 'Integration test: npm package require'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
       - id: npm-require
         uses: ./
@@ -69,7 +72,7 @@ jobs:
     name: 'Integration test: GraphQL previews option'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
       - id: previews-default
         name: Default previews not set
@@ -122,7 +125,7 @@ jobs:
     name: 'Integration test: user-agent option'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
       - id: user-agent-default
         name: Default user-agent not set
@@ -179,7 +182,7 @@ jobs:
     name: "Integration test: debug option (runner.debug mode ${{ matrix.environment && 'enabled' || 'disabled' }})"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
       - id: debug-default
         name: Default debug not set
@@ -253,7 +256,7 @@ jobs:
     name: 'Integration test: base-url option'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
 
       - id: base-url-default

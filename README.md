@@ -1,17 +1,17 @@
 # actions/github-script
 
-[![.github/workflows/integration.yml](https://github.com/actions/github-script/workflows/Integration/badge.svg?event=push&branch=main)](https://github.com/actions/github-script/actions?query=workflow%3AIntegration+branch%3Amain+event%3Apush)
-[![.github/workflows/ci.yml](https://github.com/actions/github-script/workflows/CI/badge.svg?event=push&branch=main)](https://github.com/actions/github-script/actions?query=workflow%3ACI+branch%3Amain+event%3Apush)
-[![.github/workflows/licensed.yml](https://github.com/actions/github-script/workflows/Licensed/badge.svg?event=push&branch=main)](https://github.com/actions/github-script/actions?query=workflow%3ALicensed+branch%3Amain+event%3Apush)
+[![Integration](https://github.com/actions/github-script/actions/workflows/integration.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/integration.yml)
+[![CI](https://github.com/actions/github-script/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/ci.yml)
+[![Licensed](https://github.com/actions/github-script/actions/workflows/licensed.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/licensed.yml)
 
 This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
 
-To use this action, provide an input named `script` that contains the body of an asynchronous function call.
+To use this action, provide an input named `script` that contains the body of an asynchronous JavaScript function call.
 The following arguments will be provided:
 
-- `github` A pre-authenticated
-  [octokit/rest.js](https://octokit.github.io/rest.js) client with pagination plugins
+- `octokit` (and `github`) A pre-authenticated
+  [octokit/rest.js](https://octokit.github.io/rest.js) client _instance_ with pagination plugins
 - `context` An object containing the [context of the workflow
   run](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts)
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
@@ -102,14 +102,14 @@ By default, requests made with the `github` instance will not be retried. You ca
     result-encoding: string
     retries: 3
     script: |
-      github.rest.issues.get({
+      octokit.rest.issues.get({
         issue_number: context.issue.number,
         owner: context.repo.owner,
         repo: context.repo.repo,
       })
 ```
 
-In this example, request failures from `github.rest.issues.get()` will be retried up to 3 times.
+In this example, request failures from `octokit.rest.issues.get()` will be retried up to 3 times.
 
 You can also configure which status codes should be exempt from retries via the `retry-exempt-status-codes` option:
 
@@ -121,7 +121,7 @@ You can also configure which status codes should be exempt from retries via the 
     retries: 3
     retry-exempt-status-codes: 400,401
     script: |
-      github.rest.issues.get({
+      octokit.rest.issues.get({
         issue_number: context.issue.number,
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -166,7 +166,7 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.createComment({
+            octokit.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -188,7 +188,7 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.addLabels({
+            octokit.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -213,12 +213,12 @@ jobs:
             // Get a list of all issues created by the PR opener
             // See: https://octokit.github.io/rest.js/#pagination
             const creator = context.payload.sender.login
-            const opts = github.rest.issues.listForRepo.endpoint.merge({
+            const opts = octokit.rest.issues.listForRepo.endpoint.merge({
               ...context.issue,
               creator,
               state: 'all'
             })
-            const issues = await github.paginate(opts)
+            const issues = await octokit.paginate(opts)
 
             for (const issue of issues) {
               if (issue.number === context.issue.number) {
@@ -230,7 +230,7 @@ jobs:
               }
             }
 
-            await github.rest.issues.createComment({
+            await octokit.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -256,7 +256,7 @@ jobs:
         with:
           script: |
             const diff_url = context.payload.pull_request.diff_url
-            const result = await github.request(diff_url)
+            const result = await octokit.request(diff_url)
             console.log(result)
 ```
 
@@ -293,7 +293,7 @@ jobs:
               name: context.repo.repo,
               label: 'wontfix'
             }
-            const result = await github.graphql(query, variables)
+            const result = await octokit.graphql(query, variables)
             console.log(result)
 ```
 
@@ -309,18 +309,18 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/github-script@v7
         with:
           script: |
             const script = require('./path/to/script.js')
-            console.log(script({github, context}))
+            console.log(script({octokit, context}))
 ```
 
 And then export a function from your module:
 
 ```javascript
-module.exports = ({github, context}) => {
+module.exports = ({octokit, context}) => {
   return context.payload.client_payload.value
 }
 ```
@@ -347,22 +347,22 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/github-script@v7
         env:
           SHA: '${{env.parentSHA}}'
         with:
           script: |
             const script = require('./path/to/script.js')
-            await script({github, context, core})
+            await script({octokit, context, core})
 ```
 
 And then export an async function from your module:
 
 ```javascript
-module.exports = async ({github, context, core}) => {
+module.exports = async ({octokit, context, core}) => {
   const {SHA} = process.env
-  const commit = await github.rest.repos.getCommit({
+  const commit = await octokit.rest.repos.getCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
     ref: `${SHA}`
@@ -385,8 +385,8 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
       - run: npm ci
@@ -421,7 +421,7 @@ jobs:
   print-stuff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/github-script@v7
         with:
           script: |
@@ -432,18 +432,17 @@ jobs:
 
 ### Use scripts with jsDoc support
 
-If you want type support for your scripts, you could use the command below to install the
-`github-script` type declaration.
+If you want type support for your scripts, you could use the command below to install the `@actions/github-script` type declaration.
 
 ```sh
-npm i -D @types/github-script@github:actions/github-script
+$ npm i -D @actions/github-script@github:actions/github-script
 ```
 
 And then add the `jsDoc` declaration to your script like this:
 
 ```js
 // @ts-check
-/** @param {import('@types/github-script').AsyncFunctionArguments} AsyncFunctionArguments */
+/** @param {import('@actions/github-script').AsyncFunctionArguments} AsyncFunctionArguments */
 export default async ({ core, context }) => {
   core.debug("Running something at the moment");
   return context.actor;
@@ -493,7 +492,7 @@ jobs:
         with:
           github-token: ${{ secrets.MY_PAT }}
           script: |
-            github.rest.issues.addLabels({
+            octokit.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
