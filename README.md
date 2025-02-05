@@ -153,7 +153,7 @@ By default, github-script will use the token provided to your workflow.
 ```yaml
 on:
   issues:
-   
+    types: [opened]
 # see: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token
 permissions:
   issues: 'write'
