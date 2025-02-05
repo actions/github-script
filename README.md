@@ -35,21 +35,21 @@ documentation.
 
 ### V7
 
-Version 7 of this action updated the runtime to Node 20 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
+Version 7 of this action updated the runtime to Node 20 - <https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions>
 
 All scripts are now run with Node 20 instead of Node 16 and are affected by any breaking changes between Node 16 and 20
 
-The `previews` input now only applies to GraphQL API calls as REST API previews are no longer necessary - https://github.blog/changelog/2021-10-14-rest-api-preview-promotions/.
+The `previews` input now only applies to GraphQL API calls as REST API previews are no longer necessary - <https://github.blog/changelog/2021-10-14-rest-api-preview-promotions/>.
 
 ### V6
 
-Version 6 of this action updated the runtime to Node 16 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
+Version 6 of this action updated the runtime to Node 16 - <https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions>
 
 All scripts are now run with Node 16 instead of Node 12 and are affected by any breaking changes between Node 12 and 16.
 
 ### V5
 
-Version 5 of this action includes the version 5 of `@actions/github` and `@octokit/plugin-rest-endpoint-methods`. As part of this update, the Octokit context available via `github` no longer has REST methods directly. These methods are available via `github.rest.*` - https://github.com/octokit/plugin-rest-endpoint-methods.js/releases/tag/v5.0.0
+Version 5 of this action includes the version 5 of `@actions/github` and `@octokit/plugin-rest-endpoint-methods`. As part of this update, the Octokit context available via `github` no longer has REST methods directly. These methods are available via `github.rest.*` - <https://github.com/octokit/plugin-rest-endpoint-methods.js/releases/tag/v5.0.0>
 
 For example, `github.issues.createComment` in V4 becomes `github.rest.issues.createComment` in V5
 
@@ -157,7 +157,7 @@ on:
 
 # see: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token
 permissions:
-  pull-requests: 'write'
+  issues: 'write'
 
 jobs:
   comment:
@@ -434,11 +434,13 @@ jobs:
 
 If you want type support for your scripts, you could use the command below to install the
 `github-script` type declaration.
+
 ```sh
-$ npm i -D @types/github-script@github:actions/github-script
+npm i -D @types/github-script@github:actions/github-script
 ```
 
 And then add the `jsDoc` declaration to your script like this:
+
 ```js
 // @ts-check
 /** @param {import('@types/github-script').AsyncFunctionArguments} AsyncFunctionArguments */
