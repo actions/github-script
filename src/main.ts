@@ -7,7 +7,7 @@ import * as io from '@actions/io'
 import {requestLog} from '@octokit/plugin-request-log'
 import {retry} from '@octokit/plugin-retry'
 import {RequestRequestOptions} from '@octokit/types'
-import {callAsyncFunction} from './async-function'
+import {SupportedLanguage, interpretScript} from './interpret-script'
 import {RetryOptions, getRetryOptions, parseNumberArray} from './retry-options'
 import {wrapRequire} from './wrap-require'
 
@@ -21,6 +21,7 @@ type Options = {
   previews?: string[]
   retry?: RetryOptions
   request?: RequestRequestOptions
+  language?: string
 }
 
 async function main(): Promise<void> {
@@ -38,6 +39,15 @@ async function main(): Promise<void> {
     exemptStatusCodes,
     defaultGitHubOptions
   )
+  const languageRaw = core.getInput('language')
+
+  const langValues = Object.keys(SupportedLanguage)
+  if (!langValues.includes(languageRaw)) {
+    throw new Error(
+      `"language" must be one of the following: "${langValues.join('", "')}"`
+    )
+  }
+  const language = SupportedLanguage[languageRaw as SupportedLanguage]
 
   const opts: Options = {
     log: debug ? console : undefined,
@@ -56,8 +66,8 @@ async function main(): Promise<void> {
   const github = getOctokit(token, opts, retry, requestLog)
   const script = core.getInput('script', {required: true})
 
-  // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-  const result = await callAsyncFunction(
+  const executable = await interpretScript(
+    language,
     {
       require: wrapRequire,
       __original_require__: __non_webpack_require__,
@@ -71,6 +81,9 @@ async function main(): Promise<void> {
     },
     script
   )
+
+  // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
+  const result = await executable()
 
   let encoding = core.getInput('result-encoding')
   encoding = encoding ? encoding : 'json'
