@@ -494,3 +494,45 @@ jobs:
               labels: ['Triage']
             })
 ```
+
+### Using exec package
+
+The provided [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package allows to execute command or tools in a cross platform way:
+
+```yaml
+on: push
+
+jobs:
+  use-exec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const exitCode = await exec.exec('echo', ['hello'])
+
+            console.log(exitCode)
+```
+
+`exec` packages provides `getExecOutput` function to retrieve stdout and stderr from executed command:
+
+```yaml
+on: push
+
+jobs:
+  use-get-exec-output:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const {
+              exitCode,
+              stdout,
+              stderr
+            } = await exec.getExecOutput('echo', ['hello']);
+
+            console.log(exitCode, stdout, stderr)
+```      
