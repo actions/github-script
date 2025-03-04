@@ -10,8 +10,8 @@ uses the GitHub API and the workflow run context.
 To use this action, provide an input named `script` that contains the body of an asynchronous JavaScript function call.
 The following arguments will be provided:
 
-- `octokit` (and `github`) A pre-authenticated
-  [octokit/rest.js](https://octokit.github.io/rest.js) client _instance_ with pagination plugins
+- `github` A pre-authenticated
+  [octokit/rest.js](https://octokit.github.io/rest.js) client with pagination plugins
 - `context` An object containing the [context of the workflow
   run](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts)
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
@@ -102,14 +102,14 @@ By default, requests made with the `github` instance will not be retried. You ca
     result-encoding: string
     retries: 3
     script: |
-      octokit.rest.issues.get({
+      github.rest.issues.get({
         issue_number: context.issue.number,
         owner: context.repo.owner,
         repo: context.repo.repo,
       })
 ```
 
-In this example, request failures from `octokit.rest.issues.get()` will be retried up to 3 times.
+In this example, request failures from `github.rest.issues.get()` will be retried up to 3 times.
 
 You can also configure which status codes should be exempt from retries via the `retry-exempt-status-codes` option:
 
@@ -121,7 +121,7 @@ You can also configure which status codes should be exempt from retries via the 
     retries: 3
     retry-exempt-status-codes: 400,401
     script: |
-      octokit.rest.issues.get({
+      github.rest.issues.get({
         issue_number: context.issue.number,
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -162,7 +162,7 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            octokit.rest.issues.createComment({
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -184,7 +184,7 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            octokit.rest.issues.addLabels({
+            github.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -209,12 +209,12 @@ jobs:
             // Get a list of all issues created by the PR opener
             // See: https://octokit.github.io/rest.js/#pagination
             const creator = context.payload.sender.login
-            const opts = octokit.rest.issues.listForRepo.endpoint.merge({
+            const opts = github.rest.issues.listForRepo.endpoint.merge({
               ...context.issue,
               creator,
               state: 'all'
             })
-            const issues = await octokit.paginate(opts)
+            const issues = await github.paginate(opts)
 
             for (const issue of issues) {
               if (issue.number === context.issue.number) {
@@ -226,7 +226,7 @@ jobs:
               }
             }
 
-            await octokit.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -252,7 +252,7 @@ jobs:
         with:
           script: |
             const diff_url = context.payload.pull_request.diff_url
-            const result = await octokit.request(diff_url)
+            const result = await github.request(diff_url)
             console.log(result)
 ```
 
@@ -289,7 +289,7 @@ jobs:
               name: context.repo.repo,
               label: 'wontfix'
             }
-            const result = await octokit.graphql(query, variables)
+            const result = await github.graphql(query, variables)
             console.log(result)
 ```
 
@@ -310,13 +310,13 @@ jobs:
         with:
           script: |
             const script = require('./path/to/script.js')
-            console.log(script({octokit, context}))
+            console.log(script({github, context}))
 ```
 
 And then export a function from your module:
 
 ```javascript
-module.exports = ({octokit, context}) => {
+module.exports = ({github, context}) => {
   return context.payload.client_payload.value
 }
 ```
@@ -350,15 +350,15 @@ jobs:
         with:
           script: |
             const script = require('./path/to/script.js')
-            await script({octokit, context, core})
+            await script({github, context, core})
 ```
 
 And then export an async function from your module:
 
 ```javascript
-module.exports = async ({octokit, context, core}) => {
+module.exports = async ({github, context, core}) => {
   const {SHA} = process.env
-  const commit = await octokit.rest.repos.getCommit({
+  const commit = await github.rest.repos.getCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
     ref: `${SHA}`
@@ -487,7 +487,7 @@ jobs:
         with:
           github-token: ${{ secrets.MY_PAT }}
           script: |
-            octokit.rest.issues.addLabels({
+            github.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
