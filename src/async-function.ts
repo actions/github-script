@@ -23,6 +23,11 @@ export function callAsyncFunction<T>(
   args: AsyncFunctionArguments,
   source: string
 ): Promise<T> {
-  const fn = new AsyncFunction(...Object.keys(args), source)
-  return fn(...Object.values(args))
+  const commonJsArgs = {
+    ...args,
+    module: {exports: {}},
+    exports: {}
+  }
+  const fn = new AsyncFunction(...Object.keys(commonJsArgs), source)
+  return fn(...Object.values(commonJsArgs))
 }
