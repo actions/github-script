@@ -8,7 +8,7 @@
   "types": "types/async-function.d.ts",
   "private": true,
   "engines": {
-    "node": ">=20.0.0 <21.0.0"
+    "node": ">=20.0.0 <23.0.0"
   },
   "scripts": {
     "build": "npm run build:types && ncc build src/main.ts",
