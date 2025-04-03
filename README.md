@@ -132,6 +132,26 @@ By default, the following status codes will not be retried: `400, 401, 403, 404,
 
 These retries are implemented using the [octokit/plugin-retry.js](https://github.com/octokit/plugin-retry.js) plugin. The retries use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) to space out retries. ([source](https://github.com/octokit/plugin-retry.js/blob/9a2443746c350b3beedec35cf26e197ea318a261/src/error-request.ts#L13))
 
+## Recommended Permissions
+
+The permissions required for the `GITHUB_TOKEN` in your workflow vary depending on how you use `github-script`. To ensure secure and efficient use of this action, we recommend reviewing and setting the least privileges necessary for your use case.
+
+### Determine the Required Permissions
+
+1. **`GITHUB_TOKEN` Authentication**  
+   GitHub automatically provides a `GITHUB_TOKEN` for workflows. You can customize the permissions granted to this token. Refer to the documentation for details:  
+   [Permissions for the `GITHUB_TOKEN`](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#permissions-for-the-github_token)
+
+2. **API Calls with Installation Access Tokens**  
+   If you're using `github-script` to make API calls requiring installation access tokens, ensure the permissions are configured appropriately for those endpoints. Learn more here:  
+   [Permissions for installation access tokens](https://docs.github.com/en/rest/authentication/endpoints-available-for-github-app-installation-access-tokens)
+
+### General Best Practices
+
+- Use the principle of least privilege: Only grant the specific permissions needed for your workflow.
+- Regularly audit and review your workflows to ensure permissions remain appropriate for your use cases.
+- Test your workflows with the intended permissions to verify they work as expected without over-permissioning.
+
 ## Examples
 
 Note that `github-token` is optional in this action, and the input is there
