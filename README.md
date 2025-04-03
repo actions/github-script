@@ -18,6 +18,7 @@ The following arguments will be provided:
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
 - `exec` A reference to the [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package
+- `tc` A reference to the [@actions/tool-cache](https://github.com/actions/toolkit/tree/main/packages/tool-cache) package
 - `require` A proxy wrapper around the normal Node.js `require` to enable
   requiring relative paths (relative to the current working directory) and
   requiring npm packages installed in the current working directory. If for
