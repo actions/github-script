@@ -66,9 +66,9 @@ Actions expressions are evaluated before the `script` is passed to the action, s
 
 It's highly recommended to *not* evaluate expressions directly in the `script` to avoid
 [script injections](https://docs.github.com/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#understanding-the-risk-of-script-injections)
-and potential `SyntaxError`s when the expression is not valid JavaScript code (particlarly when it comes to inproperly escaped strings).
+and potential `SyntaxError`s when the expression is not valid JavaScript code (particularly when it comes to improperly escaped strings).
 
-To pass inputs, set `env` vars on the action step and reference then them in your script with `process.env`:
+To pass inputs, set `env` vars on the action step and reference them in your script with `process.env`:
 
 ```yaml
 - uses: actions/github-script@v7
