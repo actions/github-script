@@ -59,6 +59,31 @@ For example, `github.issues.createComment` in V4 becomes `github.rest.issues.cre
 
 See [development.md](/docs/development.md).
 
+## Passing inputs to the script
+
+Actions expressions are evaluated before the `script` is passed to the action, so the result of any expressions
+*will be evaluated as JavaScript code*.
+
+It's highly recommended to *not* evaluate expressions directly in the `script` to avoid
+[script injections](https://docs.github.com/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#understanding-the-risk-of-script-injections)
+and potential `SyntaxError`s when the expression is not valid JavaScript code (particularly when it comes to improperly escaped strings).
+
+To pass inputs, set `env` vars on the action step and reference them in your script with `process.env`:
+
+```yaml
+- uses: actions/github-script@v7
+  env:
+    TITLE: ${{ github.event.pull_request.title }}
+  with:
+    script: |
+      const title = process.env.TITLE;
+      if (title.startsWith('octocat')) {
+        console.log("PR title starts with 'octocat'");
+      } else {
+        console.error("PR title did not start with 'octocat'");
+      }
+```
+
 ## Reading step results
 
 The return value of the script will be in the step's outputs under the
@@ -444,27 +469,6 @@ export default async ({ core, context }) => {
 };
 ```
 
-### Use env as input
-
-You can set env vars to use them in your script:
-
-```yaml
-on: push
-
-jobs:
-  echo-input:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@v7
-        env:
-          FIRST_NAME: Mona
-          LAST_NAME: Octocat
-        with:
-          script: |
-            const { FIRST_NAME, LAST_NAME } = process.env
-
-            console.log(`Hello ${FIRST_NAME} ${LAST_NAME}`)
-```
 
 ### Using a separate GitHub token
 
