@@ -2,7 +2,7 @@
 
 import {getRetryOptions} from '../src/retry-options'
 
-describe('getRequestOptions', () => {
+describe(getRetryOptions.name, () => {
   test('retries disabled if retries == 0', async () => {
     const [retryOptions, requestOptions] = getRetryOptions(
       0,
