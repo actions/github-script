@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "allowJs": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types"
+  },
+  "include": [
+    "src/async-function.ts"
+  ]
+}

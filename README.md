@@ -10,10 +10,9 @@ uses the GitHub API and the workflow run context.
 To use this action, provide an input named `script` that contains the body of an asynchronous JavaScript function call.
 The following arguments will be provided:
 
-- `github` A pre-authenticated
+- `github`/`octokit` A pre-authenticated
   [octokit/rest.js](https://octokit.github.io/rest.js) client with pagination plugins
-- `context` An object containing the [context of the workflow
-  run](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts)
+- `context` An object containing partial [context of the workflow run](./src/context.ts)
 - `core` A reference to the [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) package
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
@@ -32,6 +31,11 @@ See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
 
 ## Breaking Changes
+
+### V8
+
+Version 8 of this action upgraded `@octokit/core` from v5 to v7, which could impact scripts that would
+be impacted by those breaking changes.
 
 ### V7
 

@@ -1,30 +1,25 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import {context, getOctokit} from '@actions/github'
-import {defaults as defaultGitHubOptions} from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
-import {requestLog} from '@octokit/plugin-request-log'
+import {Octokit} from '@octokit/action'
 import {retry} from '@octokit/plugin-retry'
-import {RequestRequestOptions} from '@octokit/types'
-import {callAsyncFunction} from './async-function'
-import {RetryOptions, getRetryOptions, parseNumberArray} from './retry-options'
-import {wrapRequire} from './wrap-require'
+import {requestLog} from '@octokit/plugin-request-log'
+import {callAsyncFunction} from './async-function.js'
+import {Context} from './context.js'
+import {getRetryOptions, parseNumberArray} from './retry-options.js'
+import {wrapRequire} from './wrap-require.js'
+import {OctokitOptions} from '@octokit/core'
 
 process.on('unhandledRejection', handleError)
 main().catch(handleError)
 
-type Options = {
-  log?: Console
-  userAgent?: string
-  baseUrl?: string
-  previews?: string[]
-  retry?: RetryOptions
-  request?: RequestRequestOptions
-}
-
 async function main(): Promise<void> {
-  const token = core.getInput('github-token', {required: true})
+  // @octokit/aciton will use @octokit/auth-action which automatically
+  // reads the GITHUB_TOKEN input
+  // We should still validate that the token is provided early though
+  core.getInput('github-token', {required: true})
+
   const debug = core.getBooleanInput('debug')
   const userAgent = core.getInput('user-agent')
   const previews = core.getInput('previews')
@@ -33,18 +28,16 @@ async function main(): Promise<void> {
   const exemptStatusCodes = parseNumberArray(
     core.getInput('retry-exempt-status-codes')
   )
-  const [retryOpts, requestOpts] = getRetryOptions(
-    retries,
-    exemptStatusCodes,
-    defaultGitHubOptions
-  )
+  const retryOpts = getRetryOptions(retries, exemptStatusCodes)
 
-  const opts: Options = {
+  const opts: OctokitOptions = {
     log: debug ? console : undefined,
     userAgent: userAgent || undefined,
     previews: previews ? previews.split(',') : undefined,
     retry: retryOpts,
-    request: requestOpts
+    request: {
+      retries
+    }
   }
 
   // Setting `baseUrl` to undefined will prevent the default value from being used
@@ -53,7 +46,8 @@ async function main(): Promise<void> {
     opts.baseUrl = baseUrl
   }
 
-  const github = getOctokit(token, opts, retry, requestLog)
+  const OctokitWithPlugins = Octokit.plugin(retry, requestLog)
+  const octokit = new OctokitWithPlugins(opts)
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
@@ -61,9 +55,9 @@ async function main(): Promise<void> {
     {
       require: wrapRequire,
       __original_require__: __non_webpack_require__,
-      github,
-      octokit: github,
-      context,
+      github: octokit,
+      octokit,
+      context: new Context(),
       core,
       exec,
       glob,

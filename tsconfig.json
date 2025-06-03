@@ -1,9 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "moduleResolution": "node",
+    "target": "es2022",
+    "module": "Node16",
+    "moduleResolution": "node16",
     "strict": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["__test__"]
+  // "include": [
+  //   "src/**/*",
+  //   "types/non-webpack-require.d.ts"
+  // ],
+  "exclude": [
+    "__test__"
+  ]
 }
