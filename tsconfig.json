@@ -6,10 +6,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true
   },
-  // "include": [
-  //   "src/**/*",
-  //   "types/non-webpack-require.d.ts"
-  // ],
   "exclude": [
     "__test__"
   ]
