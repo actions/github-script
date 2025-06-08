@@ -2,13 +2,21 @@
 
 import {callAsyncFunction} from '../src/async-function'
 
-describe('callAsyncFunction', () => {
+describe(callAsyncFunction.name, () => {
   test('calls the function with its arguments', async () => {
     const result = await callAsyncFunction({foo: 'bar'} as any, 'return foo')
     expect(result).toEqual('bar')
   })
 
-  test('throws on ReferenceError', async () => {
+  test('can await a Promise', async () => {
+    const result = await callAsyncFunction(
+      {} as any,
+      'return await new Promise(resolve => resolve("bar"))'
+    )
+    expect(result).toEqual('bar')
+  })
+
+  test(`throws an ${ReferenceError.name}`, async () => {
     expect.assertions(1)
 
     try {
