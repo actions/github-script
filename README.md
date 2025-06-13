@@ -390,8 +390,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/github-script@v7
-        env:
-          SHA: '${{env.parentSHA}}'
         with:
           script: |
             const script = require('./path/to/script.js')
@@ -402,11 +400,11 @@ And then export an async function from your module:
 
 ```javascript
 module.exports = async ({github, context, core}) => {
-  const {SHA} = process.env
+  const {GITHUB_SHA} = process.env
   const commit = await github.rest.repos.getCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    ref: `${SHA}`
+    ref: GITHUB_SHA
   })
   core.exportVariable('author', commit.data.commit.author.email)
 }
