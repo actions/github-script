@@ -6,6 +6,7 @@ import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import {requestLog} from '@octokit/plugin-request-log'
 import {retry} from '@octokit/plugin-retry'
+import {throttling, ThrottlingOptions} from '@octokit/plugin-throttling'
 import {RequestRequestOptions} from '@octokit/types'
 import {callAsyncFunction} from './async-function'
 import {RetryOptions, getRetryOptions, parseNumberArray} from './retry-options'
@@ -20,6 +21,7 @@ type Options = {
   baseUrl?: string
   previews?: string[]
   retry?: RetryOptions
+  throttle?: ThrottlingOptions
   request?: RequestRequestOptions
 }
 
@@ -33,7 +35,7 @@ async function main(): Promise<void> {
   const exemptStatusCodes = parseNumberArray(
     core.getInput('retry-exempt-status-codes')
   )
-  const [retryOpts, requestOpts] = getRetryOptions(
+  const [retryOpts, requestOpts, throttleOpts] = getRetryOptions(
     retries,
     exemptStatusCodes,
     defaultGitHubOptions
@@ -44,7 +46,8 @@ async function main(): Promise<void> {
     userAgent: userAgent || undefined,
     previews: previews ? previews.split(',') : undefined,
     retry: retryOpts,
-    request: requestOpts
+    request: requestOpts,
+    throttle: throttleOpts
   }
 
   // Setting `baseUrl` to undefined will prevent the default value from being used
@@ -53,7 +56,7 @@ async function main(): Promise<void> {
     opts.baseUrl = baseUrl
   }
 
-  const github = getOctokit(token, opts, retry, requestLog)
+  const github = getOctokit(token, opts, retry, requestLog, throttling)
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
