@@ -36,5 +36,5 @@ outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`
 runs:
-  using: node20
+  using: node24
   main: dist/index.js
