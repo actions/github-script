@@ -155,7 +155,7 @@ By default, requests made with the `github` instance will not be retried. You ca
     result-encoding: string
     retries: 3
     script: |
-      github.rest.issues.get({
+      return github.rest.issues.get({
         issue_number: context.issue.number,
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -174,7 +174,7 @@ You can also configure which status codes should be exempt from retries via the 
     retries: 3
     retry-exempt-status-codes: 400,401
     script: |
-      github.rest.issues.get({
+      return github.rest.issues.get({
         issue_number: context.issue.number,
         owner: context.repo.owner,
         repo: context.repo.repo,
