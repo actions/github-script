@@ -59,7 +59,7 @@ Version 8 of this action updated the runtime to Node 24 - https://docs.github.co
 
 All scripts are now run with Node 24 instead of Node 20 and are affected by any breaking changes between Node 20 and 24.
 
-This requires a minimum Actions Runner version of [v2.327.1](https://github.com/actions/runner/releases/tag/v2.327.1)
+**This requires a minimum Actions Runner version of [v2.327.1](https://github.com/actions/runner/releases/tag/v2.327.1)**
 
 ### V7
 
