@@ -7,6 +7,26 @@
 This action makes it easy to quickly write a script in your workflow that
 uses the GitHub API and the workflow run context.
 
+### Note
+
+Thank you for your interest in this GitHub action, however, right now we are not taking contributions. 
+
+We continue to focus our resources on strategic areas that help our customers be successful while making developers' lives easier. While GitHub Actions remains a key part of this vision, we are allocating resources towards other areas of Actions and are not taking contributions to this repository at this time. The GitHub public roadmap is the best place to follow along for any updates on features we’re working on and what stage they’re in.
+
+We are taking the following steps to better direct requests related to GitHub Actions, including:
+
+1. We will be directing questions and support requests to our [Community Discussions area](https://github.com/orgs/community/discussions/categories/actions)
+
+2. High Priority bugs can be reported through Community Discussions or you can report these to our support team https://support.github.com/contact/bug-report.
+
+3. Security Issues should be handled as per our [security.md](security.md)
+
+We will still provide security updates for this project and fix major breaking changes during this time.
+
+You are welcome to still raise bugs in this repo.
+
+### This action 
+
 To use this action, provide an input named `script` that contains the body of an asynchronous JavaScript function call.
 The following arguments will be provided:
 
@@ -32,6 +52,14 @@ See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
 
 ## Breaking Changes
+
+### V8
+
+Version 8 of this action updated the runtime to Node 24 - https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
+
+All scripts are now run with Node 24 instead of Node 20 and are affected by any breaking changes between Node 20 and 24.
+
+**This requires a minimum Actions Runner version of [v2.327.1](https://github.com/actions/runner/releases/tag/v2.327.1)**
 
 ### V7
 
@@ -59,13 +87,38 @@ For example, `github.issues.createComment` in V4 becomes `github.rest.issues.cre
 
 See [development.md](/docs/development.md).
 
+## Passing inputs to the script
+
+Actions expressions are evaluated before the `script` is passed to the action, so the result of any expressions
+*will be evaluated as JavaScript code*.
+
+It's highly recommended to *not* evaluate expressions directly in the `script` to avoid
+[script injections](https://docs.github.com/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#understanding-the-risk-of-script-injections)
+and potential `SyntaxError`s when the expression is not valid JavaScript code (particularly when it comes to improperly escaped strings).
+
+To pass inputs, set `env` vars on the action step and reference them in your script with `process.env`:
+
+```yaml
+- uses: actions/github-script@v8
+  env:
+    TITLE: ${{ github.event.pull_request.title }}
+  with:
+    script: |
+      const title = process.env.TITLE;
+      if (title.startsWith('octocat')) {
+        console.log("PR title starts with 'octocat'");
+      } else {
+        console.error("PR title did not start with 'octocat'");
+      }
+```
+
 ## Reading step results
 
 The return value of the script will be in the step's outputs under the
 "result" key.
 
 ```yaml
-- uses: actions/github-script@v7
+- uses: actions/github-script@v8
   id: set-result
   with:
     script: return "Hello!"
@@ -84,7 +137,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 `result-encoding` input:
 
 ```yaml
-- uses: actions/github-script@v7
+- uses: actions/github-script@v8
   id: my-script
   with:
     result-encoding: string
@@ -96,7 +149,7 @@ output of a github-script step. For some workflows, string encoding is preferred
 By default, requests made with the `github` instance will not be retried. You can configure this with the `retries` option:
 
 ```yaml
-- uses: actions/github-script@v7
+- uses: actions/github-script@v8
   id: my-script
   with:
     result-encoding: string
@@ -114,7 +167,7 @@ In this example, request failures from `github.rest.issues.get()` will be retrie
 You can also configure which status codes should be exempt from retries via the `retry-exempt-status-codes` option:
 
 ```yaml
-- uses: actions/github-script@v7
+- uses: actions/github-script@v8
   id: my-script
   with:
     result-encoding: string
@@ -143,7 +196,7 @@ By default, github-script will use the token provided to your workflow.
 
 ```yaml
 - name: View context attributes
-  uses: actions/github-script@v7
+  uses: actions/github-script@v8
   with:
     script: console.log(context)
 ```
@@ -159,7 +212,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.createComment({
@@ -181,7 +234,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -203,7 +256,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             // Get a list of all issues created by the PR opener
@@ -248,7 +301,7 @@ jobs:
   diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             const diff_url = context.payload.pull_request.diff_url
@@ -272,7 +325,7 @@ jobs:
   list-issues:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             const query = `query($owner:String!, $name:String!, $label:String!) {
@@ -305,8 +358,8 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/github-script@v7
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v8
         with:
           script: |
             const script = require('./path/to/script.js')
@@ -343,8 +396,8 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/github-script@v7
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v8
         env:
           SHA: '${{env.parentSHA}}'
         with:
@@ -381,14 +434,14 @@ jobs:
   echo-input:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
       - run: npm ci
       # or one-off:
       - run: npm install execa
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             const execa = require('execa')
@@ -417,8 +470,8 @@ jobs:
   print-stuff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/github-script@v7
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v8
         with:
           script: |
             const { default: printStuff } = await import('${{ github.workspace }}/src/print-stuff.js')
@@ -444,27 +497,6 @@ export default async ({ core, context }) => {
 };
 ```
 
-### Use env as input
-
-You can set env vars to use them in your script:
-
-```yaml
-on: push
-
-jobs:
-  echo-input:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@v7
-        env:
-          FIRST_NAME: Mona
-          LAST_NAME: Octocat
-        with:
-          script: |
-            const { FIRST_NAME, LAST_NAME } = process.env
-
-            console.log(`Hello ${FIRST_NAME} ${LAST_NAME}`)
-```
 
 ### Using a separate GitHub token
 
@@ -483,7 +515,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.MY_PAT }}
           script: |
@@ -494,3 +526,45 @@ jobs:
               labels: ['Triage']
             })
 ```
+
+### Using exec package
+
+The provided [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package allows to execute command or tools in a cross platform way:
+
+```yaml
+on: push
+
+jobs:
+  use-exec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const exitCode = await exec.exec('echo', ['hello'])
+
+            console.log(exitCode)
+```
+
+`exec` packages provides `getExecOutput` function to retrieve stdout and stderr from executed command:
+
+```yaml
+on: push
+
+jobs:
+  use-get-exec-output:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const {
+              exitCode,
+              stdout,
+              stderr
+            } = await exec.getExecOutput('echo', ['hello']);
+
+            console.log(exitCode, stdout, stderr)
+```      

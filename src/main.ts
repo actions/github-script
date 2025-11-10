@@ -62,6 +62,7 @@ async function main(): Promise<void> {
       require: wrapRequire,
       __original_require__: __non_webpack_require__,
       github,
+      octokit: github,
       context,
       core,
       exec,
