@@ -1,0 +1,225 @@
+-- StarterPlayerScripts/SaikytiteoAutoParry.lua
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+-- ====== SERVER LOGIC ======
+if RunService:IsServer() then
+	local DEFAULT_REACTION = 0.03
+	local MAX_HITBOX_DISTANCE = 4
+	local ATTACK_FLAG = "IsAttacking"
+	local HITBOX_NAME = "Hitbox"
+
+	local AutoParryState = {}
+	local PlayerReaction = {}
+
+	Players.PlayerAdded:Connect(function(plr)
+		AutoParryState[plr] = false
+		PlayerReaction[plr] = DEFAULT_REACTION
+
+		plr.CharacterAdded:Connect(function(char)
+			local remote = Instance.new("RemoteEvent")
+			remote.Name = "ParryRemote"
+			remote.Parent = char
+
+			local toggleEvent = Instance.new("RemoteEvent")
+			toggleEvent.Name = "AutoParryToggle"
+			toggleEvent.Parent = plr:WaitForChild("PlayerGui")
+
+			toggleEvent.OnServerEvent:Connect(function(p, state, reaction)
+				if p == plr then
+					AutoParryState[p] = state
+					if reaction then PlayerReaction[p] = reaction end
+				end
+			end)
+		end)
+	end)
+
+	local function IncomingPerfectHit(targetPlayer)
+		local char = targetPlayer.Character
+		if not char or not char:FindFirstChild("HumanoidRootPart") then return false end
+		local hrp = char.HumanoidRootPart
+
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if plr ~= targetPlayer then
+				local aChar = plr.Character
+				if aChar and aChar:FindFirstChild(ATTACK_FLAG) then
+					if aChar[ATTACK_FLAG].Value then
+						local hitbox = aChar:FindFirstChild(HITBOX_NAME)
+						if hitbox then
+							local dist = (hitbox.Position - hrp.Position).Magnitude
+							if dist <= MAX_HITBOX_DISTANCE then
+								return true
+							end
+						end
+					end
+				end
+			end
+		end
+		return false
+	end
+
+	RunService.Heartbeat:Connect(function()
+		for plr, enabled in pairs(AutoParryState) do
+			if enabled and plr.Character then
+				local char = plr.Character
+				local remote = char:FindFirstChild("ParryRemote")
+				if remote and IncomingPerfectHit(plr) then
+					task.spawn(function()
+						task.wait(PlayerReaction[plr] or DEFAULT_REACTION)
+						remote:Fire("StartParryPerfect")
+					end)
+				end
+			end
+		end
+	end)
+	return
+end
+
+-- ====== CLIENT LOGIC ======
+local char = player.Character or player.CharacterAdded:Wait()
+local remote = char:FindFirstChild("ParryRemote") or Instance.new("RemoteEvent")
+remote.Name = "ParryRemote"
+remote.Parent = char
+
+remote.OnClientEvent:Connect(function(action)
+	if action == "StartParryPerfect" then
+		print("PERFECT AUTO PARRY!")
+		-- Thêm flash, âm thanh, animation ở đây nếu muốn
+	end
+end)
+
+-- ====== GUI “Saikytiteo” ======
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Name = "SaikytiteoAutoParryMenu"
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 250, 0, 150)
+Frame.Position = UDim2.new(0.05,0,0.2,0)
+Frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+Frame.Active = true
+Frame.Draggable = true
+Frame.ClipsDescendants = true
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1,0,0,28)
+Title.BackgroundTransparency = 1
+Title.Text = "Saikytiteo"
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+Title.TextSize = 24
+Title.Font = Enum.Font.GothamBold
+Title.Parent = Frame
+
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Size = UDim2.new(0,200,0,50)
+ToggleButton.Position = UDim2.new(0,25,0,40)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(180,50,50)
+ToggleButton.Text = "OFF"
+ToggleButton.TextColor3 = Color3.fromRGB(255,255,255)
+ToggleButton.TextSize = 22
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Parent = Frame
+ToggleButton.AutoButtonColor = true
+ToggleButton.BorderSizePixel = 0
+ToggleButton.CornerRadius = UDim.new(0,10)
+
+local SliderLabel = Instance.new("TextLabel")
+SliderLabel.Size = UDim2.new(1,0,0,20)
+SliderLabel.Position = UDim2.new(0,0,0,100)
+SliderLabel.BackgroundTransparency = 1
+SliderLabel.Text = "Reaction Time"
+SliderLabel.TextColor3 = Color3.fromRGB(255,255,255)
+SliderLabel.Font = Enum.Font.Gotham
+SliderLabel.TextSize = 16
+SliderLabel.Parent = Frame
+
+local SliderBar = Instance.new("Frame")
+SliderBar.Size = UDim2.new(0,200,0,20)
+SliderBar.Position = UDim2.new(0,25,0,120)
+SliderBar.BackgroundColor3 = Color3.fromRGB(70,70,70)
+SliderBar.BorderSizePixel = 0
+SliderBar.Parent = Frame
+SliderBar.CornerRadius = UDim.new(0,10)
+
+local Handle = Instance.new("Frame")
+Handle.Size = UDim2.new(0,20,1,0)
+Handle.Position = UDim2.new(0.5,0,0,0)
+Handle.BackgroundColor3 = Color3.fromRGB(200,200,200)
+Handle.BorderSizePixel = 0
+Handle.Parent = SliderBar
+Handle.CornerRadius = UDim.new(0,10)
+
+local dragging = false
+local reactionTime = 0.03
+Handle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true end
+end)
+Handle.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+end)
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local x = math.clamp(input.Position.X - SliderBar.AbsolutePosition.X,0,SliderBar.AbsoluteSize.X)
+		Handle.Position = UDim2.new(0, x, 0, 0)
+		reactionTime = 0.01 + (0.05 * (1 - x/SliderBar.AbsoluteSize.X))
+	end
+end)
+
+-- Nút thu nhỏ
+local MiniButton = Instance.new("TextButton")
+MiniButton.Size = UDim2.new(0,40,0,40)
+MiniButton.Position = UDim2.new(1, -45, 0, 5)
+MiniButton.BackgroundColor3 = Color3.fromRGB(50,50,50)
+MiniButton.TextColor3 = Color3.fromRGB(255,255,255)
+MiniButton.Text = "S"
+MiniButton.Font = Enum.Font.GothamBold
+MiniButton.TextSize = 24
+MiniButton.Parent = Frame
+MiniButton.Visible = true
+
+local isMinimized = false
+MiniButton.MouseButton1Click:Connect(function()
+	if not isMinimized then
+		-- Thu nhỏ
+		Frame.Size = UDim2.new(0, 60, 0, 40)
+		Title.Visible = false
+		ToggleButton.Visible = false
+		SliderLabel.Visible = false
+		SliderBar.Visible = false
+		Handle.Visible = false
+		isMinimized = true
+	else
+		-- Mở lại
+		Frame.Size = UDim2.new(0, 250, 0, 150)
+		Title.Visible = true
+		ToggleButton.Visible = true
+		SliderLabel.Visible = true
+		SliderBar.Visible = true
+		Handle.Visible = true
+		isMinimized = false
+	end
+end)
+
+-- RemoteEvent để gửi ON/OFF và reaction time
+local toggleRemote = ScreenGui:FindFirstChild("AutoParryToggle") or Instance.new("RemoteEvent")
+toggleRemote.Name = "AutoParryToggle"
+toggleRemote.Parent = ScreenGui
+
+local isOn = false
+ToggleButton.MouseButton1Click:Connect(function()
+	isOn = not isOn
+	if isOn then
+		ToggleButton.BackgroundColor3 = Color3.fromRGB(40,180,60)
+		ToggleButton.Text = "ON"
+	else
+		ToggleButton.BackgroundColor3 = Color3.fromRGB(180,50,50)
+		ToggleButton.Text = "OFF"
+	end
+	toggleRemote:FireServer(isOn, reactionTime)
+end)
