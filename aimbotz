@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+# ROXBLOX AIM ASSIST v1.0 - Educational Purpose Only
+# Compatible: Android (via Termux), PC (Windows/Linux)
+# Requirements: pip install numpy opencv-python pillow
+
+import cv2
+import numpy as np
+import time
+import sys
+import os
+from PIL import ImageGrab
+
+class BloxFruitAimAssist:
+    def __init__(self, platform="pc"):
+        self.platform = platform
+        self.target_color_lower = np.array([100, 150, 150])  # Blue/Purple players
+        self.target_color_upper = np.array([140, 255, 255])
+        self.screen_region = (0, 0, 1920, 1080)  # Adjust for your screen
+        
+    def capture_screen(self):
+        """Capture screen based on platform"""
+        if self.platform == "pc":
+            screenshot = ImageGrab.grab(bbox=self.screen_region)
+            frame = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+        else:
+            # For Android - Requires scrcpy or screen capture permission
+            os.system("adb exec-out screencap -p > /sdcard/screen.png")
+            frame = cv2.imread("/sdcard/screen.png")
+        return frame
+    
+    def find_targets(self, frame):
+        """Find player targets using color detection"""
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, self.target_color_lower, self.target_color_upper)
+        
+        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        
+        targets = []
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            if area > 100:  # Filter small objects
+                x, y, w, h = cv2.boundingRect(cnt)
+                center_x = x + w//2
+                center_y = y + h//2
+                targets.append((center_x, center_y, area))
+        
+        return targets
+    
+    def calculate_aim_offset(self, target, screen_center):
+        """Calculate mouse/touch offset to aim at target"""
+        tx, ty, _ = target
+        cx, cy = screen_center
+        
+        offset_x = tx - cx
+        offset_y = ty - cy
+        
+        # Apply smoothing
+        offset_x = int(offset_x * 0.7)
+        offset_y = int(offset_y * 0.7)
+        
+        return offset_x, offset_y
+    
+    def auto_aim(self):
+        """Main aiming loop"""
+        print(f"[+] Blox Fruit Aim Assist Started ({self.platform.upper()})")
+        print("[!] Press Ctrl+C to stop")
+        
+        screen_center = (self.screen_region[2]//2, self.screen_region[3]//2)
+        
+        try:
+            while True:
+                frame = self.capture_screen()
+                targets = self.find_targets(frame)
+                
+                if targets:
+                    # Select closest target to center
+                    targets.sort(key=lambda t: abs(t[0]-screen_center[0]) + abs(t[1]-screen_center[1]))
+                    closest = targets[0]
+                    
+                    offset_x, offset_y = self.calculate_aim_offset(closest, screen_center)
+                    
+                    # Move aim
+                    if abs(offset_x) > 5 or abs(offset_y) > 5:
+                        if self.platform == "pc":
+                            self.move_mouse(offset_x, offset_y)
+                        else:
+                            self.simulate_touch(offset_x, offset_y)
+                        
+                        print(f"[AIM] Target locked: {closest[:2]} | Offset: ({offset_x}, {offset_y})")
+                
+                time.sleep(0.05)  # 20 FPS processing
+                
+        except KeyboardInterrupt:
+            print("\n[!] Aim assist stopped")
+    
+    def move_mouse(self, dx, dy):
+        """Move mouse (PC)"""
+        try:
+            import pyautogui
+            pyautogui.move(dx, dy)
+        except:
+            # Fallback for systems without pyautogui
+            pass
+    
+    def simulate_touch(self, dx, dy):
+        """Simulate touch movement (Android)"""
+        # Requires ADB debugging enabled
+        os.system(f"adb shell input swipe 500 500 {500+dx} {500+dy} 50")
+
+# QUICK SETUP INSTRUCTIONS
+"""
+=== FOR PC ===
+1. Install Python: python.org
+2. Install requirements:
+   pip install numpy opencv-python pillow pyautogui
+3. Run: python blox_aim.py
+
+=== FOR MOBILE (Android) ===
+1. Install Termux from F-Droid
+2. In Termux:
+   pkg install python clang
+   pip install numpy opencv-python
+3. Enable USB Debugging on phone
+4. Connect to PC via USB
+5. Run with platform="mobile"
+
+=== CONFIGURATION ===
+Adjust screen_region for your resolution
+Adjust target_color for enemy colors
+"""
+
+if __name__ == "__main__":
+    # Auto detect platform
+    platform = "mobile" if "android" in sys.platform else "pc"
+    
+    # Or manually specify
+    # platform = "pc"  # or "mobile"
+    
+    aimbot = BloxFruitAimAssist(platform)
+    aimbot.auto_aim()
