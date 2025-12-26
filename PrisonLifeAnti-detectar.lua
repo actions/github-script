@@ -1,0 +1,100 @@
+-- ==================================
+-- PANEL: Protección Local (Test Mode)
+-- Made for Anderson
+-- ==================================
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local godmode = false
+local blockRagdoll = false
+local humanoid = nil
+local originalHealth = 100
+
+-- ======================
+-- FUNCIONES
+-- ======================
+local function setupCharacter(char)
+	humanoid = char:WaitForChild("Humanoid")
+	originalHealth = humanoid.MaxHealth
+
+	humanoid.HealthChanged:Connect(function()
+		if godmode and humanoid.Health < humanoid.MaxHealth then
+			humanoid.Health = humanoid.MaxHealth
+		end
+	end)
+
+	humanoid.StateChanged:Connect(function(_, new)
+		if blockRagdoll and new == Enum.HumanoidStateType.Physics then
+			humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+		end
+	end)
+end
+
+if player.Character then
+	setupCharacter(player.Character)
+end
+
+player.CharacterAdded:Connect(setupCharacter)
+
+-- ======================
+-- GUI
+-- ======================
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+gui.Name = "LocalProtectionPanel"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 260, 0, 190)
+frame.Position = UDim2.new(0.05, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,12)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,35)
+title.BackgroundTransparency = 1
+title.Text = "Protección Local (Test)"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 15
+
+local function createButton(text, y)
+	local b = Instance.new("TextButton", frame)
+	b.Size = UDim2.new(0.85,0,0,40)
+	b.Position = UDim2.new(0.075,0,y,0)
+	b.Text = text
+	b.Font = Enum.Font.GothamBold
+	b.TextSize = 14
+	b.TextColor3 = Color3.new(1,1,1)
+	b.BackgroundColor3 = Color3.fromRGB(170,60,60)
+	Instance.new("UICorner", b).CornerRadius = UDim.new(0,8)
+	return b
+end
+
+local godBtn = createButton("Godmode Local: OFF", 0.28)
+local ragBtn = createButton("Anti Ragdoll: OFF", 0.58)
+
+-- ======================
+-- BOTONES
+-- ======================
+godBtn.MouseButton1Click:Connect(function()
+	godmode = not godmode
+	godBtn.Text = "Godmode Local: " .. (godmode and "ON" or "OFF")
+	godBtn.BackgroundColor3 = godmode and Color3.fromRGB(60,170,90) or Color3.fromRGB(170,60,60)
+
+	if humanoid and godmode then
+		humanoid.MaxHealth = math.huge
+		humanoid.Health = humanoid.MaxHealth
+	elseif humanoid then
+		humanoid.MaxHealth = originalHealth
+	end
+end)
+
+ragBtn.MouseButton1Click:Connect(function()
+	blockRagdoll = not blockRagdoll
+	ragBtn.Text = "Anti Ragdoll: " .. (blockRagdoll and "ON" or "OFF")
+	ragBtn.BackgroundColor3 = blockRagdoll and Color3.fromRGB(60,170,90) or Color3.fromRGB(170,60,60)
+end)
