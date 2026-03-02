@@ -1,17 +1,328 @@
+name: Integration
+
 on:
-  push: {branches: master}
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  integration:
+  test-return:
+    name: 'Integration test: return'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: output-set
-        uses: actions/github-script@master
+        uses: ./
         with:
           script: return core.getInput('input-value')
           result-encoding: string
           input-value: output
       - run: |
-          if [[ "${{steps.output-set.outputs.result}}" != "output" ]]; then
+          echo "- Validating output is produced"
+          expected="output"
+          if [[ "${{steps.output-set.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.output-set.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-relative-require:
+    name: 'Integration test: relative-path require'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: relative-require
+        uses: ./
+        with:
+          script: return require('./package.json').name
+          result-encoding: string
+      - run: |
+          echo "- Validating relative require output"
+          if [[ "${{steps.relative-require.outputs.result}}" != "@actions/github-script" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.relative-require.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-npm-require:
+    name: 'Integration test: npm package require'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-dependencies
+      - id: npm-require
+        uses: ./
+        with:
+          script: return require('@actions/core/package.json').name
+          result-encoding: string
+      - run: |
+          echo "- Validating npm require output"
+          expected="@actions/core"
+          if [[ "${{steps.npm-require.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.npm-require.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-previews:
+    name: 'Integration test: GraphQL previews option'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-dependencies
+      - id: previews-default
+        name: Default previews not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({url: "/graphql"}).headers.accept
+          result-encoding: string
+      - id: previews-set-single
+        name: Previews set to a single value
+        uses: ./
+        with:
+          previews: foo
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({url: "/graphql"}).headers.accept
+          result-encoding: string
+      - id: previews-set-multiple
+        name: Previews set to comma-separated list
+        uses: ./
+        with:
+          previews: foo,bar,baz
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({url: "/graphql"}).headers.accept
+          result-encoding: string
+      - run: |
+          echo "- Validating previews default"
+          expected="application/vnd.github.v3+json"
+          if [[ "${{steps.previews-default.outputs.result}}" != $expected ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.previews-default.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating previews set to a single value"
+          expected="application/vnd.github.foo-preview+json"
+          if [[ "${{steps.previews-set-single.outputs.result}}" != $expected ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.previews-set-single.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating previews set to multiple values"
+          expected="application/vnd.github.foo-preview+json,application/vnd.github.bar-preview+json,application/vnd.github.baz-preview+json"
+          if [[ "${{steps.previews-set-multiple.outputs.result}}" != $expected ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.previews-set-multiple.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-user-agent:
+    name: 'Integration test: user-agent option'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-dependencies
+      - id: user-agent-default
+        name: Default user-agent not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers['user-agent']
+          result-encoding: string
+      - id: user-agent-set
+        name: User-agent set
+        uses: ./
+        with:
+          user-agent: foobar
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers['user-agent']
+          result-encoding: string
+      - id: user-agent-empty
+        name: User-agent set to an empty string
+        uses: ./
+        with:
+          user-agent: ''
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).headers['user-agent']
+          result-encoding: string
+      - run: |
+          echo "- Validating user-agent default"
+          expected="actions/github-script octokit-core.js/"
+          if [[ "${{steps.user-agent-default.outputs.result}}" != "$expected"* ]]; then
+            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-default.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating user-agent set to a value"
+          expected="foobar octokit-core.js/"
+          if [[ "${{steps.user-agent-set.outputs.result}}" != "$expected"* ]]; then
+            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-set.outputs.result}}"
+            exit 1
+          fi
+          echo "- Validating user-agent set to an empty string"
+          expected="actions/github-script octokit-core.js/"
+          if [[ "${{steps.user-agent-empty.outputs.result}}" != "$expected"* ]]; then
+            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-empty.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-debug:
+    strategy:
+      matrix:
+        environment: ['', 'debug-integration-test']
+    environment: ${{ matrix.environment }}
+    name: "Integration test: debug option (runner.debug mode ${{ matrix.environment && 'enabled' || 'disabled' }})"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-dependencies
+      - id: debug-default
+        name: Default debug not set
+        uses: ./
+        with:
+          script: |
+            const log = github.log
+            return {
+              runnerDebugMode: core.isDebug(),
+              debug: log.debug === console.debug,
+              info: log.info === console.info
+            }
+      - id: debug-true
+        name: Debug set to true
+        uses: ./
+        with:
+          debug: true
+          script: |
+            const log = github.log
+            return {
+              runnerDebugMode: core.isDebug(),
+              debug: log.debug === console.debug,
+              info: log.info === console.info
+            }
+      - id: debug-false
+        name: Debug set to false
+        uses: ./
+        with:
+          debug: false
+          script: |
+            const log = github.log
+            return {
+              runnerDebugMode: core.isDebug(),
+              debug: log.debug === console.debug,
+              info: log.info === console.info
+            }
+      - id: evaluate-tests
+        name: Evaluate test outputs
+        env:
+          RDMODE: ${{ runner.debug == '1' }}
+        run: |
+          # tests table, pipe separated: label | output | expected
+          # leading and trailing spaces on any field are trimmed
+          tests=$(cat << 'TESTS'
+            Validating debug default |\
+              ${{ steps.debug-default.outputs.result }} |\
+              {"runnerDebugMode":${{ env.RDMODE }},"debug":${{ env.RDMODE }},"info":${{ env.RDMODE }}}
+            Validating debug set to true |\
+              ${{ steps.debug-true.outputs.result }} |\
+              {"runnerDebugMode":${{ env.RDMODE }},"debug":true,"info":true}
+            Validating debug set to false |\
+              ${{ steps.debug-false.outputs.result }} |\
+              {"runnerDebugMode":${{ env.RDMODE }},"debug":false,"info":false}
+          TESTS
+          )
+
+          strim() { shopt -s extglob; lt="${1##+( )}"; echo "${lt%%+( )}"; }
+          while IFS='|' read label output expected; do
+            label="$(strim "$label")"; output="$(strim "$output")"; expected="$(strim "$expected")"
+            echo -n "- $label:"
+            if [[ "$output" != "$expected" ]]; then
+              echo $'\n::error::\u274C' "Expected '$expected', got '$output'"
+              exit 1
+            fi
+            echo $' \u2705'
+          done <<< "$tests"
+
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-base-url:
+    name: 'Integration test: base-url option'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-dependencies
+
+      - id: base-url-default
+        name: API URL with base-url not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).url
+          result-encoding: string
+
+      - id: base-url-default-graphql
+        name: GraphQL URL with base-url not set
+        uses: ./
+        with:
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({url: "/graphql"}).url
+          result-encoding: string
+
+      - id: base-url-set
+        name: API URL with base-url set
+        uses: ./
+        with:
+          base-url: https://my.github-enterprise-server.com/api/v3
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({}).url
+          result-encoding: string
+
+      - id: base-url-set-graphql
+        name: GraphQL URL with base-url set
+        uses: ./
+        with:
+          base-url: https://my.github-enterprise-server.com/api/v3
+          script: |
+            const endpoint = github.request.endpoint
+            return endpoint({url: "/graphql"}).url
+          result-encoding: string
+
+      - run: |
+          echo "- Validating API URL default"
+          expected="https://api.github.com/"
+          actual="${{steps.base-url-default.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
+            exit 1
+          fi
+          echo "- Validating GraphQL URL default"
+          expected="https://api.github.com/graphql"
+          actual="${{steps.base-url-default-graphql.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
+            exit 1
+          fi
+          echo "- Validating base-url set to a value"
+          expected="https://my.github-enterprise-server.com/api/v3/"
+          actual="${{steps.base-url-set.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
+            exit 1
+          fi
+          echo "- Validating GraphQL URL with base-url set to a value"
+          expected="https://my.github-enterprise-server.com/api/v3/graphql"
+          actual="${{steps.base-url-set-graphql.outputs.result}}"
+          if [[ "$expected" != "$actual" ]]; then
+            echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
             exit 1
           fi

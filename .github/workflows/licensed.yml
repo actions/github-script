@@ -1,0 +1,30 @@
+name: Licensed
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Check licenses
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # prefer to use a full fetch for licensed workflows
+      - uses: ruby/setup-ruby@354a1ad156761f5ee2b7b13fa8e09943a5e8d252 # v1.229.0
+        with:
+          ruby-version: ruby
+      - uses: github/setup-licensed@v1
+        with:
+          version: '4.x'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./.github/actions/install-dependencies
+      - run: licensed status
