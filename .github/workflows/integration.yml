@@ -155,21 +155,21 @@ jobs:
           result-encoding: string
       - run: |
           echo "- Validating user-agent default"
-          expected="actions/github-script octokit-core.js/"
-          if [[ "${{steps.user-agent-default.outputs.result}}" != "$expected"* ]]; then
-            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-default.outputs.result}}"
+          actual="${{steps.user-agent-default.outputs.result}}"
+          if [[ ! "$actual" =~ ^actions/github-script([[:space:]]actions_orchestration_id/[^[:space:]]+)?[[:space:]]octokit-core\.js/ ]]; then
+            echo $'::error::\u274C' "Expected user-agent to match 'actions/github-script [actions_orchestration_id/...] octokit-core.js/...', got $actual"
             exit 1
           fi
           echo "- Validating user-agent set to a value"
-          expected="foobar octokit-core.js/"
-          if [[ "${{steps.user-agent-set.outputs.result}}" != "$expected"* ]]; then
-            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-set.outputs.result}}"
+          actual="${{steps.user-agent-set.outputs.result}}"
+          if [[ ! "$actual" =~ ^foobar([[:space:]]actions_orchestration_id/[^[:space:]]+)?[[:space:]]octokit-core\.js/ ]]; then
+            echo $'::error::\u274C' "Expected user-agent to match 'foobar [actions_orchestration_id/...] octokit-core.js/...', got $actual"
             exit 1
           fi
           echo "- Validating user-agent set to an empty string"
-          expected="actions/github-script octokit-core.js/"
-          if [[ "${{steps.user-agent-empty.outputs.result}}" != "$expected"* ]]; then
-            echo $'::error::\u274C' "Expected user-agent to start with '$expected', got ${{steps.user-agent-empty.outputs.result}}"
+          actual="${{steps.user-agent-empty.outputs.result}}"
+          if [[ ! "$actual" =~ ^actions/github-script([[:space:]]actions_orchestration_id/[^[:space:]]+)?[[:space:]]octokit-core\.js/ ]]; then
+            echo $'::error::\u274C' "Expected user-agent to match 'actions/github-script [actions_orchestration_id/...] octokit-core.js/...', got $actual"
             exit 1
           fi
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
