@@ -10,6 +10,7 @@ import {RequestRequestOptions} from '@octokit/types'
 import {callAsyncFunction} from './async-function'
 import {createConfiguredGetOctokit} from './create-configured-getoctokit'
 import {RetryOptions, getRetryOptions, parseNumberArray} from './retry-options'
+import {callScriptFile} from './script-file'
 import {wrapRequire} from './wrap-require'
 
 process.on('unhandledRejection', handleError)
@@ -58,7 +59,17 @@ async function main(): Promise<void> {
   }
 
   const github = getOctokit(token, opts, retry, requestLog)
-  const script = core.getInput('script', {required: true})
+  const scriptInline = core.getInput('script')
+  const scriptFile = core.getInput('script-file')
+
+  if (scriptInline && scriptFile) {
+    throw new Error(
+      'Only one of "script" or "script-file" may be provided, not both'
+    )
+  }
+  if (!scriptInline && !scriptFile) {
+    throw new Error('One of "script" or "script-file" must be provided')
+  }
 
   // Wrap getOctokit so secondary clients inherit retry, logging,
   // orchestration ID, and the action's retries input.
@@ -71,21 +82,22 @@ async function main(): Promise<void> {
   )
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-  const result = await callAsyncFunction(
-    {
-      require: wrapRequire,
-      __original_require__: __non_webpack_require__,
-      github,
-      octokit: github,
-      getOctokit: configuredGetOctokit,
-      context,
-      core,
-      exec,
-      glob,
-      io
-    },
-    script
-  )
+  const args = {
+    require: wrapRequire,
+    __original_require__: __non_webpack_require__,
+    github,
+    octokit: github,
+    getOctokit: configuredGetOctokit,
+    context,
+    core,
+    exec,
+    glob,
+    io
+  }
+
+  const result = scriptFile
+    ? await callScriptFile(args, scriptFile, __non_webpack_require__)
+    : await callAsyncFunction(args, scriptInline)
 
   let encoding = core.getInput('result-encoding')
   encoding = encoding ? encoding : 'json'

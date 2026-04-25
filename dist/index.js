@@ -65029,6 +65029,25 @@ function parseNumberArray(listString) {
 
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(1017);
+;// CONCATENATED MODULE: ./src/script-file.ts
+
+function resolveScriptFilePath(scriptFile) {
+    if (scriptFile.startsWith('file://')) {
+        throw new Error('"script-file" must not use the "file://" protocol');
+    }
+    return external_path_.isAbsolute(scriptFile)
+        ? scriptFile
+        : external_path_.resolve(process.env['GITHUB_WORKSPACE'], scriptFile);
+}
+async function callScriptFile(args, scriptFile, requireFn) {
+    const resolvedPath = resolveScriptFilePath(scriptFile);
+    const scriptFn = requireFn(resolvedPath);
+    if (typeof scriptFn !== 'function') {
+        throw new Error(`"script-file" must export a function, got ${typeof scriptFn}`);
+    }
+    return scriptFn(args);
+}
+
 ;// CONCATENATED MODULE: ./src/wrap-require.ts
 
 const wrapRequire = new Proxy(require, {
@@ -65053,6 +65072,7 @@ const wrapRequire = new Proxy(require, {
 });
 
 ;// CONCATENATED MODULE: ./src/main.ts
+
 
 
 
@@ -65091,13 +65111,20 @@ async function main() {
         opts.baseUrl = baseUrl;
     }
     const github = getOctokit(token, opts, retry, requestLog);
-    const script = core.getInput('script', { required: true });
+    const scriptInline = core.getInput('script');
+    const scriptFile = core.getInput('script-file');
+    if (scriptInline && scriptFile) {
+        throw new Error('Only one of "script" or "script-file" may be provided, not both');
+    }
+    if (!scriptInline && !scriptFile) {
+        throw new Error('One of "script" or "script-file" must be provided');
+    }
     // Wrap getOctokit so secondary clients inherit retry, logging,
     // orchestration ID, and the action's retries input.
     // Deep-copy opts to prevent shared references with the primary client.
     const configuredGetOctokit = createConfiguredGetOctokit(getOctokit, { ...opts, retry: { ...opts.retry }, request: { ...opts.request } }, retry, requestLog);
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
-    const result = await callAsyncFunction({
+    const args = {
         require: wrapRequire,
         __original_require__: require,
         github,
@@ -65108,7 +65135,10 @@ async function main() {
         exec: exec,
         glob: glob,
         io: io
-    }, script);
+    };
+    const result = scriptFile
+        ? await callScriptFile(args, scriptFile, require)
+        : await callAsyncFunction(args, scriptInline);
     let encoding = core.getInput('result-encoding');
     encoding = encoding ? encoding : 'json';
     let output;
