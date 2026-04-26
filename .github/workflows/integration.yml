@@ -361,3 +361,174 @@ jobs:
             echo $'::error::\u274C' "Expected base-url to equal '$expected', got $actual"
             exit 1
           fi
+
+  test-script-file-basic:
+    name: 'Integration test: script-file - relative path, string return'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        uses: ./
+        with:
+          script-file: .github/fixtures/script-file/basic.js
+          result-encoding: string
+      - run: |
+          expected="hello from script-file"
+          if [[ "${{ steps.act.outputs.result }}" != "$expected" ]]; then
+            echo $'::error::❌' "Expected '$expected', got ${{ steps.act.outputs.result }}"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-absolute-path:
+    name: 'Integration test: script-file - absolute path'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        uses: ./
+        with:
+          script-file: ${{ github.workspace }}/.github/fixtures/script-file/basic.js
+          result-encoding: string
+      - run: |
+          expected="hello from script-file"
+          if [[ "${{ steps.act.outputs.result }}" != "$expected" ]]; then
+            echo $'::error::❌' "Expected '$expected', got ${{ steps.act.outputs.result }}"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-all-ioc-args:
+    name: 'Integration test: script-file - all IoC args available'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        uses: ./
+        with:
+          script-file: .github/fixtures/script-file/all-args.js
+      - run: |
+          if [[ "${{ steps.act.outputs.result }}" != "true" ]]; then
+            echo $'::error::❌' "Expected all IoC args to be present, got ${{ steps.act.outputs.result }}"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-result-encoding-json:
+    name: 'Integration test: script-file - result-encoding json'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        uses: ./
+        with:
+          script-file: .github/fixtures/script-file/json-return.js
+      - run: |
+          expected='{"repo":"${{ github.event.repository.name }}","owner":"${{ github.repository_owner }}"}'
+          if [[ "${{ steps.act.outputs.result }}" != "$expected" ]]; then
+            echo $'::error::❌' "Expected '$expected', got ${{ steps.act.outputs.result }}"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-require-in-file:
+    name: 'Integration test: script-file - require inside script file'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        uses: ./
+        with:
+          script-file: .github/fixtures/script-file/sibling-caller.js
+          result-encoding: string
+      - run: |
+          expected="loaded-by-require"
+          if [[ "${{ steps.act.outputs.result }}" != "$expected" ]]; then
+            echo $'::error::❌' "Expected '$expected', got ${{ steps.act.outputs.result }}"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-conflict-both:
+    name: 'Integration test: script-file - fails when both script and script-file are set'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        continue-on-error: true
+        uses: ./
+        with:
+          script: return 1
+          script-file: .github/fixtures/script-file/basic.js
+      - run: |
+          if [[ "${{ steps.act.outcome }}" != "failure" ]]; then
+            echo $'::error::❌' "Expected step to fail when both inputs are set"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-conflict-neither:
+    name: 'Integration test: script-file - fails when neither script nor script-file is set'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        continue-on-error: true
+        uses: ./
+      - run: |
+          if [[ "${{ steps.act.outcome }}" != "failure" ]]; then
+            echo $'::error::❌' "Expected step to fail when no input is set"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-nonexistent-file:
+    name: 'Integration test: script-file - fails on nonexistent file'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        continue-on-error: true
+        uses: ./
+        with:
+          script-file: .github/fixtures/script-file/does-not-exist.js
+      - run: |
+          if [[ "${{ steps.act.outcome }}" != "failure" ]]; then
+            echo $'::error::❌' "Expected step to fail for nonexistent file"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-non-function-export:
+    name: 'Integration test: script-file - fails when file does not export a function'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        continue-on-error: true
+        uses: ./
+        with:
+          script-file: .github/fixtures/script-file/not-a-function.js
+      - run: |
+          if [[ "${{ steps.act.outcome }}" != "failure" ]]; then
+            echo $'::error::❌' "Expected step to fail for non-function export"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
+  test-script-file-file-protocol-rejected:
+    name: 'Integration test: script-file - fails for file:// protocol'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: act
+        continue-on-error: true
+        uses: ./
+        with:
+          script-file: file://${{ github.workspace }}/.github/fixtures/script-file/basic.js
+      - run: |
+          if [[ "${{ steps.act.outcome }}" != "failure" ]]; then
+            echo $'::error::❌' "Expected step to fail for file:// protocol"
+            exit 1
+          fi
+          echo $'✅ Test passed' | tee -a $GITHUB_STEP_SUMMARY

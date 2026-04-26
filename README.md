@@ -27,8 +27,9 @@ You are welcome to still raise bugs in this repo.
 
 ### This action
 
-To use this action, provide an input named `script` that contains the body of an asynchronous JavaScript function call.
-The following arguments will be provided:
+To use this action, provide either a `script` input (the body of an async function, inline in your workflow YAML) or a `script-file` input (a path to a JS file that `module.exports` an async function). Exactly one of the two must be provided.
+
+The following arguments are available to both forms:
 
 - `github` A pre-authenticated
   [octokit/rest.js](https://octokit.github.io/rest.js) client with pagination plugins
@@ -200,6 +201,56 @@ You can also configure which status codes should be exempt from retries via the 
 By default, the following status codes will not be retried: `400, 401, 403, 404, 422` [(source)](https://github.com/octokit/plugin-retry.js/blob/9a2443746c350b3beedec35cf26e197ea318a261/src/index.ts#L14).
 
 These retries are implemented using the [octokit/plugin-retry.js](https://github.com/octokit/plugin-retry.js) plugin. The retries use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) to space out retries. ([source](https://github.com/octokit/plugin-retry.js/blob/9a2443746c350b3beedec35cf26e197ea318a261/src/error-request.ts#L13))
+
+## Script file
+
+Coding long JS logic in yaml is not linted as JS/TS.
+Instead of providing the `script` inline, you can use `script-file` to point to a JS file in your repository. The file must proide `module.exports` as an function (that may be async) — making it a proper module that linters and IDEs can fully analyse.
+
+The action handler is called with a single [IoC](https://en.wikipedia.org/wiki/Inversion_of_control) dependency bag (defined in [`src/args.ts`](src/args.ts)). Its members are the same as those available to the inline `script`:
+
+| Name | Description |
+| --- | --- |
+| `github` | Pre-authenticated [octokit/rest.js](https://octokit.github.io/rest.js) client |
+| `octokit` | Alias for `github` |
+| `getOctokit` | Factory for additional authenticated Octokit clients (see [Creating additional clients](#creating-additional-clients-with-getoctokit)) |
+| `context` | [Workflow run context](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts) |
+| `core` | [@actions/core](https://github.com/actions/toolkit/tree/main/packages/core) |
+| `exec` | [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) |
+| `glob` | [@actions/glob](https://github.com/actions/toolkit/tree/main/packages/glob) |
+| `io` | [@actions/io](https://github.com/actions/toolkit/tree/main/packages/io) |
+| `require` | Wrapped `require` that resolves relative paths and local `node_modules` |
+
+**Path resolution:** relative paths are resolved against `$GITHUB_WORKSPACE`; absolute paths are used as-is. The `file://` protocol is not supported.
+
+`script` and `script-file` are mutually exclusive — exactly one must be provided.
+
+```yaml
+- uses: actions/checkout@v4
+- uses: actions/github-script@v9
+  with:
+    script-file: .github/scripts/my-script.js
+```
+
+The action handler:
+
+JS: `.github/scripts/my-script.js`
+
+```js
+module.exports = async ({github, context, core /* destructure what you need */}) => {
+  // your logic here
+}
+```
+
+or TS: `.github/scripts/my-script.ts`
+
+```ts
+import type {AsyncFunctionArguments} from '@actions/github-script'
+
+module.exports = async ({github, context, core /* destructure what you need */}: AsyncFunctionArguments) => {
+  // your logic here
+}
+```
 
 ## Examples
 
@@ -377,52 +428,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/github-script@v9
         with:
-          script: |
-            const script = require('./path/to/script.js')
-            console.log(script({github, context}))
+          script-file: ./path/to/script.js
+
 ```
 
 And then export a function from your module:
 
 ```javascript
-module.exports = ({github, context}) => {
+module.exports = ({github, context }) => {
   return context.payload.client_payload.value
 }
 ```
 
-Note that because you can't `require` things like the GitHub context or
-Actions Toolkit libraries, you'll want to pass them as arguments to your
-external function.
-
-Additionally, you'll want to use the [checkout
-action](https://github.com/actions/checkout) to make sure your script file is
-available.
-
-### Run a separate file with an async function
-
-You can also use async functions in this manner, as long as you `await` it in
-the inline script.
-
-In your workflow:
-
-```yaml
-on: push
-
-jobs:
-  echo-input:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/github-script@v9
-        env:
-          SHA: '${{env.parentSHA}}'
-        with:
-          script: |
-            const script = require('./path/to/script.js')
-            await script({github, context, core})
-```
-
-And then export an async function from your module:
+The exported function may be async if you like:
 
 ```javascript
 module.exports = async ({github, context, core}) => {
@@ -435,6 +453,14 @@ module.exports = async ({github, context, core}) => {
   core.exportVariable('author', commit.data.commit.author.email)
 }
 ```
+
+Note that because you can't `require` things like the GitHub context or
+Actions Toolkit libraries, you'll want to accept them as arguments to your
+external function: Your action is called with an [IoC](https://en.wikipedia.org/wiki/Inversion_of_control) dependency bag - destructure from it whatever you need. Check the docs above in the **Script file** section.
+
+Additionally, you'll want to use the [checkout
+action](https://github.com/actions/checkout) to make sure your script file is
+available.
 
 ### Use npm packages
 

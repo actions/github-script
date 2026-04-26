@@ -6,8 +6,15 @@ branding:
   icon: code
 inputs:
   script:
-    description: The script to run
-    required: true
+    description: The script to run (mutually exclusive with script-file)
+    required: false
+  script-file:
+    description: |
+      A path to a JS file that exports an action handler. (mutually exclusive with script)
+      Path may be absolute, or relative to your repo root.
+      The handler may be async.
+      The handler is called with an IoC bag with {context, core, exec, github, octokit, getOctokit, glob, io, require} - destructure what you need.
+    required: false
   github-token:
     description: The GitHub token used to create an authenticated client
     default: ${{ github.token }}
