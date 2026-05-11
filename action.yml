@@ -32,6 +32,9 @@ inputs:
   base-url:
     description: An optional GitHub REST API URL to connect to a different GitHub instance. For example, https://my.github-enterprise-server.com/api/v3
     required: false
+  working-directory:
+    description: The working directory where the script will be executed. If not provided, the current working directory is used.
+    required: false
 outputs:
   result:
     description: The return value of the script, stringified with `JSON.stringify`

@@ -59,6 +59,12 @@ async function main(): Promise<void> {
 
   const github = getOctokit(token, opts, retry, requestLog)
   const script = core.getInput('script', {required: true})
+  const workingDirectory = core.getInput('working-directory')
+
+  if (workingDirectory) {
+    core.info(`Changing working directory to ${workingDirectory}`)
+    process.chdir(workingDirectory)
+  }
 
   // Wrap getOctokit so secondary clients inherit retry, logging,
   // orchestration ID, and the action's retries input.
