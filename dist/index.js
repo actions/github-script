@@ -65029,6 +65029,27 @@ function parseNumberArray(listString) {
 
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(1017);
+;// CONCATENATED MODULE: ./src/working-directory.ts
+
+
+/**
+ * Validates that the given directory exists and is accessible.
+ * @param workingDirectory - The directory path to validate
+ * @returns The resolved absolute path
+ * @throws Error if the directory does not exist or is not a directory
+ */
+function validateWorkingDirectory(workingDirectory) {
+    const resolved = external_path_.resolve(workingDirectory);
+    if (!external_fs_.existsSync(resolved)) {
+        throw new Error(`working-directory "${workingDirectory}" does not exist (resolved to "${resolved}")`);
+    }
+    const stat = external_fs_.statSync(resolved);
+    if (!stat.isDirectory()) {
+        throw new Error(`working-directory "${workingDirectory}" is not a directory (resolved to "${resolved}")`);
+    }
+    return resolved;
+}
+
 ;// CONCATENATED MODULE: ./src/wrap-require.ts
 
 const wrapRequire = new Proxy(require, {
@@ -65053,6 +65074,7 @@ const wrapRequire = new Proxy(require, {
 });
 
 ;// CONCATENATED MODULE: ./src/main.ts
+
 
 
 
@@ -65094,8 +65116,9 @@ async function main() {
     const script = core.getInput('script', { required: true });
     const workingDirectory = core.getInput('working-directory');
     if (workingDirectory) {
-        core.info(`Changing working directory to ${workingDirectory}`);
-        process.chdir(workingDirectory);
+        const resolved = validateWorkingDirectory(workingDirectory);
+        core.info(`Changing working directory to ${resolved}`);
+        process.chdir(resolved);
     }
     // Wrap getOctokit so secondary clients inherit retry, logging,
     // orchestration ID, and the action's retries input.

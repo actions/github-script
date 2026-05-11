@@ -10,6 +10,7 @@ import {RequestRequestOptions} from '@octokit/types'
 import {callAsyncFunction} from './async-function'
 import {createConfiguredGetOctokit} from './create-configured-getoctokit'
 import {RetryOptions, getRetryOptions, parseNumberArray} from './retry-options'
+import {validateWorkingDirectory} from './working-directory'
 import {wrapRequire} from './wrap-require'
 
 process.on('unhandledRejection', handleError)
@@ -62,8 +63,9 @@ async function main(): Promise<void> {
   const workingDirectory = core.getInput('working-directory')
 
   if (workingDirectory) {
-    core.info(`Changing working directory to ${workingDirectory}`)
-    process.chdir(workingDirectory)
+    const resolved = validateWorkingDirectory(workingDirectory)
+    core.info(`Changing working directory to ${resolved}`)
+    process.chdir(resolved)
   }
 
   // Wrap getOctokit so secondary clients inherit retry, logging,
