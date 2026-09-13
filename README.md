@@ -362,6 +362,40 @@ jobs:
             console.log(result)
 ```
 
+### Paginate GraphQL queries
+
+The `github` client includes the [`@octokit/plugin-paginate-graphql`](https://github.com/octokit/plugin-paginate-graphql.js)
+plugin, so `github.graphql.paginate` (and `github.graphql.paginate.iterator`) fetches every page of a
+cursor-paginated GraphQL query, similar to `github.paginate` for the REST API. The query must declare a
+`$cursor: String` variable and select `pageInfo { hasNextPage endCursor }` on the paginated connection:
+
+```yaml
+on: workflow_dispatch
+
+jobs:
+  list-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const query = `query paginate($cursor: String, $owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                issues(first: 100, after: $cursor) {
+                  nodes { number title }
+                  pageInfo { hasNextPage endCursor }
+                }
+              }
+            }`
+            const result = await github.graphql.paginate(query, {
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            })
+            console.log(`Found ${result.repository.issues.nodes.length} issues`)
+```
+
+Secondary clients created with `getOctokit` also expose `graphql.paginate`.
+
 ### Run a separate file
 
 If you don't want to inline your entire script that you want to run, you can

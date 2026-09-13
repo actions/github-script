@@ -207,6 +207,49 @@ jobs:
           fi
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
 
+  test-graphql-paginate:
+    name: 'Integration test: GraphQL pagination'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-dependencies
+      - id: graphql-paginate
+        name: Paginate a GraphQL query with github.graphql.paginate
+        uses: ./
+        env:
+          APP_TOKEN: ${{ github.token }}
+        with:
+          script: |
+            const query = `query paginate($cursor: String, $owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                issues(first: 2, after: $cursor) {
+                  nodes { number }
+                  pageInfo { hasNextPage endCursor }
+                }
+              }
+            }`
+            const variables = {owner: context.repo.owner, repo: context.repo.repo}
+
+            // Walk two pages of two issues each, then stop.
+            let pages = 0
+            const numbers = new Set()
+            for await (const page of github.graphql.paginate.iterator(query, variables)) {
+              for (const issue of page.repository.issues.nodes) numbers.add(issue.number)
+              if (++pages === 2) break
+            }
+
+            const secondary = getOctokit(process.env.APP_TOKEN)
+            return `${typeof github.graphql.paginate}:${typeof secondary.graphql.paginate}:${pages}:${numbers.size}`
+          result-encoding: string
+      - run: |
+          echo "- Validating GraphQL pagination output"
+          expected="function:function:2:4"
+          if [[ "${{steps.graphql-paginate.outputs.result}}" != "$expected" ]]; then
+            echo $'::error::\u274C' "Expected '$expected', got ${{steps.graphql-paginate.outputs.result}}"
+            exit 1
+          fi
+          echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
+
   test-debug:
     strategy:
       matrix:

@@ -4,6 +4,7 @@ import {context, getOctokit} from '@actions/github'
 import {defaults as defaultGitHubOptions} from '@actions/github/lib/utils'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+import {paginateGraphQL} from '@octokit/plugin-paginate-graphql'
 import {requestLog} from '@octokit/plugin-request-log'
 import {retry} from '@octokit/plugin-retry'
 import {RequestRequestOptions} from '@octokit/types'
@@ -57,17 +58,18 @@ async function main(): Promise<void> {
     opts.baseUrl = baseUrl
   }
 
-  const github = getOctokit(token, opts, retry, requestLog)
+  const github = getOctokit(token, opts, retry, requestLog, paginateGraphQL)
   const script = core.getInput('script', {required: true})
 
-  // Wrap getOctokit so secondary clients inherit retry, logging,
-  // orchestration ID, and the action's retries input.
+  // Wrap getOctokit so secondary clients inherit retry, logging, GraphQL
+  // pagination, orchestration ID, and the action's retries input.
   // Deep-copy opts to prevent shared references with the primary client.
   const configuredGetOctokit = createConfiguredGetOctokit(
     getOctokit,
     {...opts, retry: {...opts.retry}, request: {...opts.request}},
     retry,
-    requestLog
+    requestLog,
+    paginateGraphQL
   )
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
